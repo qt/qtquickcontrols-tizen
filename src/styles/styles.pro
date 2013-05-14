@@ -4,7 +4,8 @@ QML_FILES = \
     TizenBorderImage.qml \
     ProgressBarStyle.qml \
     SliderStyle.qml \
-    ButtonStyle.qml
+    ButtonStyle.qml \
+    CheckBoxStyle.qml
 # Images
 QML_FILES += \
     images/00_progress_bar.sci \

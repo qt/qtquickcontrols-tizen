@@ -78,16 +78,5 @@ var button= {
         pressed: "images/"+theme+"/00_button_01_ef_press.sci"
         //highlighted:"images/"+theme+"/00_button_01_ef_press.sci"
     },
-    font:{pointSize:36, minimumPointSize: 28}
-
-//    ADD_SHAPE_CONFIG(DEFAULT_FONT_SIZE, 36);
-//    ADD_SHAPE_CONFIG(MULTILINE_FONT_SIZE, 28);
-//    ADD_SHAPE_CONFIG(LEFT_MARGIN, 12);
-//    ADD_SHAPE_CONFIG(TOP_MARGIN, 4);
-//    ADD_SHAPE_CONFIG(RIGHT_MARGIN, 12);
-//    ADD_SHAPE_CONFIG(BOTTOM_MARGIN, 4);
-//    ADD_FIXED_VALUE_CONFIG(TEXT_MAX_LENGTH, 60);
-//    ADD_DIMENSION_CONFIG(MIN_SIZE, 0, 0);
-
-
+    font:{pixelSize:36, minimumPixelSize: 28}
 }

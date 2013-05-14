@@ -84,11 +84,15 @@ Style {
 
     /*! The background of the button. */
     property Component background: TizenBorderImage {
-        implicitWidth: 150
-        implicitHeight: 75
+        implicitWidth: 300
+        implicitHeight: 50
         source: control.enabled ? (control.pressed ? Default.button.source.pressed: Default.button.source.normal) : Default.button.source.disabled
         effectSource: control.enabled ? (control.pressed ? Default.button.effectSource.pressed: Default.button.effectSource.normal) : Default.button.effectSource.disabled
         backgroundColor: control.enabled ? (control.pressed ? Default.button.backgroundColor.pressed: Default.button.backgroundColor.normal) : Default.button.backgroundColor.disabled
+        onEffectSourceChanged: {
+            console.log(effectSource)
+        }
+
         //foregroundColor: control.enabled ? (control.pressed ? Default.button.foregroundColor.pressed: Default.button.foregroundColor.normal) : Default.button.foregroundColor.disabled
     }
 
@@ -102,14 +106,13 @@ Style {
             anchors.topMargin: Default.button.text.margins.top
             anchors.bottomMargin: Default.button.text.margins.bottom
             anchors.fill:parent
-            font.pointSize: Default.button.font.pointSize
+            font.pixelSize: Default.button.font.pixelSize
             color: control.enabled ? (control.pressed ? Default.button.text.color.pressed : Default.button.text.color.normal) : Default.button.text.color.disabled
             fontSizeMode: Text.Fit
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             text:control.text
-            minimumPointSize: 1
-            minimumPixelSize: 1
+            minimumPixelSize: Default.button.font.minimumPixelSize
             maximumLineCount:2
             wrapMode: Text.Wrap
             clip:true

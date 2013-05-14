@@ -43,7 +43,7 @@ import QtQuick.Controls 1.0
 import "content"
 
 ApplicationWindow {
-    width: 800
+    width: 720
     height: 1280
 
     Rectangle {
