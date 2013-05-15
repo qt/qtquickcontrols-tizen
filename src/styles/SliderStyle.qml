@@ -39,139 +39,60 @@
 ****************************************************************************/
 import QtQuick 2.1
 import QtQuick.Controls 1.0
-import QtQuick.Controls.Private 1.0
+import QtQuick.Controls.Styles 1.0
 import "DefaultSettings.js" as Default
 
-/*!
-    \qmltype SliderStyle
-    \inqmlmodule QtQuick.Controls.Styles 1.0
-    \since QtQuick.Controls.Styles 1.0
-    \brief Provides custom styling for Slider
-
-    The slider style allows you to create a custom appearance for
-    a \l Slider control.
-
-    The implicit size of the slider is calculated based on the
-    maximum implicit size of the \c background and \c handle
-    delegates combined.
-
-    Example:
-    \qml
-    Slider {
-        anchors.centerIn: parent
-        style: SliderStyle {
-            groove: Rectangle {
-                implicitWidth: 200
-                implicitHeight: 8
-                color: "gray"
-                radius: 8
-            }
-            handle: Rectangle {
-                anchors.centerIn: parent
-                color: control.pressed ? "white" : "lightgray"
-                border.color: "gray"
-                border.width: 2
-                width: 34
-                height: 34
-                radius: 12
-            }
-        }
-    }
-    \endqml
-*/
-Style {
+SliderStyle {
     id: styleitem
 
-    /*! The \l Slider attached to this style. */
-    readonly property Slider control: __control
-
-    /*! The padding around the groove item. */
-    property Margins padding: Margins { top: 0 ; left: 0 ; right: 0 ; bottom: 0 }
-
-    /*! This property holds the item for the slider handle.
-        You can access the slider through the \c control property
-    */
     Component.onCompleted: {
         control.stepSize = 1.0
         control.maximumValue = 100
     }
 
-    property Component handle:  TizenBorderImage {
-        id:bg
-        source: Default.slider.handle.source.normal
-        effectSource: if (control.enabled) {
-                          control.pressed ?
-                          Default.slider.handle.effectSource.pressed:
-                          Default.slider.handle.effectSource.normal
-                      } else {
-                          Default.slider.handle.effectSource.disabled
-                      }
+    handle:  Item {
+        implicitWidth: bg.implicitWidth
+        implicitHeight: bg.implicitHeight
+        TizenBorderImage {
+            id:bg
 
-        backgroundColor: control.enabled ? (control.pressed ? Default.slider.handle.backgroundColor.pressed : Default.slider.handle.backgroundColor.normal):Default.slider.handle.backgroundColor.disabled
-        foregroundColor: control.enabled ? Default.slider.handle.foregroundColor.normal:Default.slider.handle.foregroundColor.disabled
-        Text {
-            visible:!control.pressed
-            text: control.value
-            anchors.fill: parent
-            anchors.margins: Default.slider.handle.text.margins
-            fontSizeMode: Text.Fit
-            font.pointSize: Default.slider.handle.font.pointSize
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            color: control.enabled ? Default.slider.handle.text.color.normal : Default.slider.handle.text.color.disabled
+            anchors.centerIn: parent
+            source: Default.slider.handle.source.normal
+            effectSource: if (control.enabled) {
+                              control.pressed ?
+                                          Default.slider.handle.effectSource.pressed:
+                                          Default.slider.handle.effectSource.normal
+                          } else {
+                              Default.slider.handle.effectSource.disabled
+                          }
+
+            backgroundColor: control.enabled ? (control.pressed ? Default.slider.handle.backgroundColor.pressed : Default.slider.handle.backgroundColor.normal):Default.slider.handle.backgroundColor.disabled
+
+            Text {
+                visible:!control.pressed
+                text: control.value
+                anchors.fill: parent
+                anchors.margins: Default.slider.handle.text.margins
+                fontSizeMode: Text.Fit
+                font.pointSize: Default.slider.handle.font.pointSize
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                color: control.enabled ? Default.slider.handle.text.color.normal : Default.slider.handle.text.color.disabled
+            }
         }
     }
-
 
     /*! This property holds the background groove of the slider.
         You can access the handle position through the \c handlePosition property.
     */
-    property Component groove: Item {
-        implicitHeight: 50
+    groove: Item {
+        implicitHeight: 36
         implicitWidth: 400
         ProgressBar {
             anchors.fill: parent
             value: control.value
             maximumValue: control.maximumValue
             minimumValue: control.minimumValue
-        }
-    }
-
-    /*! This property holds the slider style panel.
-
-        Note that it is generally not recommended to override this.
-    */
-    property Component panel: Item {
-        id: root
-        property bool horizontal : control.orientation === Qt.Horizontal
-        property int horizontalSize: grooveLoader.implicitWidth + padding.left + padding.right
-        property int verticalSize: Math.max(handleLoader.implicitHeight, grooveLoader.implicitHeight) + padding.top + padding.bottom
-
-        implicitWidth: horizontal ? horizontalSize : verticalSize
-        implicitHeight: horizontal ? verticalSize : horizontalSize
-
-        y: horizontal ? 0 : height
-        rotation: horizontal ? 0 : -90
-        transformOrigin: Item.TopLeft
-
-        Item {
-
-            anchors.fill: parent
-
-            Loader {
-                id: grooveLoader
-                property int handlePosition: handleLoader.x + handleLoader.width/2
-                x: padding.left
-                sourceComponent: groove
-                width: (horizontal ? parent.width : parent.height) - padding.left - padding.right
-                y:  padding.top +  (Math.round(horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2
-            }
-            Loader {
-                id: handleLoader
-                sourceComponent: handle
-                anchors.verticalCenter: grooveLoader.verticalCenter
-                x: Math.round(control.value / control.maximumValue * ((horizontal ? root.width : root.height)- item.width))
-            }
         }
     }
 }

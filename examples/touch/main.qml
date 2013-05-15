@@ -47,7 +47,7 @@ ApplicationWindow {
     height: 1280
 
     Rectangle {
-        color: "#212126"
+        color: "#FFFFFF"
         anchors.fill: parent
     }
 
@@ -77,7 +77,7 @@ ApplicationWindow {
             antialiasing: true
             height: 60
             radius: 4
-            color: backmouse.pressed ? "#222" : "transparent"
+            color: backmouse.pressed ? "#EEEEEE" : "transparent"
             Behavior on opacity { NumberAnimation{} }
             Image {
                 anchors.verticalCenter: parent.verticalCenter
@@ -96,7 +96,7 @@ ApplicationWindow {
             Behavior on x { NumberAnimation{ easing.type: Easing.OutCubic} }
             x: backButton.x + backButton.width + 20
             anchors.verticalCenter: parent.verticalCenter
-            color: "white"
+            color: "black"
             text: "Widget Gallery"
         }
     }

@@ -60,7 +60,7 @@ Item {
 
     Text {
         id: textitem
-        color: "white"
+        color: "black"
         font.pixelSize: 32
         text: modelData
         anchors.verticalCenter: parent.verticalCenter

@@ -40,101 +40,38 @@
 
 import QtQuick 2.1
 import QtQuick.Controls 1.0
-import QtQuick.Controls.Private 1.0
+import QtQuick.Controls.Styles 1.0
 import "DefaultSettings.js" as Default
 
-/*!
-    \qmltype ProgressBarStyle
-
-    \inqmlmodule QtQuick.Controls.Styles 1.0
-    \since QtQuick.Controls.Styles 1.0
-    \brief Provides custom styling for ProgressBar
-
-    Example:
-    \qml
-    ProgressBar {
-        value: slider.value
-        style: ProgressBarStyle {
-            background: Rectangle {
-                radius: 2
-                color: "lightgray"
-                border.color: "gray"
-                border.width: 1
-                implicitWidth: 200
-                implicitHeight: 24
-            }
-            progress: Rectangle {
-                color: "lightsteelblue"
-                border.color: "steelblue"
-            }
-        }
-    }
-    \endqml
-*/
-
-Style {
+ProgressBarStyle {
     id: progressBarStyle
 
-    /*! The \l ProgressBar attached to this style. */
-    readonly property ProgressBar control: __control
-
-    /*! A value in the range [0-1] indicating the current progress. */
-    readonly property real currentProgress: control.indeterminate ? 1.0 :
-                                                                    control.value / control.maximumValue
-
-    /*! This property holds the visible contents of the progress bar
-        You can access the Slider through the \c control property.
-
-        For convenience, you can also access the readonly property \c controlState.progress
-        which provides the current progress as a \c real in the range [0-1]
-    */
-    property Margins padding: Margins { top: 0 ; left: 8 ; right: 8 ; bottom: 0 }
-
-
-    property Component progress: TizenBorderImage {
-        id:bar
-        source: "images/00_progress_bar.sci"
-        backgroundColor: Default.progress.progressColor
-        effectSource: "images/white/00_progress_bar_ef.sci"
+    padding.left: Default.progress.margins.left
+    padding.right: Default.progress.margins.right
+    progress: Item {
+        implicitWidth: bar.implicitWidth
+        implicitHeight: bar.implicitHeight
+        TizenBorderImage {
+            id:bar
+            anchors.centerIn: parent
+            width: parent.width
+            source: Default.progress.source.normal
+            backgroundColor: Default.progress.progressColor
+            effectSource: Default.progress.effectSource.normal
+        }
     }
 
-
-    property Component background: TizenBorderImage {
-        source: "images/00_progress_bg.sci"
-        backgroundColor: Default.progress.backgroundColor
-        effectSource: "images/white/00_progress_ef_bg.sci"
-    }
-
-    property Component panel: Item{
-        property bool horizontal: control.orientation == Qt.Horizontal
-        implicitWidth: horizontal ? backgroundLoader.implicitWidth : backgroundLoader.implicitHeight
-        implicitHeight: horizontal ? backgroundLoader.implicitHeight : backgroundLoader.implicitWidth
-
-        Item {
-            width: horizontal ? parent.width : parent.height
-            height: !horizontal ? parent.width : parent.height
-            y: horizontal ? 0 : width
-            rotation: horizontal ? 0 : -90
-            transformOrigin: Item.TopLeft
-
-            Loader {
-                id: backgroundLoader
-                anchors.fill: parent
-                sourceComponent: background
-            }
-
-            Loader {
-                sourceComponent: progressBarStyle.progress
-                anchors.topMargin: padding.top
-                anchors.leftMargin: padding.left
-                anchors.rightMargin: padding.right
-                anchors.bottomMargin: padding.bottom
-
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.bottom: parent.bottom
-                width: currentProgress * (parent.width - padding.left - padding.right)
-            }
+    background: Item {
+        implicitHeight: bg.implicitHeight
+        implicitWidth: bg.implicitWidth
+        TizenBorderImage {
+            id:bg
+            anchors.centerIn: parent
+            width:parent.width
+            height:Default.progress.height
+            source: Default.progress.backgroundSource.normal
+            backgroundColor: Default.progress.backgroundColor
+            effectSource: Default.progress.backgroundEffectSource.normal
         }
     }
 }
