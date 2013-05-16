@@ -120,6 +120,10 @@ ApplicationWindow {
             page: "content/TabBarPage.qml"
         }
         ListElement {
+            title: "CheckBoxes"
+            page: "content/CheckBoxPage.qml"
+        }
+        ListElement {
             title: "TextInput"
             page: "content/TextInputPage.qml"
         }

@@ -45,6 +45,7 @@ import "DefaultSettings.js" as Default
 CheckBoxStyle {
     id: checkboxStyle
 
+
     label: Text {
         text: control.text
         font.pointSize: Default.checkBox.font.pixelSize
@@ -60,20 +61,17 @@ CheckBoxStyle {
         verticalAlignment: Text.AlignVCenter
     }
 
-    /*
-      0 - default CheckBox - with check indicator on the left
-      1 - check box with onoff indicator on the right
-      */
     property bool onOff: false
 
     property bool showDetails: false
 
     indicator: Item {
-        implicitWidth: indicatorLoader.implicitWidth
-        implicitHeight: indicatorLoader.implicitHeight
+        implicitWidth: bg.implicitWidth
+        implicitHeight: bg.implicitHeight
         Image {
             id:bg
             source: control.enabled ? (control.pressed? Default.checkBox.indicator.source.pressed: Default.checkBox.indicator.source.normal):Default.checkBox.indicator.source.disabled
+            anchors.centerIn:parent
             Image {
                 visible: control.checked
                 source: control.enabled ? (control.pressed || !control.checked ? Default.checkBox.indicator.markSource.pressed: Default.checkBox.indicator.markSource.normal):Default.checkBox.indicator.markSource.disabled
@@ -81,13 +79,70 @@ CheckBoxStyle {
         }        
     }
     property Component onOffIndicator: Item {
+        id:onOffind
         implicitWidth: onOffBackground.implicitWidth
         implicitHeight: onOffBackground.implicitHeight
-        TizenBorderImage {
+        state:"normal"
+        Image {
             id:onOffBackground
             anchors.centerIn: parent
-            source: Default.checkBox.onOff.icon.source.normal
+            source: if (control.checked) {
+                        control.enabled ? Default.checkBox.onOff.backgroundSource.on.normal :  Default.checkBox.onOff.backgroundSource.on.disabled
+                    } else {
+                        control.enabled ? Default.checkBox.onOff.backgroundSource.off.normal :  Default.checkBox.onOff.backgroundSource.off.disabled
+                    }            
+            Image {
+                id:icon
+                source: control.enabled ? ( control.pressed ? Default.checkBox.onOff.icon.source.pressed : Default.checkBox.onOff.icon.source.normal) :  Default.checkBox.onOff.icon.source.disabled
+                Image {
+                    source: control.enabled ? ( control.pressed ? Default.checkBox.onOff.handlerSource.pressed : Default.checkBox.onOff.handlerSource.normal) :  Default.checkBox.onOff.handlerSource.disabled
+                }
+            }
         }
+        MouseArea {
+            anchors.fill: parent
+            focus:true
+
+            onMouseXChanged: {
+                if (pressed) {
+                    if (mouse.x >= 0) {
+                        if (mouse.x <= onOffBackground.width - icon.width) {
+                            icon.x = mouse.x
+                        } else {
+                            icon.x = onOffBackground.width - icon.width
+                        }
+                    } else {
+                        icon.x = 0
+                    }
+                }
+            }
+
+            onReleased: control.checked = (icon.x > onOffBackground.width/2)
+        }
+        states: [
+            State {
+                name:"normal"
+                when:!control.checked
+                PropertyChanges {
+                    target: icon
+                    x: 0
+                }
+            },
+            State {
+                name:"checked"
+                when: control.checked
+                PropertyChanges {
+                    target: icon
+                    x: onOffBackground.width - icon.width
+                }
+            }
+
+        ]
+        transitions: [
+            Transition {
+                NumberAnimation {target:icon; property: "x";easing.type: Easing.InCubic; duration:200}
+            }
+        ]
     }
 
     property Component background: Panel {
@@ -102,6 +157,7 @@ CheckBoxStyle {
         implicitHeight: detailsBg.height
         TizenBorderImage {
             id:detailsBg
+            anchors.centerIn: parent
             source: Default.checkBox.details.source.normal
             backgroundColor: control.enabled ? (control.pressed ? Default.checkBox.details.color.pressed : Default.checkBox.details.color.normal) : Default.checkBox.details.color.disabled
             effectSource: control.enabled ? (control.pressed ? Default.checkBox.details.effectSource.pressed : Default.checkBox.details.effectSource.normal) : Default.checkBox.details.effectSource.disabled
@@ -116,6 +172,8 @@ CheckBoxStyle {
 
     /*! \internal */
     property Component panel: Item {
+        id:panelComponent
+
         implicitWidth: backgroundLoader.implicitWidth + padding.left + padding.right
         implicitHeight: backgroundLoader.implicitHeight + padding.top + padding.bottom
         Loader {
@@ -139,14 +197,24 @@ CheckBoxStyle {
             anchors.leftMargin:  checkboxStyle.spacing
             anchors.top: backgroundLoader.top
             anchors.bottom: backgroundLoader.bottom
-            anchors.right: detailsLoader.right
+            anchors.right: onOffLoader.left
             anchors.topMargin: Default.checkBox.margins.top
             anchors.bottomMargin: Default.checkBox.margins.bottom
-            anchors.rightMargin: Default.checkBox.margins.right
             sourceComponent: label
         }
         Loader {
+            id: onOffLoader
+            anchors.top: backgroundLoader.top
+            anchors.bottom: backgroundLoader.bottom
+            anchors.right: detailsLoader.right
+            anchors.topMargin: Default.checkBox.margins.top
+            anchors.bottomMargin: Default.checkBox.margins.bottom
+            sourceComponent: onOff ? onOffIndicator : null
+        }
+
+        Loader {
             id:detailsLoader
+
             anchors.top: backgroundLoader.top
             anchors.bottom: backgroundLoader.bottom
             anchors.right: backgroundLoader.right

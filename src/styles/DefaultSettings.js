@@ -810,6 +810,22 @@ var checkBox = {
             pressed: images.img_00_button_on_off_handler,
             highlighted: images.img_00_button_on_off_handler,
             selected: images.img_00_button_on_off_handler
+        },
+        backgroundSource: {
+            on: {
+                normal:images.img_00_button_on,
+                disabled: images.img_00_button_on_dim,
+                pressed: images.img_00_button_on,
+                highlighted: images.img_00_button_on,
+                selected: images.img_00_button_on
+            },
+            off: {
+                normal:images.img_00_button_off,
+                disabled: images.img_00_button_off_dim,
+                pressed: images.img_00_button_off,
+                highlighted: images.img_00_button_off,
+                selected: images.img_00_button_off
+            }
         }
 
     },

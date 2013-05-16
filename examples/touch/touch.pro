@@ -7,6 +7,7 @@ OTHER_FILES += \
     content/ProgressBarPage.qml \
     content/SliderPage.qml \
     content/TabBarPage.qml \
+    content/CheckBoxPage.qml \
     content/TextInputPage.qml
 
 
