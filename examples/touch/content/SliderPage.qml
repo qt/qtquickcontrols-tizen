@@ -56,18 +56,19 @@ Item {
 
         Slider {
             anchors.margins: 20
-            //style: touchStyle
             value: 0
+            stepSize: 1
+            maximumValue: 100
         }
         Slider {
             anchors.margins: 20
-            //style: touchStyle
-            value: 0.5
+            stepSize: 1
+            value: 500
+            maximumValue: 1000
         }
         Slider {
             anchors.margins: 20
-            //style: touchStyle
-            value: 1.0
+            value: 0.3
             enabled:false
         }
 

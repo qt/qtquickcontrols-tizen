@@ -47,7 +47,7 @@ ApplicationWindow {
     height: 1280
 
     Rectangle {
-        color: "#FFFFFF"
+        color: Qt.lighter("lightgrey")
         anchors.fill: parent
     }
 
@@ -96,7 +96,7 @@ ApplicationWindow {
             Behavior on x { NumberAnimation{ easing.type: Easing.OutCubic} }
             x: backButton.x + backButton.width + 20
             anchors.verticalCenter: parent.verticalCenter
-            color: "black"
+            color: "white"
             text: "Widget Gallery"
         }
     }
