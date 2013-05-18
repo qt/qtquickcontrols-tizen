@@ -1,0 +1,36 @@
+diff --git a/src/private/qquickcontrolsettings.cpp b/src/private/qquickcontrolsettings.cpp
+index 3b7d550..9205e33 100644
+--- a/src/private/qquickcontrolsettings.cpp
++++ b/src/private/qquickcontrolsettings.cpp
+@@ -42,6 +42,7 @@
+ #include "qquickcontrolsettings_p.h"
+ #include <qquickitem.h>
+ #include <qcoreapplication.h>
++#include <qdir.h>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -55,13 +56,18 @@ QString QQuickControlSettings::theme()
+     static QString currentTheme;
+     if (currentTheme.isEmpty()) {
+         currentTheme = QLatin1String("Styles");
++        QString customStyle = qgetenv("QT_QUICK_CONTROLS_STYLE");
++        if (customStyle.isEmpty()) {
+ #ifndef QT_NO_WIDGETS
+-        //Only enable QStyle support when we are using QApplication
+-        if (QCoreApplication::instance()->inherits("QApplication")) {
+-            if (qgetenv("QT_QUICK_CONTROLS_NO_WIDGETS").toInt() < 1)
+-                currentTheme = QLatin1String("Styles/Desktop");
+-        }
++            //Only enable QStyle support when we are using QApplication
++            if (QCoreApplication::instance()->inherits("QApplication")) {
++                if (qgetenv("QT_QUICK_CONTROLS_NO_WIDGETS").toInt() < 1)
++                    currentTheme = QLatin1String("Styles/Desktop");
++            }
+ #endif
++        } else {
++            currentTheme += QDir::separator()+customStyle;
++        }
+     }
+     return currentTheme;
+ }
