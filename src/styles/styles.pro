@@ -6,7 +6,9 @@ QML_FILES = \
     SliderStyle.qml \
     ButtonStyle.qml \
     CheckBoxStyle.qml \
-    Panel.qml
+    Panel.qml \
+    TabViewStyle.qml \
+    Floater.qml
 # Images
 QML_FILES += \
     images/720x1280/*.png \
@@ -18,6 +20,7 @@ QML_FILES += \
     DefaultSettings.js
 
 OTHER_FILES +=    qmldir
+
 
 load(qml_module)
 

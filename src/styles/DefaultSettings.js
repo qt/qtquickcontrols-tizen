@@ -695,6 +695,21 @@ var slider = {
                 normal:colors.W0611,
                 disabled:colors.W0611D
             }
+        },
+        overlay: {
+            backgroundColor:colors.W0631,
+            text: {
+                color:colors.W0632
+            },
+            font: {
+                pixelSize: 72
+            },
+            width: 90,
+            height: 108,
+            heightWithoutArrow: 86,
+            margin: 12,
+            source: images.img_00_slider_popup_bg,
+            effectSource: images.img_00_slider_popup_bg_ef
         }
     },
     groove:{/*is default progressbar*/}
@@ -760,31 +775,6 @@ var checkBox = {
             checked: images.img_00_check_Activated
         }
     },
-
-
-//  ADD_IMAGE_CONFIG(ONOFF_ICON_BG_NORMAL, #00_button_radio_bg.png);
-//	ADD_IMAGE_CONFIG(ONOFF_ICON_BG_DISABLED, #00_button_radio_dim_bg.png);
-//	ADD_IMAGE_CONFIG(ONOFF_ICON_BG_PRESSED, #00_button_radio_press_bg.png);
-//	ADD_IMAGE_CONFIG(ONOFF_ICON_BG_HIGHLIGHTED, #00_button_radio_press_bg.png);
-//	ADD_IMAGE_CONFIG(ONOFF_ICON_BG_SELECTED, #00_button_radio_bg.png);
-
-//	ADD_IMAGE_CONFIG(ONOFF_ICON_NORMAL, #00_button_radio_Activated.png);
-//	ADD_IMAGE_CONFIG(ONOFF_ICON_DISABLED, #00_button_radio_Activated_dim.png);
-//	ADD_IMAGE_CONFIG(ONOFF_ICON_PRESSED, #00_button_radio_press.png);
-//	ADD_IMAGE_CONFIG(ONOFF_ICON_HIGHLIGHTED, #00_button_radio_press.png);
-//	ADD_IMAGE_CONFIG(ONOFF_ICON_SELECTED, #00_button_radio_Activated.png);
-
-//	ADD_IMAGE_CONFIG(ONOFF_SLIDING_ON_BG_NORMAL, #00_button_on.png);
-//	ADD_IMAGE_CONFIG(ONOFF_SLIDING_ON_BG_DISABLED, #00_button_on_dim.png);
-//	ADD_IMAGE_CONFIG(ONOFF_SLIDING_ON_BG_PRESSED, #00_button_on.png);
-//	ADD_IMAGE_CONFIG(ONOFF_SLIDING_ON_BG_HIGHLIGHTED, #00_button_on.png);
-//	ADD_IMAGE_CONFIG(ONOFF_SLIDING_ON_BG_SELECTED, #00_button_on.png);
-
-//	ADD_IMAGE_CONFIG(ONOFF_SLIDING_OFF_BG_NORMAL,  #00_button_off.png);
-//	ADD_IMAGE_CONFIG(ONOFF_SLIDING_OFF_BG_DISABLED, #00_button_off_dim.png);
-//	ADD_IMAGE_CONFIG(ONOFF_SLIDING_OFF_BG_PRESSED, #00_button_off.png);
-//	ADD_IMAGE_CONFIG(ONOFF_SLIDING_OFF_BG_HIGHLIGHTED, #00_button_off.png);
-//	ADD_IMAGE_CONFIG(ONOFF_SLIDING_OFF_BG_SELECTED, #00_button_off.png);
 
     onOff: {
         icon: {
@@ -876,5 +866,48 @@ var checkBox = {
             //highlighted: colors.F032L1P,
         }
     }
+}
 
+
+var tabBar = {
+
+    color: colors.W0813,
+    source: images.img_00_category_panel_bg,
+    effectSource: images.img_00_category_panel_bg_ef,
+    tab: {
+        color: {
+            normal:colors.W0813,
+            pressed:colors.W101,
+            selected:colors.W101,
+        },
+
+        text: {
+            color: {
+                normal:colors.F031L3,
+                pressed:colors.F031L3P,
+                selected:colors.F031L3P
+            },
+            margin:10
+        },
+        arrow: {
+            color: colors.F031L3,
+            sourceLeft: images.img_00_arrow_left,
+            sourceRight: images.img_00_arrow_right,
+            margin:8
+        },
+        source: {
+            normal: images.img_00_category_button,
+            pressed: images.img_00_category_button_focus,
+            selected: images.img_00_category_button
+        },
+        font: {
+            pixelSize: 40,
+        },
+        minWidth: 140,
+        maxWidth: 444,
+        height:72,
+        margin:12,
+        sideMargin:54
+    },
+    height: 90
 }

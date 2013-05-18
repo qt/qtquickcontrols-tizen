@@ -44,15 +44,49 @@ import "DefaultSettings.js" as Default
 
 SliderStyle {
     id: styleitem
-
-    Component.onCompleted: {
-        control.stepSize = 1.0
-        control.maximumValue = 100
-    }
-
     handle:  Item {
+        id:handleItem
         implicitWidth: bg.implicitWidth
         implicitHeight: bg.implicitHeight
+        property int globalX:updatePos(control.value).x
+        property int globalY:updatePos(control.value).y
+        function updatePos(value) {
+            return handleItem.mapFromItem(floater.parent,x,y)
+        }
+        Floater {
+            id:floater
+            content: TizenBorderImage {
+                smooth: true
+                implicitWidth: Math.max(txt.contentWidth+txt.anchors.margins, Default.slider.handle.overlay.width)
+                implicitHeight: Default.slider.handle.overlay.height
+                //height: Default.slider.handle.overlay.height
+                source: Default.slider.handle.overlay.source
+                backgroundColor: Default.slider.handle.overlay.backgroundColor
+                effectSource: Default.slider.handle.overlay.effectSource
+                Text {
+                    id:txt
+                    anchors.top: parent.top
+                    anchors.left:  parent.left
+                    anchors.right: parent.right
+                    height: Default.slider.handle.overlay.heightWithoutArrow
+                    anchors.leftMargin: Default.slider.handle.overlay.margin
+                    anchors.rightMargin:  Default.slider.handle.overlay.margin
+                    font.pixelSize: Default.slider.handle.overlay.font.pixelSize
+                    color: Default.slider.handle.overlay.text.color
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    text: control.value
+
+                }
+            }
+            visible:control.pressed
+
+
+            x: -handleItem.globalX-(floater.width-handleItem.width)/2
+            y: -handleItem.globalY- floater.height
+
+        }
+
         TizenBorderImage {
             id:bg
 

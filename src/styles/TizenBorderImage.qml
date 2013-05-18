@@ -11,6 +11,7 @@ Item {
     BorderImage {
         id:bg
         anchors.fill: parent
+        smooth: parent.smooth
         layer.enabled: root.backgroundColor != undefined && source != undefined
         layer.effect: ShaderEffect {
             id:bgShader
@@ -34,6 +35,7 @@ Item {
     BorderImage {
         id:effect
         anchors.fill: bg
+        smooth: parent.smooth
         layer.enabled: root.foregroundColor != undefined && effectSource != undefined
         layer.effect: ShaderEffect {
             id:effectShader
