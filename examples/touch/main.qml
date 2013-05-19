@@ -47,7 +47,7 @@ ApplicationWindow {
     height: 1280
 
     Rectangle {
-        color: Qt.lighter("lightgrey")
+        color: "#F8F6EF"
         anchors.fill: parent
     }
 

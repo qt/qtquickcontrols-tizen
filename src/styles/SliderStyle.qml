@@ -28,6 +28,7 @@ SliderStyle {
         id:handleItem
         implicitWidth: bg.implicitWidth
         implicitHeight: bg.implicitHeight
+
         property int globalX:updatePos(control.value).x
         property int globalY:updatePos(control.value).y
         function updatePos(value) {
@@ -101,7 +102,7 @@ SliderStyle {
     */
     groove: Item {
         implicitHeight: 36
-        implicitWidth: 400
+        implicitWidth: 650
         ProgressBar {
             anchors.fill: parent
             value: control.value

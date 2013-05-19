@@ -26,8 +26,8 @@ ButtonStyle {
     id: buttonstyle
 
     background: TizenBorderImage {
-        implicitWidth: 300
-        implicitHeight: 50
+        implicitWidth: 400
+        implicitHeight: 80
         source: control.enabled ? (control.pressed ? Default.button.source.pressed: Default.button.source.normal) : Default.button.source.disabled
         effectSource: control.enabled ? (control.pressed ? Default.button.effectSource.pressed: Default.button.effectSource.normal) : Default.button.effectSource.disabled
         backgroundColor: control.enabled ? (control.pressed ? Default.button.backgroundColor.pressed: Default.button.backgroundColor.normal) : Default.button.backgroundColor.disabled

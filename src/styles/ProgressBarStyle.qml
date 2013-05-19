@@ -41,8 +41,9 @@ ProgressBarStyle {
     }
 
     background: Item {
-        implicitHeight: bg.implicitHeight
-        implicitWidth: bg.implicitWidth
+        implicitHeight: 36
+        implicitWidth: 650
+
         TizenBorderImage {
             id:bg
             anchors.centerIn: parent
