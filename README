@@ -16,7 +16,8 @@ To run a QML example using the Tizen style, execute this in directory, e.g.
 
 For this to work, patched qtquickcontrols repository has to be build and original libprivateplugin.so
 should be replaced by the newly built. The patched code is included in this Qt for Tizen release
-(see qtquickcontrols-tizen/tools/patches/qtquickcontrols/*.patch).
+(see qtquickcontrols-tizen/tools/patches/qtquickcontrols/*.patch or follow build instructions from 
+tizenbuildtools repository or follow instructions from qt-tizen*.tar.gz package).
 
 
 Licensing
