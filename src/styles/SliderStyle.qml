@@ -29,11 +29,19 @@ SliderStyle {
         implicitWidth: bg.implicitWidth
         implicitHeight: bg.implicitHeight
 
-        property int globalX:updatePos(control.value).x
-        property int globalY:updatePos(control.value).y
-        function updatePos(value) {
-            return handleItem.mapFromItem(floater.parent,x,y)
+        Component.onCompleted: {
+            control.onPressedChanged.connect(updatePos)
+            control.onValueChanged.connect(updatePos)
         }
+        property point globalPosition
+        property int globalX
+        property int globalY
+        function updatePos() {
+            var pt = handleItem.mapFromItem(floater.parent,x,y)
+            globalPosition = Qt.point(pt.x,pt.y)
+        }
+
+
         Floater {
             id:floater
             content: TizenBorderImage {
@@ -63,8 +71,8 @@ SliderStyle {
             visible:control.pressed
 
 
-            x: -handleItem.globalX-(floater.width-handleItem.width)/2
-            y: -handleItem.globalY- floater.height
+            x: -handleItem.globalPosition.x-(floater.width-handleItem.width)/2
+            y: -handleItem.globalPosition.y- floater.height
 
         }
 
