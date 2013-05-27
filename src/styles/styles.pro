@@ -19,11 +19,7 @@ QML_FILES += \
 QML_FILES += \
     DefaultSettings.js
 
-OTHER_FILES +=    qmldir
+CONFIG += force_independent
 
 
 load(qml_module)
-
-
-
-
