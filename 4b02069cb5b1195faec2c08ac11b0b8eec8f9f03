@@ -1,0 +1,7 @@
+Sanity-Review+1: Qt Sanity Bot <qt_sanitybot@qt-project.org>
+Code-Review+2: Tomasz Olszak <olszak.tomasz@gmail.com>
+Submitted-by: Tomasz Olszak <olszak.tomasz@gmail.com>
+Submitted-at: Tue, 28 May 2013 09:55:54 +0200
+Reviewed-on: https://codereview.qt-project.org/57192
+Project: qt/qtquickcontrols-tizen
+Branch: refs/heads/wip/tizen
