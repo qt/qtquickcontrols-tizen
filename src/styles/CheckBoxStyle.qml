@@ -58,72 +58,6 @@ CheckBoxStyle {
             }
         }        
     }
-    property Component onOffIndicator: Item {
-        id:onOffind
-        implicitWidth: onOffBackground.implicitWidth
-        implicitHeight: onOffBackground.implicitHeight
-        state:"normal"
-        Image {
-            id:onOffBackground
-            anchors.centerIn: parent
-            source: if (control.checked) {
-                        control.enabled ? Default.checkBox.onOff.backgroundSource.on.normal :  Default.checkBox.onOff.backgroundSource.on.disabled
-                    } else {
-                        control.enabled ? Default.checkBox.onOff.backgroundSource.off.normal :  Default.checkBox.onOff.backgroundSource.off.disabled
-                    }            
-            Image {
-                id:icon
-                source: control.enabled ? ( control.pressed ? Default.checkBox.onOff.icon.source.pressed : Default.checkBox.onOff.icon.source.normal) :  Default.checkBox.onOff.icon.source.disabled
-                Image {
-                    source: control.enabled ? ( control.pressed ? Default.checkBox.onOff.handlerSource.pressed : Default.checkBox.onOff.handlerSource.normal) :  Default.checkBox.onOff.handlerSource.disabled
-                }
-            }
-        }
-        MouseArea {
-            anchors.fill: parent
-            focus:true
-
-            onMouseXChanged: {
-                if (pressed) {
-                    if (mouse.x >= 0) {
-                        if (mouse.x <= onOffBackground.width - icon.width) {
-                            icon.x = mouse.x
-                        } else {
-                            icon.x = onOffBackground.width - icon.width
-                        }
-                    } else {
-                        icon.x = 0
-                    }
-                }
-            }
-
-            onReleased: control.checked = (icon.x > onOffBackground.width/2)
-        }
-        states: [
-            State {
-                name:"normal"
-                when:!control.checked
-                PropertyChanges {
-                    target: icon
-                    x: 0
-                }
-            },
-            State {
-                name:"checked"
-                when: control.checked
-                PropertyChanges {
-                    target: icon
-                    x: onOffBackground.width - icon.width
-                }
-            }
-
-        ]
-        transitions: [
-            Transition {
-                NumberAnimation {target:icon; property: "x";easing.type: Easing.InCubic; duration:200}
-            }
-        ]
-    }
 
     property Component background: Panel {
         pressed: control.pressed
@@ -177,24 +111,14 @@ CheckBoxStyle {
             anchors.leftMargin:  checkboxStyle.spacing
             anchors.top: backgroundLoader.top
             anchors.bottom: backgroundLoader.bottom
-            anchors.right: onOffLoader.left
+            anchors.right: detailsLoader.left
             anchors.topMargin: Default.checkBox.margins.top
             anchors.bottomMargin: Default.checkBox.margins.bottom
             sourceComponent: label
         }
-        Loader {
-            id: onOffLoader
-            anchors.top: backgroundLoader.top
-            anchors.bottom: backgroundLoader.bottom
-            anchors.right: detailsLoader.right
-            anchors.topMargin: Default.checkBox.margins.top
-            anchors.bottomMargin: Default.checkBox.margins.bottom
-            sourceComponent: onOff ? onOffIndicator : null
-        }
 
         Loader {
             id:detailsLoader
-
             anchors.top: backgroundLoader.top
             anchors.bottom: backgroundLoader.bottom
             anchors.right: backgroundLoader.right

@@ -28,8 +28,7 @@
 
 import QtQuick 2.1
 import QtQuick.Controls 1.0
-//import QtQuick.Controls.Styles 1.0
-import QtQuick.Controls.Styles.Tizen 1.0
+import QtQuick.Controls.Tizen 1.0
 
 Item {
     width: parent.width
@@ -43,16 +42,28 @@ Item {
             text:"Check box"
         }
         CheckBox {
-            text:"Details"
-            style: CheckBoxStyle {
-                showDetails: true
+            text:"H Switch"
+            onCheckedChanged: mSwitch2.checked = checked
+            Switch {
+                id:mSwitch2
+                checked: parent.checked
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                onCheckedChanged: parent.checked = checked
             }
         }
         CheckBox {
-            text:"onOff"
-            style: CheckBoxStyle {
-                onOff:true
+            text:"V Switch"
+            onCheckedChanged: mSwitch1.checked = checked
+            Switch {
+                id:mSwitch1
+                orientation: Qt.Vertical
+                checked: parent.checked
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                onCheckedChanged: parent.checked = checked
             }
         }
-    }    
+    }
 }

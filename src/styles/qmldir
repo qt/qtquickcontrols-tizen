@@ -8,6 +8,8 @@ SliderStyle 1.0 SliderStyle.qml
 TizenBorderImage 1.0 TizenBorderImage.qml
 Panel 1.0 Panel.qml
 Floater 1.0 Floater.qml
+Switch 1.0 Switch.qml
+SwitchStyle 1.0 SwitchStyle.qml
 
 
 

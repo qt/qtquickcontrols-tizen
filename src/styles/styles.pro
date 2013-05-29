@@ -8,7 +8,9 @@ QML_FILES = \
     CheckBoxStyle.qml \
     Panel.qml \
     TabViewStyle.qml \
-    Floater.qml
+    Floater.qml \
+    SwitchStyle.qml
+
 # Images
 QML_FILES += \
     images/720x1280/*.png \
@@ -21,5 +23,6 @@ QML_FILES += \
 
 CONFIG += force_independent
 
+OTHER_FILES += qmldir
 
 load(qml_module)

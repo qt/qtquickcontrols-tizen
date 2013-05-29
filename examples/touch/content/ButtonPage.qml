@@ -46,22 +46,6 @@ Item {
     width: parent.width
     height: parent.height
 
-    property real progress: 0
-    SequentialAnimation on progress {
-        loops: Animation.Infinite
-        running: true
-        NumberAnimation {
-            from: 0
-            to: 1
-            duration: 3000
-        }
-        NumberAnimation {
-            from: 1
-            to: 0
-            duration: 3000
-        }
-    }
-
     Column {
         spacing: 40
         anchors.centerIn: parent
