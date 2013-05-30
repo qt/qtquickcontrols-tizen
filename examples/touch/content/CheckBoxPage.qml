@@ -29,8 +29,10 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Tizen 1.0
+import QtQuick.Controls.Styles 1.0
 
 Item {
+    id:root
     width: parent.width
     height: parent.height
 
@@ -41,6 +43,17 @@ Item {
         CheckBox {
             text:"Check box"
         }
+        CheckBox {
+            text:"Inverted"
+            x:100
+            width:root.width/2
+            height: root.height/10
+            styleHints: {"color": "yellow","pressedColor": "red"}
+            LayoutMirroring.enabled: true
+            LayoutMirroring.childrenInherit: true
+
+        }
+
         CheckBox {
             text:"H Switch"
             onCheckedChanged: mSwitch2.checked = checked

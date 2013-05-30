@@ -25,7 +25,6 @@ import "DefaultSettings.js" as Theme
 CheckBoxStyle {
     id: checkboxStyle
 
-
     label: Text {
         text: control.text
         font.pointSize: Theme.checkBox.font.pixelSize
@@ -41,91 +40,22 @@ CheckBoxStyle {
         verticalAlignment: Text.AlignVCenter
     }
 
-    property bool onOff: false
-
-    property bool showDetails: false
-
-    indicator: Item {
-        implicitWidth: bg.implicitWidth
-        implicitHeight: bg.implicitHeight
+    indicator: Image {
+        source: control.enabled ? (control.pressed? Theme.checkBox.indicator.source.pressed: Theme.checkBox.indicator.source.normal):Theme.checkBox.indicator.source.disabled
         Image {
-            id:bg
-            source: control.enabled ? (control.pressed? Theme.checkBox.indicator.source.pressed: Theme.checkBox.indicator.source.normal):Theme.checkBox.indicator.source.disabled
-            anchors.centerIn:parent
-            Image {
-                visible: control.checked
-                source: control.enabled ? (control.pressed || !control.checked ? Theme.checkBox.indicator.markSource.pressed: Theme.checkBox.indicator.markSource.normal):Theme.checkBox.indicator.markSource.disabled
-            }
-        }        
+            visible: control.checked
+            source: control.enabled ? (control.pressed || !control.checked ? Theme.checkBox.indicator.markSource.pressed: Theme.checkBox.indicator.markSource.normal):Theme.checkBox.indicator.markSource.disabled
+        }
     }
 
-    property Component background: Panel {
+
+    background: Panel {
+        id:panel
         pressed: control.pressed
+        property var pressedColor: control.styleHints && control.styleHints["pressedColor"] ? control.styleHints["pressedColor"]: Theme.panel.color.pressed
+        property var normalColor: control.styleHints && control.styleHints["color"] ? control.styleHints["color"]: Theme.panel.color.normal
+        backgroundColor: control.pressed ? pressedColor : normalColor
         implicitWidth: 600
         implicitHeight: 100
-    }
-
-
-    property Component details: Item {
-        implicitWidth: detailsBg.implicitWidth
-        implicitHeight: detailsBg.height
-        TizenBorderImage {
-            id:detailsBg
-            anchors.centerIn: parent
-            source: Theme.checkBox.details.source.normal
-            backgroundColor: control.enabled ? (control.pressed ? Theme.checkBox.details.color.pressed : Theme.checkBox.details.color.normal) : Theme.checkBox.details.color.disabled
-            effectSource: control.enabled ? (control.pressed ? Theme.checkBox.details.effectSource.pressed : Theme.checkBox.details.effectSource.normal) : Theme.checkBox.details.effectSource.disabled
-        }
-        TizenBorderImage {
-            anchors.centerIn: detailsBg
-            source: Theme.checkBox.details.iconSource.normal
-            backgroundColor: control.enabled ? (control.pressed ? Theme.checkBox.details.iconColor.pressed : Theme.checkBox.details.iconColor.normal) : Theme.checkBox.details.iconColor.disabled
-            effectSource: Theme.checkBox.details.iconEffectSource.normal
-        }
-    }
-
-    /*! \internal */
-    property Component panel: Item {
-        id:panelComponent
-
-        implicitWidth: backgroundLoader.implicitWidth + padding.left + padding.right
-        implicitHeight: backgroundLoader.implicitHeight + padding.top + padding.bottom
-        Loader {
-            id:backgroundLoader
-            anchors.fill: parent
-            sourceComponent: background
-        }
-        Loader {
-            id: markIndicatorLoader
-            sourceComponent: onOff ? null : indicator
-            anchors.left: backgroundLoader.left
-            anchors.top: backgroundLoader.top
-            anchors.bottom: backgroundLoader.bottom
-            anchors.leftMargin: Theme.checkBox.margins.left
-            anchors.topMargin: Theme.checkBox.margins.top
-            anchors.bottomMargin: Theme.checkBox.margins.bottom
-        }
-        Loader {
-            id: labelLoader
-            anchors.left: markIndicatorLoader.right
-            anchors.leftMargin:  checkboxStyle.spacing
-            anchors.top: backgroundLoader.top
-            anchors.bottom: backgroundLoader.bottom
-            anchors.right: detailsLoader.left
-            anchors.topMargin: Theme.checkBox.margins.top
-            anchors.bottomMargin: Theme.checkBox.margins.bottom
-            sourceComponent: label
-        }
-
-        Loader {
-            id:detailsLoader
-            anchors.top: backgroundLoader.top
-            anchors.bottom: backgroundLoader.bottom
-            anchors.right: backgroundLoader.right
-            anchors.topMargin: Theme.checkBox.margins.top
-            anchors.bottomMargin: Theme.checkBox.margins.bottom
-            anchors.rightMargin: Theme.checkBox.margins.right
-            sourceComponent: showDetails ? details : null
-        }
     }
 }
