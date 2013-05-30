@@ -25,7 +25,8 @@ Licensing
 
 * License headers are included in source code files (LGPL, BSD)
 
-* Images stored in src/styles/images come from 'uifw' package (Tizen 2.1 beta release):
+* Images and fonts stored in src/styles/images and other directories come from 'uifw' package
+  (Tizen 2.1 beta release):
   https://review.tizen.org/git/?p=platform/framework/native/uifw.git;a=tag;h=refs/tags/2.1b_release,
   from uifw.git/res/common/usr/share/osp/bitmaps/ directory.
   They are licensed under the Apache 2.0, see the LICENSE.APLv2 file.
