@@ -42,6 +42,21 @@ Item {
 
         CheckBox {
             text:"Check box"
+            width:implicitWidth-detail.width
+            DetailButton {
+                id:detail
+                anchors.left:parent.right
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+        CheckBox {
+            text:"Check box 2"
+            DetailButton {
+                anchors.right:parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                arrowType: Qt.LeftArrow
+                onClicked: if (pageStack) pageStack.pop()
+            }
         }
         CheckBox {
             text:"Inverted"

@@ -930,3 +930,32 @@ var tabBar = {
     },
     height: 90
 }
+
+var detailButton = {
+    color: {
+        normal: checkBox.details.color.normal,
+        disabled: checkBox.details.color.disabled,
+        pressed: checkBox.details.color.pressed
+    },
+    source: {
+        normal: checkBox.details.source.normal
+    },
+    effectSource: {
+        normal: checkBox.details.effectSource.normal,
+        disabled: checkBox.details.effectSource.disabled,
+        pressed: checkBox.details.effectSource.pressed
+    },
+    iconSource: {
+        normal: checkBox.details.iconSource.normal
+    },
+    iconEffectSource: {
+        normal: checkBox.details.iconEffectSource.normal,
+        pressed: checkBox.details.iconEffectSource.pressed
+    },
+    iconColor: {
+        normal: checkBox.details.iconColor.normal,
+        disabled: checkBox.details.iconColor.disabled,
+        pressed: checkBox.details.iconColor.pressed
+        //highlighted: colors.F032L1P,
+    }
+}

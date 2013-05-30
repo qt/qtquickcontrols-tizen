@@ -9,7 +9,8 @@ QML_FILES = \
     Panel.qml \
     TabViewStyle.qml \
     Floater.qml \
-    SwitchStyle.qml
+    SwitchStyle.qml\
+    DetailButtonStyle.qml
 
 # Images
 QML_FILES += \

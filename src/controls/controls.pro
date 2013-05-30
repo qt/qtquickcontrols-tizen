@@ -2,7 +2,8 @@ TARGETPATH = QtQuick/Controls/Tizen
 
 
 QML_FILES += \
-    Switch.qml
+    Switch.qml \
+    DetailButton.qml
 
 CONFIG += force_independent
 

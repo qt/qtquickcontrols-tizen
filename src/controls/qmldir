@@ -1,3 +1,4 @@
 module QtQuick.Controls.Tizen
 
 Switch 1.0 Switch.qml
+DetailButton 1.0 DetailButton.qml
