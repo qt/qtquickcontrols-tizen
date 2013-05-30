@@ -21,10 +21,9 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Default
+import "DefaultSettings.js" as Theme
 
-
-PaddedStyle {
+Style {
     id: styleitem
 
     /*! The \l Slider attached to this style. */
@@ -41,9 +40,9 @@ PaddedStyle {
         Image {
             id:icon
             anchors.fill: parent
-            source: control.enabled ? ( control.pressed ? Default.checkBox.onOff.icon.source.pressed : Default.checkBox.onOff.icon.source.normal) :  Default.checkBox.onOff.icon.source.disabled
+            source: control.enabled ? ( control.pressed ? Theme.checkBox.onOff.icon.source.pressed : Theme.checkBox.onOff.icon.source.normal) :  Theme.checkBox.onOff.icon.source.disabled
             Image {
-                source: control.enabled ? ( control.pressed ? Default.checkBox.onOff.handlerSource.pressed : Default.checkBox.onOff.handlerSource.normal) :  Default.checkBox.onOff.handlerSource.disabled
+                source: control.enabled ? ( control.pressed ? Theme.checkBox.onOff.handlerSource.pressed : Theme.checkBox.onOff.handlerSource.normal) :  Theme.checkBox.onOff.handlerSource.disabled
             }
         }
     }
@@ -58,9 +57,9 @@ PaddedStyle {
             id:onOffBackground
             anchors.fill: parent
             source: if (control.checked) {
-                        control.enabled ? Default.checkBox.onOff.backgroundSource.on.normal :  Default.checkBox.onOff.backgroundSource.on.disabled
+                        control.enabled ? Theme.checkBox.onOff.backgroundSource.on.normal :  Theme.checkBox.onOff.backgroundSource.on.disabled
                     } else {
-                        control.enabled ? Default.checkBox.onOff.backgroundSource.off.normal :  Default.checkBox.onOff.backgroundSource.off.disabled
+                        control.enabled ? Theme.checkBox.onOff.backgroundSource.off.normal :  Theme.checkBox.onOff.backgroundSource.off.disabled
                     }
         }
     }

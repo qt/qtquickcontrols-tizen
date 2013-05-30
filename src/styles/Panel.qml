@@ -18,13 +18,13 @@
  */
 
 import QtQuick 2.1
-import "DefaultSettings.js" as Default
+import "DefaultSettings.js" as Theme
 
 TizenBorderImage {
     implicitWidth: 200
     implicitHeight: 100
     property bool pressed:false
-    source: pressed ? Default.panel.source.pressed : Default.panel.source.normal
-    effectSource: pressed ? Default.panel.effectSource.pressed : (activeFocus ? Default.panel.effectSource.selected : Default.panel.effectSource.normal)
-    backgroundColor: pressed ? Default.panel.color.pressed: Default.panel.color.normal
+    source: pressed ? Theme.panel.source.pressed : Theme.panel.source.normal
+    effectSource: pressed ? Theme.panel.effectSource.pressed : (activeFocus ? Theme.panel.effectSource.selected : Theme.panel.effectSource.normal)
+    backgroundColor: pressed ? Theme.panel.color.pressed: Theme.panel.color.normal
 }

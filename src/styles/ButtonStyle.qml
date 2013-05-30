@@ -20,7 +20,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
-import "DefaultSettings.js" as Default
+import "DefaultSettings.js" as Theme
 
 ButtonStyle {
     id: buttonstyle
@@ -28,9 +28,9 @@ ButtonStyle {
     background: TizenBorderImage {
         implicitWidth: 400
         implicitHeight: 80
-        source: control.enabled ? (control.pressed ? Default.button.source.pressed: Default.button.source.normal) : Default.button.source.disabled
-        effectSource: control.enabled ? (control.pressed ? Default.button.effectSource.pressed: Default.button.effectSource.normal) : Default.button.effectSource.disabled
-        backgroundColor: control.enabled ? (control.pressed ? Default.button.backgroundColor.pressed: Default.button.backgroundColor.normal) : Default.button.backgroundColor.disabled
+        source: control.enabled ? (control.pressed ? Theme.button.source.pressed: Theme.button.source.normal) : Theme.button.source.disabled
+        effectSource: control.enabled ? (control.pressed ? Theme.button.effectSource.pressed: Theme.button.effectSource.normal) : Theme.button.effectSource.disabled
+        backgroundColor: control.enabled ? (control.pressed ? Theme.button.backgroundColor.pressed: Theme.button.backgroundColor.normal) : Theme.button.backgroundColor.disabled
     }
 
     /*! The label of the button. */
@@ -39,18 +39,18 @@ ButtonStyle {
         implicitHeight: 0
         Text {
             id:txt
-            anchors.leftMargin: Default.button.text.margins.left
-            anchors.rightMargin: Default.button.text.margins.right
-            anchors.topMargin: Default.button.text.margins.top
-            anchors.bottomMargin: Default.button.text.margins.bottom
+            anchors.leftMargin: Theme.button.text.margins.left
+            anchors.rightMargin: Theme.button.text.margins.right
+            anchors.topMargin: Theme.button.text.margins.top
+            anchors.bottomMargin: Theme.button.text.margins.bottom
             anchors.fill:parent
-            font.pixelSize: Default.button.font.pixelSize
-            color: control.enabled ? (control.pressed ? Default.button.text.color.pressed : Default.button.text.color.normal) : Default.button.text.color.disabled
+            font.pixelSize: Theme.button.font.pixelSize
+            color: control.enabled ? (control.pressed ? Theme.button.text.color.pressed : Theme.button.text.color.normal) : Theme.button.text.color.disabled
             fontSizeMode: Text.Fit
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             text:control.text
-            minimumPixelSize: Default.button.font.minimumPixelSize
+            minimumPixelSize: Theme.button.font.minimumPixelSize
             maximumLineCount:2
             wrapMode: Text.Wrap
         }

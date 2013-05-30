@@ -20,13 +20,13 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
-import "DefaultSettings.js" as Default
+import "DefaultSettings.js" as Theme
 
 ProgressBarStyle {
     id: progressBarStyle
 
-    padding.left: Default.progress.margins.left
-    padding.right: Default.progress.margins.right
+    padding.left: Theme.progress.margins.left
+    padding.right: Theme.progress.margins.right
     progress: Item {
         implicitWidth: bar.implicitWidth
         implicitHeight: bar.implicitHeight
@@ -34,9 +34,9 @@ ProgressBarStyle {
             id:bar
             anchors.centerIn: parent
             width: parent.width
-            source: Default.progress.source.normal
-            backgroundColor: Default.progress.progressColor
-            effectSource: Default.progress.effectSource.normal
+            source: Theme.progress.source.normal
+            backgroundColor: Theme.progress.progressColor
+            effectSource: Theme.progress.effectSource.normal
         }
     }
 
@@ -48,10 +48,10 @@ ProgressBarStyle {
             id:bg
             anchors.centerIn: parent
             width:parent.width
-            height:Default.progress.height
-            source: Default.progress.backgroundSource.normal
-            backgroundColor: Default.progress.backgroundColor
-            effectSource: Default.progress.backgroundEffectSource.normal
+            height:Theme.progress.height
+            source: Theme.progress.backgroundSource.normal
+            backgroundColor: Theme.progress.backgroundColor
+            effectSource: Theme.progress.backgroundEffectSource.normal
         }
     }
 }

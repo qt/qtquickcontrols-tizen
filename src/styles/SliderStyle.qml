@@ -20,7 +20,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
-import "DefaultSettings.js" as Default
+import "DefaultSettings.js" as Theme
 
 SliderStyle {
     id: styleitem
@@ -46,22 +46,22 @@ SliderStyle {
             id:floater
             content: TizenBorderImage {
                 smooth: true
-                implicitWidth: Math.max(txt.contentWidth+txt.anchors.margins, Default.slider.handle.overlay.width)
-                implicitHeight: Default.slider.handle.overlay.height
-                //height: Default.slider.handle.overlay.height
-                source: Default.slider.handle.overlay.source
-                backgroundColor: Default.slider.handle.overlay.backgroundColor
-                effectSource: Default.slider.handle.overlay.effectSource
+                implicitWidth: Math.max(txt.contentWidth+txt.anchors.margins, Theme.slider.handle.overlay.width)
+                implicitHeight: Theme.slider.handle.overlay.height
+                //height: Theme.slider.handle.overlay.height
+                source: Theme.slider.handle.overlay.source
+                backgroundColor: Theme.slider.handle.overlay.backgroundColor
+                effectSource: Theme.slider.handle.overlay.effectSource
                 Text {
                     id:txt
                     anchors.top: parent.top
                     anchors.left:  parent.left
                     anchors.right: parent.right
-                    height: Default.slider.handle.overlay.heightWithoutArrow
-                    anchors.leftMargin: Default.slider.handle.overlay.margin
-                    anchors.rightMargin:  Default.slider.handle.overlay.margin
-                    font.pixelSize: Default.slider.handle.overlay.font.pixelSize
-                    color: Default.slider.handle.overlay.text.color
+                    height: Theme.slider.handle.overlay.heightWithoutArrow
+                    anchors.leftMargin: Theme.slider.handle.overlay.margin
+                    anchors.rightMargin:  Theme.slider.handle.overlay.margin
+                    font.pixelSize: Theme.slider.handle.overlay.font.pixelSize
+                    color: Theme.slider.handle.overlay.text.color
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     text: control.value
@@ -80,27 +80,27 @@ SliderStyle {
             id:bg
 
             anchors.centerIn: parent
-            source: Default.slider.handle.source.normal
+            source: Theme.slider.handle.source.normal
             effectSource: if (control.enabled) {
                               control.pressed ?
-                                          Default.slider.handle.effectSource.pressed:
-                                          Default.slider.handle.effectSource.normal
+                                          Theme.slider.handle.effectSource.pressed:
+                                          Theme.slider.handle.effectSource.normal
                           } else {
-                              Default.slider.handle.effectSource.disabled
+                              Theme.slider.handle.effectSource.disabled
                           }
 
-            backgroundColor: control.enabled ? (control.pressed ? Default.slider.handle.backgroundColor.pressed : Default.slider.handle.backgroundColor.normal):Default.slider.handle.backgroundColor.disabled
+            backgroundColor: control.enabled ? (control.pressed ? Theme.slider.handle.backgroundColor.pressed : Theme.slider.handle.backgroundColor.normal):Theme.slider.handle.backgroundColor.disabled
 
             Text {
                 visible:!control.pressed
                 text: control.value
                 anchors.fill: parent
-                anchors.margins: Default.slider.handle.text.margins
+                anchors.margins: Theme.slider.handle.text.margins
                 fontSizeMode: Text.Fit
-                font.pointSize: Default.slider.handle.font.pointSize
+                font.pointSize: Theme.slider.handle.font.pointSize
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                color: control.enabled ? Default.slider.handle.text.color.normal : Default.slider.handle.text.color.disabled
+                color: control.enabled ? Theme.slider.handle.text.color.normal : Theme.slider.handle.text.color.disabled
             }
         }
     }
