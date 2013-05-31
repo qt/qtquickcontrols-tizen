@@ -53,6 +53,7 @@ Item {
         Button {
             anchors.margins: 20
             text: "Press me"
+            styleHints:( {color:"yellow",pressedColor:"red"})
         }
 
         Button {

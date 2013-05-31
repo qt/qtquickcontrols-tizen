@@ -28,9 +28,14 @@ ButtonStyle {
     background: TizenBorderImage {
         implicitWidth: 400
         implicitHeight: 80
+
+        property color bgColorNormal: control.styleHints && control.styleHints.color ? control.styleHints.color :Theme.button.backgroundColor.normal
+        property color bgColorPressed: control.styleHints && control.styleHints.pressedColor ? control.styleHints.pressedColor :Theme.button.backgroundColor.pressed
+        property color bgColorDisabled: control.styleHints && control.styleHints.disabledColor ? control.styleHints.disabledColor : Theme.button.backgroundColor.disabled
+
         source: control.enabled ? (control.pressed ? Theme.button.source.pressed: Theme.button.source.normal) : Theme.button.source.disabled
         effectSource: control.enabled ? (control.pressed ? Theme.button.effectSource.pressed: Theme.button.effectSource.normal) : Theme.button.effectSource.disabled
-        backgroundColor: control.enabled ? (control.pressed ? Theme.button.backgroundColor.pressed: Theme.button.backgroundColor.normal) : Theme.button.backgroundColor.disabled
+        backgroundColor: control.enabled ? (control.pressed ? bgColorPressed : bgColorNormal) : bgColorDisabled
     }
 
     /*! The label of the button. */
