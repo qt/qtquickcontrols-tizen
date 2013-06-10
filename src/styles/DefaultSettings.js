@@ -893,6 +893,13 @@ var tabBar = {
     color: colors.W0813,
     source: images.img_00_category_panel_bg,
     effectSource: images.img_00_category_panel_bg_ef,
+
+    arrow: {
+        color: colors.F031L3,
+        sourceLeft: images.img_00_arrow_left,
+        sourceRight: images.img_00_arrow_right,
+        margin:8
+    },
     tab: {
         color: {
             normal:colors.W0813,
@@ -907,12 +914,6 @@ var tabBar = {
                 selected:colors.F031L3P
             },
             margin:10
-        },
-        arrow: {
-            color: colors.F031L3,
-            sourceLeft: images.img_00_arrow_left,
-            sourceRight: images.img_00_arrow_right,
-            margin:8
         },
         source: {
             normal: images.img_00_category_button,
@@ -929,6 +930,7 @@ var tabBar = {
         sideMargin:54
     },
     height: 90
+
 }
 
 var detailButton = {
