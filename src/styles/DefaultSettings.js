@@ -959,3 +959,74 @@ var detailButton = {
         //highlighted: colors.F032L1P,
     }
 }
+
+var contextMenu = {
+
+    color: colors.B061L4,
+    listItemDividerColor1: colors.B0622L1,
+    listItemDividerColor2: colors.B0622L2,
+    item: {
+        color: {
+            normal: colors.B061L4,
+            pressed: colors.B044,
+            highlighted: colors.B044,
+        },
+        text: {
+            color: {
+                normal: colors.B063L5,
+                pressed: colors.B063L5,
+                highlighted: colors.B063L5,
+            },
+            font: {
+                pixelSize:40
+            }
+        },
+        source: {
+            pressed: images.img_00_more_popup_press
+        },
+        height: 112,
+        iconWidth: 45,
+        iconHeight: 45,
+        spacing: 16
+    },
+    gridItemDividerColor1: colors.B0623L1,
+    gridItemDividerColor2: colors.B0623L2,
+
+    source: images.img_00_popup_bubble_bg,
+    effectSource: images.img_00_popup_bubble_bg_ef,
+
+    arrow: {
+        source: {
+            left: images.img_00_popup_bubble_tail_left,
+            right: images.img_00_popup_bubble_tail_right,
+            top: images.img_00_popup_bubble_tail_top,
+            bottom: images.img_00_popup_bubble_tail_bottom
+        },
+        effectSource: {
+            left: images.img_00_popup_bubble_tail_left_ef,
+            right: images.img_00_popup_bubble_tail_right_ef,
+            top: images.img_00_popup_bubble_tail_top_ef,
+            bottom: images.img_00_popup_bubble_tail_bottom_ef
+        },
+        width: 36,
+        height: 36,
+        anchors: {
+            topMargin: 18,
+            leftMargin: 12,
+            rightMargin:12,
+            bottomMargin:10
+        }
+    },
+    minimumWidth: 386,
+    maximumWidth: 620,
+    listTopMargin: 8,
+    listBottomMargin: 16,
+    listLeftMargin: 10,
+    listRightMargin: 10,
+    screen: {
+        topMargin: 24,
+        bottomMargin: 24,
+        leftMargin: 24,
+        rightMargin: 24
+    }
+}

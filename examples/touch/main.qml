@@ -124,6 +124,10 @@ ApplicationWindow {
             page: "content/CheckBoxPage.qml"
         }
         ListElement {
+            title: "ContextMenu"
+            page: "content/ContextMenuPage.qml"
+        }
+        ListElement {
             title: "TextInput"
             page: "content/TextInputPage.qml"
         }

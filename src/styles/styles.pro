@@ -10,7 +10,8 @@ QML_FILES = \
     TabViewStyle.qml \
     Floater.qml \
     SwitchStyle.qml\
-    DetailButtonStyle.qml
+    DetailButtonStyle.qml\
+    DefaultSettings.js
 
 # Images
 QML_FILES += \
@@ -18,9 +19,6 @@ QML_FILES += \
     images/720x1280/*.sci \
     images/720x1280/white/*.png \
     images/720x1280/white/*.sci
-
-QML_FILES += \
-    DefaultSettings.js
 
 CONFIG += force_independent
 

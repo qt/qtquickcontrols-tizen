@@ -8,6 +8,7 @@ OTHER_FILES += \
     content/SliderPage.qml \
     content/TabBarPage.qml \
     content/CheckBoxPage.qml \
-    content/TextInputPage.qml
+    content/TextInputPage.qml \
+    content/ContextMenuPage.qml
 
 

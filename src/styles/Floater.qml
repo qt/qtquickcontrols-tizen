@@ -4,8 +4,8 @@ Item {
     id: floaterBehavior
     visible: false
     property Component content
-    width: contentLoader ? contentLoader.item.width:0
-    height: contentLoader ? contentLoader.item.height:0
+    width: contentLoader ? contentLoader.item.implicitWidth:0
+    height: contentLoader ? contentLoader.item.implicitHeight:0
     property Item root: findRoot()
 
     function findRoot() {
@@ -19,6 +19,7 @@ Item {
     Loader {
         id: contentLoader
         sourceComponent: content
+        anchors.fill: parent
     }
 
     states: State {
@@ -26,5 +27,4 @@ Item {
         when: Qt.isQtObject(contentLoader.item) && contentLoader.item.opacity > 0
         ParentChange { target: floaterBehavior; parent: root }
     }
-
 }

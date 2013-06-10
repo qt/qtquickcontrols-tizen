@@ -70,7 +70,7 @@ Item {
         }
         Tab {
             title: "5"
-            TextInputPage{ visible: true }
+            ContextMenuPage{ visible: true }
         }
     }   
 }
