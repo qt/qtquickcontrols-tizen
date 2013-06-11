@@ -63,54 +63,101 @@ int main(int argc, char *argv[])
         outDir = fileInfo.dir().absolutePath();
     }
 
-    int borderLeft = 0;
-    int borderRight = 0;
-    int borderTop = 0;
-    int borderBottom = 0;
+    int borderLeft = -1;
+    int borderRight = -1;
+    int borderTop = -1;
+    int borderBottom = -1;
+
+    bool isNinePatch = true;
+
     for (int x = 0; x < image.width(); ++x) {
-        if (image.pixel(x, 0) == qRgba(0, 0, 0, 255) && !borderLeft) {
-            borderLeft = x - 1;
+        if (qAlpha(image.pixel(x, 0)) == 255 && borderLeft < 0) {
+            if (!x) {
+                qWarning("Wrong nine-patch image format! Border definition line should not start at x = 0.");
+                isNinePatch = false;
+                break;
+            } else {
+                if (image.pixel(x, 0) != qRgba(0, 0, 0, 255)) {
+                    qWarning("Wrong nine-patch image format!");
+                    isNinePatch = false;
+                    break;
+                }
+                borderLeft = x - 1;
+            }
         }
-        if (image.pixel(x, 0) != qRgba(0, 0, 0, 255) && borderLeft) {
+        if (qAlpha(image.pixel(x, 0)) != 255 && borderLeft >= 0) {
             borderRight = image.width() - x - 1;
             break;
         }
     }
-    for (int y = 0; y < image.height(); ++y) {
-        if (image.pixel(0, y) == qRgba(0, 0, 0, 255) && !borderTop) {
-            borderTop = y - 1;
+
+    if (borderLeft < 0) {
+        qWarning("Wrong nine-patch image format! Proper border definition not found.");
+        isNinePatch = false;
+    }
+    if (borderRight < 0) {
+        qWarning("Wrong nine-patch image format!");
+        isNinePatch = false;
+    }
+
+    for (int y = 0; (y < image.height()) && isNinePatch; ++y) {
+        if (qAlpha(image.pixel(0, y)) == 255 && borderTop < 0) {
+            if (!y) {
+                qWarning("Wrong nine-patch image format! Border definition line should not start at y = 0.");
+                isNinePatch = false;
+                break;
+            } else {
+                if (image.pixel(0, y) != qRgba(0, 0, 0, 255)) {
+                    qWarning("Wrong nine-patch image format!");
+                    isNinePatch = false;
+                    break;
+                }
+                borderTop = y - 1;
+            }
         }
-        if (image.pixel(0, y) != qRgba(0, 0, 0, 255) && borderTop) {
+        if (qAlpha(image.pixel(0, y)) != 255 && borderTop >= 0) {
             borderBottom = image.height() - y - 1;
             break;
         }
     }
-    // assuming that if there is no border we don't crop the image
-    int xOffset = (borderLeft || borderRight) ? 1 : 0;
-    int yOffset = (borderTop || borderBottom) ? 1 : 0;
+
+    if (borderTop < 0) {
+        qWarning("Wrong nine-patch image format! Proper border definition not found.");
+        isNinePatch = false;
+    }
+    if (borderBottom < 0) {
+        qWarning("Wrong nine-patch image format!");
+        isNinePatch = false;
+    }
+
+    if (!isNinePatch) {
+        qDebug()<<fileInfo.fileName()<<" is not 9-patch file - skipping";
+        return 1;
+    }
+
+    int xOffset = 1;
+    int yOffset = 1;
+
     QImage copy = image.copy(xOffset, yOffset, image.width() - 2*xOffset, image.height() - 2*yOffset);
 
-    if (borderBottom + borderLeft + borderRight + borderTop > 0) {
-        if (!copy.save(QDir(outDir).filePath(QString("%1").arg(fileInfo.fileName())))) {
-            qWarning() << "Cannot save image file:"<<fileInfo.fileName();
-            return 1;
-        }
-        QFile sciFile(QDir(outDir).filePath(QString("%1.sci").arg(fileInfo.completeBaseName())));
-        if (!sciFile.open(QFile::Text|QFile::WriteOnly)) {
-            qWarning() << "Cannot create sci file:"<<sciFile.fileName();
-            return 1;
-        }
-        qDebug()<<"creating sci file:"<<sciFile.fileName();
-        QTextStream stream(&sciFile);
-        stream << "border.left: " << borderLeft << "\n";
-        stream << "border.right: " << borderRight << "\n";
-        stream << "border.top: " << borderTop << "\n";
-        stream << "border.bottom: " << borderBottom << "\n";
-        stream << "source: " << QString("%1").arg(fileInfo.fileName()) << "\n";
-        stream.flush();
-        sciFile.close();
-    } else {
-        qDebug()<<fileInfo.fileName()<<" is not 9-patch file - skipping";
+    if (!copy.save(QDir(outDir).filePath(QString("%1").arg(fileInfo.fileName())))) {
+        qWarning() << "Cannot save image file:"<<fileInfo.fileName();
+        return 1;
     }
+    QFile sciFile(QDir(outDir).filePath(QString("%1.sci").arg(fileInfo.completeBaseName())));
+    if (!sciFile.open(QFile::Text|QFile::WriteOnly)) {
+        qWarning() << "Cannot create sci file:"<<sciFile.fileName();
+        return 1;
+    }
+    qDebug()<<"creating sci file:"<<sciFile.fileName();
+    QTextStream stream(&sciFile);
+    stream << "border.left: " << borderLeft << "\n";
+    stream << "border.right: " << borderRight << "\n";
+    stream << "border.top: " << borderTop << "\n";
+    stream << "border.bottom: " << borderBottom << "\n";
+    stream << "source: " << QString("%1").arg(fileInfo.fileName()) << "\n";
+    stream.flush();
+    sciFile.close();
+
     return 0;
 }
