@@ -104,15 +104,30 @@ Item {
         text: "Animate"
         onClicked: animation.running = !animation.running
     }
-    NumberAnimation {
+    PathAnimation {
         id:animation
         target: center
-        property: "x"
-        from: 0
-        to: parent.width
+        anchorPoint: Qt.point(center.width/2,center.height/2)
         loops: Animation.Infinite
         running: false
         duration: 5000
+        path: Path {
+            id: myPath
+            startX: 360; startY: 300
+
+            PathArc {
+                x: 360; y: 900
+                radiusX: 300
+                radiusY: 300
+                useLargeArc: true
+            }
+            PathArc {
+                x: 360; y: 300
+                radiusX: 300
+                radiusY: 300
+                useLargeArc: true
+            }
+        }
     }
 
 }
