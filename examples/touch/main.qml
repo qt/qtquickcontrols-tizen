@@ -40,6 +40,7 @@
 
 import QtQuick 2.1
 import QtQuick.Controls 1.0
+import QtQuick.Controls.Tizen 1.0
 import "content"
 
 ApplicationWindow {
@@ -126,6 +127,10 @@ ApplicationWindow {
         ListElement {
             title: "ContextMenu"
             page: "content/ContextMenuPage.qml"
+        }
+        ListElement {
+            title: "SplitView"
+            page: "content/SplitViewPage.qml"
         }
         ListElement {
             title: "TextInput"

@@ -4,7 +4,8 @@ TARGETPATH = QtQuick/Controls/Tizen
 QML_FILES += \
     Switch.qml \
     DetailButton.qml\
-    Menu.qml
+    Menu.qml\
+    SplitView.qml
 
 CONFIG += force_independent
 

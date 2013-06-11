@@ -1032,3 +1032,20 @@ var contextMenu = {
         rightMargin: 24
     }
 }
+var splitView = {
+    color: {
+        normal: colors.W131,
+        pressed: colors.W132
+    },
+    width: 5,
+    pressedWidth: 13,
+    source: images.img_00_split_handler_bg,
+    vertical: {
+        source:images.img_00_split_handler_v,
+        effectSource: images.img_00_split_handler_bg_ef_v
+    },
+    horizontal: {
+        source:images.img_00_split_handler_h,
+        effectSource: images.img_00_split_handler_bg_ef_h
+    }
+}

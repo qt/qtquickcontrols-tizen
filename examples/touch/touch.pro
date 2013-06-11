@@ -9,6 +9,7 @@ OTHER_FILES += \
     content/TabBarPage.qml \
     content/CheckBoxPage.qml \
     content/TextInputPage.qml \
-    content/ContextMenuPage.qml
+    content/ContextMenuPage.qml \
+    content/SplitViewPage.qml
 
 
