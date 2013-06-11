@@ -27,14 +27,14 @@
 #
 # 
 
-for file in `find . -name "*#*.png"`; do 
-  normalized=$(echo -n $file | sed s/#\.//); 
-  mv $file $normalized; 
+for file in `find . -name "*#.png"`; do
+    normalized=$(echo -n $file | sed s/#\./9\./);
+    mv $file $normalized;
 done
-for file in `find . -name "*&*"`; do 
-  normalized=$(echo -n $file|sed s/\&/_and_/); 
-  mv $file $normalized; 
+for file in `find . -name "*&*"`; do
+    normalized=$(echo -n $file|sed s/\&/_and_/);
+    mv $file $normalized;
 done
-for file in `find . -name '*.png'`; 
-  do 9-patch2sci $file; 
+for file in `find . -name '*.9.png'`; do
+    9patch2sci $file;
 done

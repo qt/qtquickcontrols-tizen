@@ -41,7 +41,8 @@ for baseName in `find . -name '*.png' | sed s#.*\./## | sed s/\.png// | sort | u
     if [ -e "$subPath$baseName.sci" ]; then
 	extension=".sci"
     fi
-    echo -n "    img_$baseName" && echo ": $path \"$baseName$extension\","
+    normalizedBaseName=$(echo -n $baseName | sed s/\.9$/_9/)
+    echo -n "    img_$normalizedBaseName" && echo ": $path \"$baseName$extension\","
 done
 
 echo "}"
