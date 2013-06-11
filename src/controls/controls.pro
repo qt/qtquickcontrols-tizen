@@ -5,7 +5,8 @@ QML_FILES += \
     Switch.qml \
     DetailButton.qml\
     Menu.qml\
-    SplitView.qml
+    SplitView.qml\
+    ScrollDecorator.qml
 
 CONFIG += force_independent
 

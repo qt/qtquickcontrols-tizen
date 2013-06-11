@@ -11,7 +11,8 @@ QML_FILES = \
     Floater.qml \
     SwitchStyle.qml\
     DetailButtonStyle.qml\
-    DefaultSettings.js
+    DefaultSettings.js\
+    ScrollDecoratorStyle.qml
 
 # Images
 QML_FILES += \

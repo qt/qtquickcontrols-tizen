@@ -9,6 +9,6 @@ Panel 1.0 Panel.qml
 Floater 1.0 Floater.qml
 SwitchStyle 1.0 SwitchStyle.qml
 DetailButtonStyle 1.0 DetailButtonStyle.qml
-
+ScrollDecoratorStyle 1.0 ScrollDecoratorStyle.qml
 Theme 1.0 DefaultSettings.js
 

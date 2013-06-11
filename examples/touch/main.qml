@@ -145,13 +145,18 @@ ApplicationWindow {
         initialItem: Item {
             width: parent.width
             height: parent.height
+
+
             ListView {
+                id:listView
                 model: pageModel
                 anchors.fill: parent
+                clip:true
                 delegate: AndroidDelegate {
                     text: title
                     onClicked: pageStack.push(Qt.resolvedUrl(page))
                 }
+                ScrollDecorator {flickableItem: listView}
             }
         }
     }
