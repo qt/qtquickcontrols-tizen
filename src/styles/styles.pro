@@ -12,7 +12,8 @@ QML_FILES = \
     SwitchStyle.qml\
     DetailButtonStyle.qml\
     DefaultSettings.js\
-    ScrollDecoratorStyle.qml
+    ScrollDecoratorStyle.qml\
+    ContextMenuStyle.qml
 
 # Images
 QML_FILES += \
