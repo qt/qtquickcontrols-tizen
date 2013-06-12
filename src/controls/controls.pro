@@ -4,7 +4,7 @@ TARGETPATH = QtQuick/Controls/Tizen
 QML_FILES += \
     Switch.qml \
     DetailButton.qml\
-    Menu.qml\
+    ContextMenu.qml\
     SplitView.qml\
     ScrollDecorator.qml
 

@@ -2,6 +2,6 @@ module QtQuick.Controls.Tizen
 
 Switch 1.0 Switch.qml
 DetailButton 1.0 DetailButton.qml
-Menu 1.0 Menu.qml
+ContextMenu 1.0 ContextMenu.qml
 SplitView 1.0 SplitView.qml
 ScrollDecorator 1.0 ScrollDecorator.qml

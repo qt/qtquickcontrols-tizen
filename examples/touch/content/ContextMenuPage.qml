@@ -36,7 +36,7 @@ Item {
     height: parent.height
 
 
-    Menu {
+    ContextMenu {
         id: menu
         anchorItem: center
         anchorPoint: Qt.point(center.width/2, center.height/2)
