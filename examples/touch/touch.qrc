@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>images/toolbar.png</file>
+        <file>images/textinput.png</file>
+        <file>images/tabs_standard.png</file>
+        <file>images/tab_selected.png</file>
+        <file>images/navigation_previous_item.png</file>
+        <file>images/navigation_next_item.png</file>
+        <file>images/internet-web-browser.png</file>
+        <file>images/internet-mail.png</file>
+        <file>images/button_pressed.png</file>
+        <file>images/button_default.png</file>
+        <file>content/ContextMenuPage.qml</file>
+        <file>content/SplitViewPage.qml</file>
+        <file>content/TextInputPage.qml</file>
+        <file>content/TabBarPage.qml</file>
+        <file>content/SliderPage.qml</file>
+        <file>content/ProgressBarPage.qml</file>
+        <file>content/CheckBoxPage.qml</file>
+        <file>content/ButtonPage.qml</file>
+        <file>content/AndroidDelegate.qml</file>
+    </qresource>
+    <qresource prefix="/qt/etc">
+        <file>qt.conf</file>
+    </qresource>
+</RCC>

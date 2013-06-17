@@ -44,12 +44,20 @@ import QtQuick.Controls.Tizen 1.0
 import "content"
 
 ApplicationWindow {
+    y: 60
     width: 720
-    height: 1280
+    height: 1220
 
     Rectangle {
         color: "#F8F6EF"
         anchors.fill: parent
+    }
+    property bool active:Qt.application.active
+
+    onActiveChanged: {
+        if (!active) {
+            Qt.quit()
+        }
     }
 
     // Implements back key navigation
@@ -131,10 +139,6 @@ ApplicationWindow {
         ListElement {
             title: "SplitView"
             page: "content/SplitViewPage.qml"
-        }
-        ListElement {
-            title: "TextInput"
-            page: "content/TextInputPage.qml"
         }
     }
 

@@ -1,4 +1,10 @@
-TEMPLATE=aux
+TEMPLATE=app
+
+QMAKE_LFLAGS+=-pie -rdynamic
+
+TARGET=QtControls.exe
+
+QT += qml quick
 
 OTHER_FILES += \
     main.qml \
@@ -10,6 +16,14 @@ OTHER_FILES += \
     content/CheckBoxPage.qml \
     content/TextInputPage.qml \
     content/ContextMenuPage.qml \
-    content/SplitViewPage.qml
+    content/SplitViewPage.qml \
+    qt.conf
+
+SOURCES += \
+    main.cpp
+
+RESOURCES += \
+    touch.qrc
+
 
 
