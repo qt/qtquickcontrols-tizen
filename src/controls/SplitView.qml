@@ -31,7 +31,8 @@ SplitView {
         source: "../Styles/Tizen/"+Theme.splitView.source
         backgroundColor: styleData.pressed ? Theme.splitView.color.pressed : Theme.splitView.color.normal
         TizenBorderImage {
-            anchors.fill: parent
+            anchors.centerIn: parent
+            visible: styleData.pressed
             source: splitView.orientation === Qt.Horizontal ? "../Styles/Tizen/"+Theme.splitView.horizontal.source : "../Styles/Tizen/"+Theme.splitView.vertical.source
             effectSource: splitView.orientation === Qt.Horizontal ? "../Styles/Tizen/"+Theme.splitView.horizontal.effectSource : "../Styles/Tizen/"+Theme.splitView.vertical.effectSource
         }

@@ -1038,7 +1038,7 @@ var splitView = {
         normal: colors.W131,
         pressed: colors.W132
     },
-    width: 5,
+    width: 13,
     pressedWidth: 13,
     source: images.img_00_split_handler_bg_9,
     vertical: {
