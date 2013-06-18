@@ -648,6 +648,10 @@ var images = {
     img_TTS_popup_bg_9: imagesPath + "TTS_popup_bg.9.sci",
 }
 
+var fonts = {
+    defaultFamily: 'TizenSans',
+    defaultSource: 'TizenSansRegular.ttf'
+}
 
 
 var panel = {
@@ -1110,6 +1114,22 @@ var popup = {
         bottom: 34+3,
         left: 16+3,
         right: 16+3
+    }
+}
+
+var titleBar = {
+    backgroundColor: colors.background,
+    text: {
+        color: colors.B042,
+        font: {
+            pixelSize: 36
+        }
+    },
+    subText: {
+        color: colors.B042,
+        font: {
+            pixelSize: 24
+        }
     }
 }
 

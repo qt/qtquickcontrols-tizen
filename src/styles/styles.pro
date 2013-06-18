@@ -15,14 +15,16 @@ QML_FILES = \
     ScrollDecoratorStyle.qml\
     ContextMenuStyle.qml\
     PopupStyle.qml\
-    BusyIndicatorStyle.qml
+    BusyIndicatorStyle.qml \
+    TitleBarStyle.qml
 
 # Images
 QML_FILES += \
     images/720x1280/*.png \
     images/720x1280/*.sci \
     images/720x1280/white/*.png \
-    images/720x1280/white/*.sci
+    images/720x1280/white/*.sci \
+    TizenSansRegular.ttf
 
 CONFIG += force_independent
 

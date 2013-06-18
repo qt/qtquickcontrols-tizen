@@ -14,4 +14,4 @@ ContextMenuStyle 1.0 ContextMenuStyle.qml
 PopupStyle 1.0 PopupStyle.qml
 BusyIndicatorStyle 1.0 BusyIndicatorStyle.qml
 Theme 1.0 DefaultSettings.js
-
+TitleBarStyle 1.0 TitleBarStyle.qml

@@ -37,6 +37,8 @@
 ****************************************************************************/
 
 import QtQuick 2.1
+import QtQuick.Controls.Tizen 1.0
+import QtQuick.Controls.Styles.Tizen 1.0 // tmp
 import "utils.js" as Utils
 
 Item {
@@ -47,7 +49,7 @@ Item {
     property alias text: textitem.text
     signal clicked
 
-    Settings { id: settings }
+    //Settings { id: settings }
 
     Rectangle {
         anchors.fill: parent
@@ -101,7 +103,7 @@ Item {
         anchors.bottomMargin: 40
         wrapMode: Text.Wrap
         textFormat: Text.RichText
-        font.family: settings.defaultFont
+        font.family: Theme.fonts.defaultFamily
         font.pixelSize: 36
         elide: Text.ElideLeft
         MouseArea {

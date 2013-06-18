@@ -1,6 +1,5 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Copyright (C) 2013 Jarosław Staniek <staniek@kde.org>
 ** Contact: http://www.qt-project.org/legal
 **
@@ -37,39 +36,28 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
+import QtQuick 2.1
+import QtQuick.XmlListModel 2.0
+import "utils.js" as Utils
 
-Item {
-    id:root
-    implicitWidth: base.implicitWidth
-    implicitHeight: base.implicitHeight
-    property alias source: base.source
-    property alias effectSource: effect.source
-    property color color
-    property int leftCut
-    property int rightCut
-    property int topCut
-    property int bottomCut
+ListModel {
+    property string user
 
-    BorderImage {
-        id: base
-        anchors.fill: parent
-        border {
-            left: root.leftCut
-            right: root.rightCut
-            top: root.topCut
-            bottom: root.bottomCut
-        }
+    ListElement {
+        date: "16 Jun 13 8:54 AM"
+        statusText: 'Become #Qt for #Tizen\'s Media Partner. We\'re looking for local nonenglish bloggers, enthusiasts. Do you want to join? http://qt-project.org/wiki/Qt-for-Tizen-Media-Partners'
     }
-
-    BorderImage {
-        id: effect
-        anchors.fill: base
-        border {
-            left: root.leftCut
-            right: root.rightCut
-            top: root.topCut
-            bottom: root.bottomCut
-        }
+    ListElement {
+        date: "15 Jun 13 3:36 PM"
+        statusText: 'New #Qt Quick Controls Alpha 2 running on #Samsung\'s "PQ" Tizen reference device! http://www.youtube.com/watch?v=nkTqf8Eb_1k'
+    }
+    ListElement {
+        date: "11 Jun 13 12:48 AM"
+        statusText: 'Scrolling performance check: #Qt Quick app for #Tizen simulated on PC outperforms Emulator. 5 to 6 times smoother. http://www.youtube.com/watch?v=EEjbExRScYo'
+    }
+    ListElement {
+        date: "9 Jun 13 11:31 PM"
+        statusText: 'Intel\'s mobile #Tizen\'s UX, codenamed Obsidian. Would you like to have full #Qt support there too? http://www.tizenexperts.com/2013/06/early-intels-phone-user-interface-codenamed-obsidian/'
     }
 }
+

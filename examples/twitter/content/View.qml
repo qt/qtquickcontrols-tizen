@@ -40,23 +40,29 @@ import QtQuick 2.1
 import QtQuick.Controls.Tizen 1.0
 import "utils.js" as Utils
 
-View {
-    readonly property string userName: "QtForTizen"
-    titleBar.text: qsTr("Tweets")
-    titleBar.subText: userName
+Item {
+    readonly property alias titleBar: __titleBar
+    property Component contents
+    Rectangle {
+        width: Utils.appWidth
+        height: Utils.appHeight
+        anchors.centerIn: parent
+        scale: Math.min(parent.width / width, parent.height / height)
+        color: "#f8f6ef"
 
-    contents: ListView {
-            id: listView
-            clip: true
-
-            delegate: ListDelegate {}
-
-            //model: TwitterModel {
-            model: TwitterMockModel {
-                user: userName
-            }
-            ScrollDecorator {
-                flickableItem: listView
-            }
+        TitleBar {
+            id: __titleBar
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
         }
+        Loader {
+             id: contentsLoader
+             sourceComponent: contents
+             anchors.top: titleBar.bottom
+             anchors.left: parent.left
+             anchors.right: parent.right
+             anchors.bottom: parent.bottom
+        }
+    }
 }

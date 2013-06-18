@@ -7,3 +7,4 @@ SplitView 1.0 SplitView.qml
 ScrollDecorator 1.0 ScrollDecorator.qml
 Popup 1.0 Popup.qml
 BusyIndicator 1.0 BusyIndicator.qml
+TitleBar 1.0 TitleBar.qml

@@ -8,7 +8,9 @@ QML_FILES += \
     SplitView.qml\
     ScrollDecorator.qml\
     Popup.qml\
-    BusyIndicator.qml
+    BusyIndicator.qml \
+    ScrollDecorator.qml \
+    TitleBar.qml
 
 CONFIG += force_independent
 
