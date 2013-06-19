@@ -16,7 +16,10 @@ QML_FILES = \
     ContextMenuStyle.qml\
     PopupStyle.qml\
     BusyIndicatorStyle.qml \
-    TitleBarStyle.qml
+    TitleBarStyle.qml \
+    ViewStyle.qml \
+    ToolBarStyle.qml \
+    ToolBarButton.qml
 
 # Images
 QML_FILES += \

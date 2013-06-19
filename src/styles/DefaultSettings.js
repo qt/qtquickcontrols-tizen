@@ -777,6 +777,30 @@ var button= {
     font:{pixelSize:36, minimumPixelSize: 28}
 }
 
+var toolBar = {
+    backgroundColor: colors.background,
+    iconColor: {
+        normal: colors.F032L1,
+        disabled: colors.F032L1,
+        pressed: colors.F011L12
+    },
+    back: {
+        source: images.img_00_icon_Back,
+        effectSource: {
+            normal: images.img_00_icon_Back_ef
+            //disabled:images.img_00_circle_bg_ef_dim
+        }
+    },
+    more: {
+        source: images.img_00_icon_more,
+        effectSource: {
+            normal: images.img_00_icon_more_ef
+            //disabled:images.img_00_circle_bg_ef_dim
+        }
+
+    }
+}
+
 var checkBox = {
 
      indicator: {
@@ -886,7 +910,7 @@ var checkBox = {
         iconColor: {
             normal: colors.F032L1,
             disabled: colors.F032L1,
-            pressed: colors.F032L1P
+            pressed: colors.B041
             //highlighted: colors.F032L1P,
         }
     }

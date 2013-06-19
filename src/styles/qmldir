@@ -15,3 +15,6 @@ PopupStyle 1.0 PopupStyle.qml
 BusyIndicatorStyle 1.0 BusyIndicatorStyle.qml
 Theme 1.0 DefaultSettings.js
 TitleBarStyle 1.0 TitleBarStyle.qml
+ToolBarStyle 1.0 ToolBarStyle.qml
+ToolBarButton 1.0 ToolBarButton.qml
+ViewStyle 1.0 ViewStyle.qml

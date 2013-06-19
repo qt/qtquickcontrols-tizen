@@ -10,7 +10,9 @@ QML_FILES += \
     Popup.qml\
     BusyIndicator.qml \
     ScrollDecorator.qml \
-    TitleBar.qml
+    TitleBar.qml \
+    ToolBar.qml \
+    View.qml
 
 CONFIG += force_independent
 

@@ -25,43 +25,29 @@ import "DefaultSettings.js" as Theme
 
 Style {
     id: style
-    property TitleBar control: __control
+    property ToolBar control: __control
 
-    property Component titleBar: Rectangle {
-        color: Theme.titleBar.backgroundColor
+    property Component toolBar: Rectangle {
+        color: Theme.toolBar.backgroundColor
         width: 720
         Binding { target: control; property: "implicitWidth"; value: width }
-        height: header.height + header2.height + 30 + 30
+        height: 98
         Binding { target: control; property: "implicitHeight"; value: height }
 
-        FontLoader { source: Theme.fonts.defaultSource }
-        Text {
-            id: header
-            anchors.top: parent.top
+        ToolBarButton {
+            id: moreButton
+            source: Theme.toolBar.more.source
+            effectSource: Theme.toolBar.more.effectSource.normal
             anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 30
-            anchors.rightMargin: 30
-            anchors.topMargin: 30
-            height: contentHeight
-            color: "#3b73b6"
-            font.family: Theme.fonts.defaultFamily
-            font.capitalization: Font.AllUppercase
-            text: control.text
-            font.pixelSize: 36
+            anchors.leftMargin: 26
         }
-        Text {
-            id: header2
-            anchors.top: header.bottom
-            anchors.left: header.left
-            anchors.right: header.right
-            anchors.leftMargin: header.leftMargin
-            anchors.rightMargin: header.rightMargin
-            height: contentHeight
-            color: header.color
-            font.family: header.font.family
-            text: control.subText
-            font.pixelSize: 24
+        ToolBarButton {
+            id: backButton
+            source: Theme.toolBar.back.source
+            effectSource: Theme.toolBar.back.effectSource.normal
+            anchors.right: parent.right
+            anchors.rightMargin: 26
+            onClicked: { /*console.log("back clicked");*/ view.backAction.trigger(); }
         }
     }
 }

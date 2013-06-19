@@ -16,43 +16,26 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Private 1.0
-import QtQuick.Controls.Tizen 1.0
 
 Control {
     id: root
-    readonly property alias titleBar: prvTitleBar
-    readonly property alias toolBar: prvToolBar
-    property alias backAction: prvBackAction
-
-    // all View's children go to content
-    default property alias data: content.data
-
-    property alias __content: content
+    property Item view
 
     /*! \internal */
-    style: Qt.createComponent(Settings.style + "/ViewStyle.qml", root)
+    style: Qt.createComponent(Settings.style + "/ToolBarStyle.qml", root)
 
     Loader {
         id: styleLoader
-        property alias __titleBar: prvTitleBar
-        property alias __toolBar: prvToolBar
         property Item __control: root
-        property Action __backAction: prvBackAction
         sourceComponent: style
     }
-    Loader {
-        id: viewLoader
-        sourceComponent: styleLoader.item && styleLoader.item.view
-    }
 
-    TitleBar { id: prvTitleBar }
-    Item { id: content }
-    ToolBar { id: prvToolBar; view: root }
-    Action {
-        id: prvBackAction
-        onTriggered: { console.debug("Quit!"); Qt.quit(); }
+    Loader {
+        id: toolBarLoader
+        sourceComponent: styleLoader.item.toolBar
     }
 }

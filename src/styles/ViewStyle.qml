@@ -27,39 +27,30 @@ import "DefaultSettings.js" as Theme
 Style {
     id: style
     property View control: __control
-    //readonly property alias titleBar: __titleBar
 
-    property Component view: //Item {
-        Rectangle {
-            width: 720 // TODO Utils.appWidth
-            //width: control.width
-            Binding { target: control; property: "implicitWidth"; value: width }
-            height: 1280 // TODO Utils.appHeight
-            //height: header.height + header2.height + 30 + 30
-            Binding { target: control; property: "implicitHeight"; value: height }
-            property Component contents: control.view
-            Binding { target: control; property: "contents"; value: contents }
+    property Component view: Rectangle {
+        y: __titleBar.height
+        Binding { target: __titleBar; property: "anchors.top"; value: control.top }
+        Binding { target: __titleBar; property: "anchors.left"; value: control.left }
+        Binding { target: __titleBar; property: "anchors.right"; value: control.right }
 
-            //anchors.centerIn: parent
-            //scale: Math.min(parent.width / width, parent.height / height)
-            color: "#f8f6ef"
+        Binding { target: control.__content; property: "anchors.top"; value: __titleBar.bottom }
+        Binding { target: control.__content; property: "anchors.bottom"; value: __toolBar.top }
+        Binding { target: control.__content; property: "anchors.left"; value: control.left }
+        Binding { target: control.__content; property: "anchors.right"; value: control.right }
 
-            TitleBar {
-                id: __titleBar
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-            }
-            Binding { target: control; property: "titleBar"; value: __titleBar }
+        Binding { target: __toolBar; property: "anchors.bottom"; value: control.bottom }
+        Binding { target: __toolBar; property: "anchors.left"; value: control.left }
+        Binding { target: __toolBar; property: "anchors.right"; value: control.right }
 
-/*            Loader {
-                 id: contentsLoader
-                 sourceComponent: contents
-                 anchors.top: titleBar.bottom
-                 anchors.left: parent.left
-                 anchors.right: parent.right
-                 anchors.bottom: parent.bottom
-            }*/
-        }
-   // }
+        width: 720 // TODO Utils.appWidth
+        implicitWidth: width
+        implicitHeight: height
+
+        Binding { target: control; property: "implicitWidth"; value: width }
+        height: 1280 - __titleBar.height - __toolBar.height // TODO Utils.appHeight
+
+        Binding { target: control; property: "implicitHeight"; value: height }
+        color: Theme.colors.background
+    }
 }

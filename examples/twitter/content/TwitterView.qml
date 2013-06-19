@@ -44,19 +44,18 @@ View {
     readonly property string userName: "QtForTizen"
     titleBar.text: qsTr("Tweets")
     titleBar.subText: userName
+    ListView {
+        id: listView
+        clip: true
+        anchors.fill: parent
+        delegate: ListDelegate {}
 
-    contents: ListView {
-            id: listView
-            clip: true
-
-            delegate: ListDelegate {}
-
-            //model: TwitterModel {
-            model: TwitterMockModel {
-                user: userName
-            }
-            ScrollDecorator {
-                flickableItem: listView
-            }
+        //model: TwitterModel {
+        model: TwitterMockModel {
+            user: userName
         }
+        ScrollDecorator {
+            flickableItem: listView
+        }
+    }
 }

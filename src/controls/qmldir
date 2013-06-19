@@ -8,3 +8,5 @@ ScrollDecorator 1.0 ScrollDecorator.qml
 Popup 1.0 Popup.qml
 BusyIndicator 1.0 BusyIndicator.qml
 TitleBar 1.0 TitleBar.qml
+ToolBar 1.0 ToolBar.qml
+View 1.0 View.qml

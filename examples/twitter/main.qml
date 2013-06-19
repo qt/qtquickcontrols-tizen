@@ -46,10 +46,14 @@ ApplicationWindow {
     width: Utils.appWidth * Utils.appScale
     height: Utils.appHeight * Utils.appScale
 
-    StackView {
-        id: pageStack
+    Item {
         anchors.fill: parent
-
-        initialItem: TwitterView {}
+        StackView {
+            anchors.centerIn: parent // used to get autoscale
+            scale: Math.min(parent.width / width, parent.height / height)
+            width: Utils.appWidth
+            height: Utils.appHeight
+            initialItem: TwitterView {}
+        }
     }
 }
