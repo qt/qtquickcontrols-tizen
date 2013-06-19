@@ -36,6 +36,40 @@ Item {
     width: parent.width
     height: parent.height
 
+    Popup {
+        id:popup
+        Text {
+            text:"Center"
+            font.pixelSize: 60
+            anchors.centerIn: parent
+        }
+        Text {
+            text:"Left"
+            font.pixelSize: 60
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        Text {
+            text:"Right"
+            font.pixelSize: 60
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        Text {
+            text:"Top"
+            font.pixelSize: 60
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+        Button {
+            anchors.bottom: parent.bottom
+            text: "Close"
+            width: 200
+            onClicked: popup.hide()
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+    }
+
     Column {
         spacing: 40
         anchors.centerIn: parent
@@ -47,6 +81,7 @@ Item {
                 id:detail
                 anchors.left:parent.right
                 anchors.verticalCenter: parent.verticalCenter
+                onClicked: popup.popup()
             }
         }
         CheckBox {

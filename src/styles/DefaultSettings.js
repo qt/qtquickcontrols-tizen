@@ -1170,4 +1170,17 @@ var scroll = {
 
 }
 
-
+var popup = {
+    color: colors.B061L1,
+    source: images.img_00_popup_bg_9,
+    effectSource: images.img_00_popup_bg_ef_9,
+    text: {
+        color: colors.B063L9
+    },
+    margins: {
+        top: 14+3,
+        bottom: 34+3,
+        left: 16+3,
+        right: 16+3
+    }
+}

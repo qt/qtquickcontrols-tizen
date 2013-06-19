@@ -13,7 +13,8 @@ QML_FILES = \
     DetailButtonStyle.qml\
     DefaultSettings.js\
     ScrollDecoratorStyle.qml\
-    ContextMenuStyle.qml
+    ContextMenuStyle.qml\
+    PopupStyle.qml
 
 # Images
 QML_FILES += \
