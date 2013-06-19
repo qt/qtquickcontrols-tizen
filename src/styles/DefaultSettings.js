@@ -1184,3 +1184,8 @@ var popup = {
         right: 16+3
     }
 }
+
+var busyIndicator = {
+    source: images.img_00_list_process_01,
+    duration: 1500
+}

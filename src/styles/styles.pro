@@ -14,7 +14,8 @@ QML_FILES = \
     DefaultSettings.js\
     ScrollDecoratorStyle.qml\
     ContextMenuStyle.qml\
-    PopupStyle.qml
+    PopupStyle.qml\
+    BusyIndicatorStyle.qml
 
 # Images
 QML_FILES += \

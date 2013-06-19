@@ -7,7 +7,8 @@ QML_FILES += \
     ContextMenu.qml\
     SplitView.qml\
     ScrollDecorator.qml\
-    Popup.qml
+    Popup.qml\
+    BusyIndicator.qml
 
 CONFIG += force_independent
 

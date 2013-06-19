@@ -39,11 +39,6 @@ Item {
     Popup {
         id:popup
         Text {
-            text:"Center"
-            font.pixelSize: 60
-            anchors.centerIn: parent
-        }
-        Text {
             text:"Left"
             font.pixelSize: 60
             anchors.left: parent.left
@@ -67,6 +62,10 @@ Item {
             width: 200
             onClicked: popup.hide()
             anchors.horizontalCenter: parent.horizontalCenter
+        }
+        BusyIndicator {
+            anchors.centerIn: parent
+            running: true
         }
     }
 

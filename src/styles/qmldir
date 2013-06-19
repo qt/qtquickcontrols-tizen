@@ -12,5 +12,6 @@ DetailButtonStyle 1.0 DetailButtonStyle.qml
 ScrollDecoratorStyle 1.0 ScrollDecoratorStyle.qml
 ContextMenuStyle 1.0 ContextMenuStyle.qml
 PopupStyle 1.0 PopupStyle.qml
+BusyIndicatorStyle 1.0 BusyIndicatorStyle.qml
 Theme 1.0 DefaultSettings.js
 
