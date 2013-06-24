@@ -2,6 +2,7 @@ import QtQuick 2.0
 
 Item {
     id: floaterBehavior
+    objectName: "floaterBehavior"
     visible: false
     property Component content
     width: contentLoader ? contentLoader.item.implicitWidth:0
@@ -20,6 +21,7 @@ Item {
         id: contentLoader
         sourceComponent: content
         anchors.fill: parent
+        onStatusChanged: if (status === Loader.Error) console.error("Failed to load content for", floaterBehavior)
     }
 
     states: State {
