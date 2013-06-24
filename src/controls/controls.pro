@@ -9,9 +9,8 @@ QML_FILES += \
     ScrollDecorator.qml\
     Popup.qml\
     BusyIndicator.qml \
-    ScrollDecorator.qml \
-    BusyIndicator.qml\
-    DateEdit.qml
+    DateEdit.qml\
+    TimeEdit.qml \
     TitleBar.qml \
     ToolBar.qml \
     View.qml

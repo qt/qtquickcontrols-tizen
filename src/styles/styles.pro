@@ -18,9 +18,10 @@ QML_FILES = \
     BusyIndicatorStyle.qml \
     TitleBarStyle.qml \
     ViewStyle.qml \
+    DateEditStyle.qml\
+    TimeEditStyle.qml \
     ToolBarStyle.qml \
-    ToolBarButton.qml \
-    DateEditStyle.qml
+    ToolBarButton.qml
 
 
 QML_FILES += \

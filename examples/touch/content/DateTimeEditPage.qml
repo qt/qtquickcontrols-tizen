@@ -65,5 +65,19 @@ Item {
                 enabled: false
             }
         }
+        Column {
+            Label {
+                text:"Time"
+            }
+
+            TimeEdit { amPmDisplay: false }
+        }
+        Column {
+            Label {
+                text:"Time AM/PM"
+            }
+
+            TimeEdit { }
+        }
     }
 }
