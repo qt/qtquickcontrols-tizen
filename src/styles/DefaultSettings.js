@@ -1161,3 +1161,66 @@ var busyIndicator = {
     source: images.img_00_list_process_01,
     duration: 1500
 }
+
+var dateEdit = {
+    bar: {
+        color: colors.W0811,
+        text: {
+            color: {
+                normal: colors.W084,
+                pressed: colors.W084P
+            }
+        },
+        day: {fontSize:48},
+        month: {fontSize:38},
+        year: {fontSize:42}
+    },
+    source: images.img_00_time_picker_number_bg_9,
+    height: 102,
+    content: {
+        color: {
+            normal: colors.W011,
+            pressed: colors.B042,
+            disabled: colors.W011,
+            highlighted: colors.W161
+        },
+        source: {
+            normal: images.img_00_picker_button_9,
+            pressed: images.img_00_picker_button_9,
+            disabled: images.img_00_picker_button_9,
+            highlighted: images.img_00_picker_button_focus_9
+        },
+        effectSource: {
+            normal: images.img_00_picker_button_ef_9,
+            disabled: images.img_00_picker_button_dim_ef_9,
+            pressed: images.img_00_picker_button_press_ef_9
+        },
+        text: {
+            color: {
+                normal: colors.F011L1,
+                pressed: colors.F011L1P,
+                disabled: colors.F011L1D
+            }
+        },
+        width: 345,
+        height: 112,
+        margin: 17,
+        date: {
+            height: 48,
+            fontSize: 34,
+        },
+        year: {
+            width: 104
+        },
+        month: {
+            width: 104
+        },
+        day: {
+            width: 69
+        }
+    },
+
+    tail: {
+        source: images.img_00_time_picker_tail
+    }
+}

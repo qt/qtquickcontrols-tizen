@@ -17,7 +17,9 @@ OTHER_FILES += \
     content/TextInputPage.qml \
     content/ContextMenuPage.qml \
     content/SplitViewPage.qml \
+    content/DateTimeEditPage.qml\
     qt.conf
+
 
 SOURCES += \
     main.cpp

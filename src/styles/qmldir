@@ -13,6 +13,7 @@ ScrollDecoratorStyle 1.0 ScrollDecoratorStyle.qml
 ContextMenuStyle 1.0 ContextMenuStyle.qml
 PopupStyle 1.0 PopupStyle.qml
 BusyIndicatorStyle 1.0 BusyIndicatorStyle.qml
+DateEditStyle 1.0 DateEditStyle.qml
 Theme 1.0 DefaultSettings.js
 TitleBarStyle 1.0 TitleBarStyle.qml
 ToolBarStyle 1.0 ToolBarStyle.qml

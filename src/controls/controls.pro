@@ -10,6 +10,8 @@ QML_FILES += \
     Popup.qml\
     BusyIndicator.qml \
     ScrollDecorator.qml \
+    BusyIndicator.qml\
+    DateEdit.qml
     TitleBar.qml \
     ToolBar.qml \
     View.qml

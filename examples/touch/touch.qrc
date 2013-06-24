@@ -20,6 +20,7 @@
         <file>content/CheckBoxPage.qml</file>
         <file>content/ButtonPage.qml</file>
         <file>content/AndroidDelegate.qml</file>
+        <file>content/DateTimeEditPage.qml</file>
     </qresource>
     <qresource prefix="/qt/etc">
         <file>qt.conf</file>

@@ -19,7 +19,13 @@ QML_FILES = \
     TitleBarStyle.qml \
     ViewStyle.qml \
     ToolBarStyle.qml \
-    ToolBarButton.qml
+    ToolBarButton.qml \
+    DateEditStyle.qml
+
+
+QML_FILES += \
+    private/DateEditField.qml\
+    private/DateEditBarPicker.qml
 
 # Images
 QML_FILES += \

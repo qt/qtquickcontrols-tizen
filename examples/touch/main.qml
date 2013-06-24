@@ -140,6 +140,10 @@ ApplicationWindow {
             title: "SplitView"
             page: "content/SplitViewPage.qml"
         }
+        ListElement {
+            title: "DateTimeEdit"
+            page: "content/DateTimeEditPage.qml"
+        }
     }
 
     StackView {
