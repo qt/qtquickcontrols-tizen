@@ -27,14 +27,14 @@ Style {
     id: style
     property TitleBar control: __control
 
-    property Component titleBar: Rectangle {
+    property Component panel: Rectangle {
+
         color: Theme.titleBar.backgroundColor
-        width: 720
-        Binding { target: control; property: "implicitWidth"; value: width }
-        height: header.height + header2.height + 30 + 30
-        Binding { target: control; property: "implicitHeight"; value: height }
+        implicitWidth: 720
+        implicitHeight: header.height + header2.height + 30 + 30
 
         FontLoader { source: Theme.fonts.defaultSource }
+
         Text {
             id: header
             anchors.top: parent.top

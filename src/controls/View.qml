@@ -28,28 +28,20 @@ Control {
     property alias backAction: prvBackAction
 
     // all View's children go to content
-    default property alias data: content.data
-
-    property alias __content: content
+    default property alias data: prvContent.data
 
     /*! \internal */
     style: Qt.createComponent(Settings.style + "/ViewStyle.qml", root)
 
-    Loader {
-        id: styleLoader
-        property alias __titleBar: prvTitleBar
-        property alias __toolBar: prvToolBar
-        property Item __control: root
-        property Action __backAction: prvBackAction
-        sourceComponent: style
-    }
-    Loader {
-        id: viewLoader
-        sourceComponent: styleLoader.item && styleLoader.item.view
+    __styleData: QtObject {
+        property alias content: prvContent
+        property alias titleBar: prvTitleBar
+        property alias toolBar: prvToolBar
+        property Action backAction: prvBackAction
     }
 
     TitleBar { id: prvTitleBar }
-    Item { id: content }
+    Item { id: prvContent   }
     ToolBar { id: prvToolBar; view: root }
     Action {
         id: prvBackAction

@@ -28,29 +28,23 @@ Style {
     id: style
     property View control: __control
 
-    property Component view: Rectangle {
-        y: __titleBar.height
-        Binding { target: __titleBar; property: "anchors.top"; value: control.top }
-        Binding { target: __titleBar; property: "anchors.left"; value: control.left }
-        Binding { target: __titleBar; property: "anchors.right"; value: control.right }
+    property Component panel: Rectangle {
+        Binding { target: styleData.titleBar; property: "anchors.top"; value: control.top }
+        Binding { target: styleData.titleBar; property: "anchors.left"; value: control.left }
+        Binding { target: styleData.titleBar; property: "anchors.right"; value: control.right }
 
-        Binding { target: control.__content; property: "anchors.top"; value: __titleBar.bottom }
-        Binding { target: control.__content; property: "anchors.bottom"; value: __toolBar.top }
-        Binding { target: control.__content; property: "anchors.left"; value: control.left }
-        Binding { target: control.__content; property: "anchors.right"; value: control.right }
+        Binding { target: styleData.content; property: "anchors.top"; value: styleData.titleBar.bottom }
+        Binding { target: styleData.content; property: "anchors.bottom"; value: styleData.toolBar.top }
+        Binding { target: styleData.content; property: "anchors.left"; value: control.left }
+        Binding { target: styleData.content; property: "anchors.right"; value: control.right }
 
-        Binding { target: __toolBar; property: "anchors.bottom"; value: control.bottom }
-        Binding { target: __toolBar; property: "anchors.left"; value: control.left }
-        Binding { target: __toolBar; property: "anchors.right"; value: control.right }
+        Binding { target: styleData.toolBar; property: "anchors.bottom"; value: control.bottom }
+        Binding { target: styleData.toolBar; property: "anchors.left"; value: control.left }
+        Binding { target: styleData.toolBar; property: "anchors.right"; value: control.right }
 
-        width: 720 // TODO Utils.appWidth
-        implicitWidth: width
-        implicitHeight: height
+        implicitWidth: 720
+        implicitHeight: 1280
 
-        Binding { target: control; property: "implicitWidth"; value: width }
-        height: 1280 - __titleBar.height - __toolBar.height // TODO Utils.appHeight
-
-        Binding { target: control; property: "implicitHeight"; value: height }
         color: Theme.colors.background
     }
 }

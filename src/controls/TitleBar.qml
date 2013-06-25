@@ -28,15 +28,4 @@ Control {
 
     /*! \internal */
     style: Qt.createComponent(Settings.style + "/TitleBarStyle.qml", root)
-
-    Loader {
-        id: styleLoader
-        property Item __control: root
-        sourceComponent: style
-    }
-
-    Loader {
-        id: titleBarLoader
-        sourceComponent: styleLoader.item.titleBar
-    }
 }

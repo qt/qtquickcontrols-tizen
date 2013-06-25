@@ -27,15 +27,4 @@ Control {
 
     /*! \internal */
     style: Qt.createComponent(Settings.style + "/ToolBarStyle.qml", root)
-
-    Loader {
-        id: styleLoader
-        property Item __control: root
-        sourceComponent: style
-    }
-
-    Loader {
-        id: toolBarLoader
-        sourceComponent: styleLoader.item.toolBar
-    }
 }

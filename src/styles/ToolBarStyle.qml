@@ -27,12 +27,10 @@ Style {
     id: style
     property ToolBar control: __control
 
-    property Component toolBar: Rectangle {
+    property Component panel: Rectangle {
+        implicitWidth: 720
+        implicitHeight: 98
         color: Theme.toolBar.backgroundColor
-        width: 720
-        Binding { target: control; property: "implicitWidth"; value: width }
-        height: 98
-        Binding { target: control; property: "implicitHeight"; value: height }
 
         ToolBarButton {
             id: moreButton
