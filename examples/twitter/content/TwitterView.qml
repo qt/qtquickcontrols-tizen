@@ -58,4 +58,5 @@ View {
             flickableItem: listView
         }
     }
+    backAction.onTriggered: Qt.quit()
 }
