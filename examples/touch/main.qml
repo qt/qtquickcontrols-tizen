@@ -41,132 +41,102 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Tizen 1.0
+import QtQuick.Window 2.0
 import "content"
 
 ApplicationWindow {
+    id: appWindow
     y: 60
     width: 720
     height: 1220
-
-    Rectangle {
-        color: "#F8F6EF"
+    View {
+        id: view
         anchors.fill: parent
-    }
-    property bool active:Qt.application.active
 
-    onActiveChanged: {
-        if (!active) {
-            Qt.quit()
-        }
-    }
+        titleBar.text: "Controls Gallery"
+        titleBar.subText: pageStack.depth > 1 ? pageStack.currentItem: "Main Page"
+        property bool active:Qt.application.active
 
-    // Implements back key navigation
-    Keys.onReleased: {
-        if (event.key === Qt.Key_Back) {
-            if (pageStack.depth > 1) {
-                pageStack.pop();
-                event.accepted = true;
-            } else { Qt.quit(); }
-        }
-    }
 
-    toolBar: BorderImage {
-        border.bottom: 8
-        source: "images/toolbar.png"
-        width: parent.width
-        height: 100
-
-        Rectangle {
-            id: backButton
-            width: opacity ? 60 : 0
-            anchors.left: parent.left
-            anchors.leftMargin: 20
-            opacity: pageStack.depth > 1 ? 1 : 0
-            anchors.verticalCenter: parent.verticalCenter
-            antialiasing: true
-            height: 60
-            radius: 4
-            color: backmouse.pressed ? "#EEEEEE" : "transparent"
-            Behavior on opacity { NumberAnimation{} }
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                source: "images/navigation_previous_item.png"
+        /*SOME UGLY HACK - FIXME*/
+        onActiveChanged: {
+            /* quit only on device*/
+            if (!active && Screen.width == 720 && Screen.height == 1280) {
+                Qt.quit()
             }
-            MouseArea {
-                id: backmouse
-                anchors.fill: parent
-                anchors.margins: -10
-                onClicked: pageStack.pop()
+        }
+        backAction.onTriggered: pageStack.depth > 1 ? pageStack.pop() : Qt.quit()
+        // Implements back key navigation
+        Keys.onReleased: {
+            if (event.key === Qt.Key_Back) {
+                if (pageStack.depth > 1) {
+                    pageStack.pop();
+                    event.accepted = true;
+                } else { Qt.quit(); }
             }
         }
 
-        Text {
-            font.pixelSize: 42
-            Behavior on x { NumberAnimation{ easing.type: Easing.OutCubic} }
-            x: backButton.x + backButton.width + 20
-            anchors.verticalCenter: parent.verticalCenter
-            color: "white"
-            text: "Widget Gallery"
+        ListModel {
+            id: pageModel
+            ListElement {
+                title: "Buttons"
+                page: "content/ButtonPage.qml"
+            }
+            ListElement {
+                title: "Sliders"
+                page: "content/SliderPage.qml"
+            }
+            ListElement {
+                title: "ProgressBar"
+                page: "content/ProgressBarPage.qml"
+            }
+            ListElement {
+                title: "Tabs"
+                page: "content/TabBarPage.qml"
+            }
+            ListElement {
+                title: "CheckBoxes"
+                page: "content/CheckBoxPage.qml"
+            }
+            ListElement {
+                title: "ContextMenu"
+                page: "content/ContextMenuPage.qml"
+            }
+            ListElement {
+                title: "SplitView"
+                page: "content/SplitViewPage.qml"
+            }
+            ListElement {
+                title: "DateTimeEdit"
+                page: "content/DateTimeEditPage.qml"
+            }
         }
-    }
 
-    ListModel {
-        id: pageModel
-        ListElement {
-            title: "Buttons"
-            page: "content/ButtonPage.qml"
-        }
-        ListElement {
-            title: "Sliders"
-            page: "content/SliderPage.qml"
-        }
-        ListElement {
-            title: "ProgressBar"
-            page: "content/ProgressBarPage.qml"
-        }
-        ListElement {
-            title: "Tabs"
-            page: "content/TabBarPage.qml"
-        }
-        ListElement {
-            title: "CheckBoxes"
-            page: "content/CheckBoxPage.qml"
-        }
-        ListElement {
-            title: "ContextMenu"
-            page: "content/ContextMenuPage.qml"
-        }
-        ListElement {
-            title: "SplitView"
-            page: "content/SplitViewPage.qml"
-        }
-        ListElement {
-            title: "DateTimeEdit"
-            page: "content/DateTimeEditPage.qml"
-        }
-    }
+        StackView {
+            id: pageStack
+            anchors.fill: parent
 
-    StackView {
-        id: pageStack
-        anchors.fill: parent
-
-        initialItem: Item {
-            width: parent.width
-            height: parent.height
+            initialItem: Item {
+                width: parent.width
+                height: parent.height
 
 
-            ListView {
-                id:listView
-                model: pageModel
-                anchors.fill: parent
-                clip:true
-                delegate: AndroidDelegate {
-                    text: title
-                    onClicked: pageStack.push(Qt.resolvedUrl(page))
+                ListView {
+                    id:listView
+                    model: pageModel
+                    anchors.fill: parent
+                    clip:true
+
+                    delegate: AndroidDelegate {
+                        text: title
+                        onClicked: {
+                            view.titleBar.subText = Qt.binding(function() {return pageStack.depth > 1 ? title: "Main Page"})
+                            pageStack.push(Qt.resolvedUrl(page))
+                        }
+                    }
+                    ScrollDecorator {flickableItem: listView}
                 }
-                ScrollDecorator {flickableItem: listView}
             }
         }
     }
-
 }
