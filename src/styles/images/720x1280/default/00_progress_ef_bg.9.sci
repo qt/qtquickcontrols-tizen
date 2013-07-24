@@ -1,5 +1,5 @@
 border.left: 17
 border.right: 17
-border.top: 17
-border.bottom: 18
+border.top: 12
+border.bottom: 14
 source: 00_progress_ef_bg.9.png

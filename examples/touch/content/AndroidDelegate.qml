@@ -38,11 +38,9 @@
 **
 ****************************************************************************/
 
-
-
-
-
 import QtQuick 2.1
+import QtQuick.Controls.Styles.Tizen 1.0
+import QtQuick.Controls.Tizen 1.0
 
 Item {
     id: root
@@ -55,12 +53,12 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "#11ffffff"
-        visible: mouse.pressed
+        visible: detailButton.pressed
     }
 
     Text {
         id: textitem
-        color: "black"
+        color: Theme.colors.foreground
         font.pixelSize: 32
         text: modelData
         anchors.verticalCenter: parent.verticalCenter
@@ -76,17 +74,20 @@ Item {
         color: "#424246"
     }
 
-    Image {
-        anchors.right: parent.right
-        anchors.rightMargin: 20
-        anchors.verticalCenter: parent.verticalCenter
-        source: "../images/navigation_next_item.png"
-    }
-
     MouseArea {
         id: mouse
         anchors.fill: parent
         onClicked: root.clicked()
 
     }
+
+
+    DetailButton {
+        id:detailButton
+        anchors.right: parent.right
+        anchors.rightMargin: 20
+        anchors.verticalCenter: parent.verticalCenter
+        onClicked: root.clicked()
+    }
+
 }

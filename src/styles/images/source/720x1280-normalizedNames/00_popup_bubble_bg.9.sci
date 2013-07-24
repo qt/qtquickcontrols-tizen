@@ -1,5 +1,5 @@
-border.left: 20
-border.right: 22
-border.top: 21
-border.bottom: 21
+border.left: 26
+border.right: 27
+border.top: 22
+border.bottom: 22
 source: 00_popup_bubble_bg.9.png

@@ -101,8 +101,8 @@ Control {
         id: fakeHandle
         anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
         anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
-        width: __panel.handleWidth
-        height: __panel.handleHeight
+        width: __horizontal ? __panel.handleWidth : __panel.handleHeight
+        height: __horizontal ? __panel.handleHeight : __panel.handleWidth
     }
 
     MouseArea {

@@ -45,13 +45,10 @@ SliderStyle {
         Floater {
             id:floater
             content: TizenBorderImage {
-                smooth: true
                 implicitWidth: Math.max(txt.contentWidth+txt.anchors.margins, Theme.slider.handle.overlay.width)
                 implicitHeight: Theme.slider.handle.overlay.height
-                //height: Theme.slider.handle.overlay.height
                 source: Theme.slider.handle.overlay.source
                 backgroundColor: Theme.slider.handle.overlay.backgroundColor
-                effectSource: Theme.slider.handle.overlay.effectSource
                 Text {
                     id:txt
                     anchors.top: parent.top

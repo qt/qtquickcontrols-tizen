@@ -1,0 +1,2358 @@
+//
+// Open Service Platform
+// Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
+//
+// Licensed under the Apache License, Version 2.0 (the License);
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0/
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+#include <dlfcn.h>
+#include <pthread.h>
+#include <feedback/feedback.h>
+#include <FBaseInteger.h>
+#include <FBaseByteBuffer.h>
+#include <FBaseColIMap.h>
+#include <FBaseColArrayListT.h>
+#include <FBaseSysLog.h>
+#include <FIoDirectory.h>
+#include <FIoFile.h>
+#include <FGrpBitmap.h>
+#include <FGrpDimension.h>
+#include <FGrpColor.h>
+#include <FMediaImageTypes.h>
+#include <FUiCtrlAnimationFrame.h>
+#include <FApp_AppInfo.h>
+#include <FAppPkg_PackageAppInfoImpl.h>
+#include <FIo_DirectoryImpl.h>
+#include <FGrp_BitmapImpl.h>
+#include <FGrp_CanvasImpl.h>
+#include <FGrp_CoordinateSystem.h>
+#include <FGrp_Screen.h>
+#include <FMedia_ImageDecoder.h>
+#include <FSys_SystemInfoImpl.h>
+#include "FUi_Control.h"
+#include "FUi_ControlManager.h"
+#include "FUi_CoordinateSystemUtils.h"
+#include "FUi_ResourceManager.h"
+#include "FUi_ResourceStringLoader.h"
+#include "FUi_ResourceConfigLoader.h"
+#include "FUi_ResourceConfigParser.h"
+#include "FUi_ResourceMapContainer.h"
+
+using namespace Tizen::App;
+using namespace Tizen::App::Package;
+using namespace Tizen::Base;
+using namespace Tizen::Base::Collection;
+using namespace Tizen::Io;
+using namespace Tizen::Graphics;
+using namespace Tizen::Media;
+using namespace Tizen::Ui::Controls;
+using namespace Tizen::Ui::_Resource;
+
+namespace
+{
+const int DEFAULT_SCREEN_WIDTH = 720;
+const int DEFAULT_SCREEN_HEIGHT = 1280;
+
+const int DPI_FOR_XHIGH = 290;
+const int DPI_FOR_HIGH = 200;
+const int DPI_FOR_MIDDLE = 150;
+const int DPI_FOR_LOW = 0;
+
+template<typename T> class ResourceFallbackItemComparer
+    : public IComparerT <T>
+{
+public:
+    ResourceFallbackItemComparer(void) {}
+    virtual ~ResourceFallbackItemComparer(void) {}
+    virtual result Compare(const T& obj1, const T& obj2, int& cmp) const
+    {
+        if (obj1->scaleFactor > obj2->scaleFactor)
+        {
+            cmp = 1;
+            return E_SUCCESS;
+        }
+        else if (obj1->scaleFactor < obj2->scaleFactor)
+        {
+            cmp = -1;
+            return E_SUCCESS;
+        }
+        else
+        {
+            cmp = 0;
+            return E_SUCCESS;
+        }
+    }
+};
+
+MediaPixelFormat ConvertBitmapPixelFormatToMediaPixelFormat(BitmapPixelFormat format)
+{
+    MediaPixelFormat out = MEDIA_PIXEL_FORMAT_NONE;
+    switch(format)
+    {
+        case BITMAP_PIXEL_FORMAT_RGB565:
+            out = MEDIA_PIXEL_FORMAT_RGB565LE;
+            break;
+        case BITMAP_PIXEL_FORMAT_ARGB8888:
+            out = MEDIA_PIXEL_FORMAT_BGRA8888;
+            break;
+        case BITMAP_PIXEL_FORMAT_R8G8B8A8:
+            out = MEDIA_PIXEL_FORMAT_RGBA8888;
+            break;
+        default:
+            break;
+    }
+    return out;
+}
+
+feedback_pattern_e Convert_ResourceFeedbackPatternTofeedback_pattern_e(Tizen::Ui::_ResourceFeedbackPattern pattern)
+{
+    feedback_pattern_e outPattern = FEEDBACK_PATTERN_TAP;
+    switch (pattern)
+    {
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_TAP:
+            outPattern = FEEDBACK_PATTERN_TAP;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_SIP:
+            outPattern = FEEDBACK_PATTERN_SIP;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_SIP_BACKSPACE:
+            outPattern = FEEDBACK_PATTERN_SIP_BACKSPACE;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_MAX_CHARACTER:
+            outPattern = FEEDBACK_PATTERN_MAX_CHARACTER;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY0:
+            outPattern = FEEDBACK_PATTERN_KEY0;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY1:
+            outPattern = FEEDBACK_PATTERN_KEY1;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY2:
+            outPattern = FEEDBACK_PATTERN_KEY2;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY3:
+            outPattern = FEEDBACK_PATTERN_KEY3;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY4:
+            outPattern = FEEDBACK_PATTERN_KEY4;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY5:
+            outPattern = FEEDBACK_PATTERN_KEY5;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY6:
+            outPattern = FEEDBACK_PATTERN_KEY6;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY7:
+            outPattern = FEEDBACK_PATTERN_KEY7;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY8:
+            outPattern = FEEDBACK_PATTERN_KEY8;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY9:
+            outPattern = FEEDBACK_PATTERN_KEY9;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY_STAR:
+            outPattern = FEEDBACK_PATTERN_KEY_STAR;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_KEY_SHARP:
+            outPattern = FEEDBACK_PATTERN_KEY_SHARP;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_HOLD:
+            outPattern = FEEDBACK_PATTERN_HOLD;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_MULTI_TAP:
+            outPattern = FEEDBACK_PATTERN_MULTI_TAP;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_HW_TAP:
+            outPattern = FEEDBACK_PATTERN_HW_TAP;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_HW_HOLD:
+            outPattern = FEEDBACK_PATTERN_HW_HOLD;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_MESSAGE:
+            outPattern = FEEDBACK_PATTERN_MESSAGE;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_MESSAGE_ON_CALL:
+            outPattern = FEEDBACK_PATTERN_MESSAGE_ON_CALL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_EMAIL:
+            outPattern = FEEDBACK_PATTERN_EMAIL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_EMAIL_ON_CALL:
+            outPattern = FEEDBACK_PATTERN_EMAIL_ON_CALL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_WAKEUP:
+            outPattern = FEEDBACK_PATTERN_WAKEUP;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_WAKEUP_ON_CALL:
+            outPattern = FEEDBACK_PATTERN_WAKEUP_ON_CALL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_SCHEDULE:
+            outPattern = FEEDBACK_PATTERN_SCHEDULE;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_SCHEDULE_ON_CALL:
+            outPattern = FEEDBACK_PATTERN_SCHEDULE_ON_CALL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_TIMER:
+            outPattern = FEEDBACK_PATTERN_TIMER;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_TIMER_ON_CALL:
+            outPattern = FEEDBACK_PATTERN_TIMER_ON_CALL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_GENERAL:
+            outPattern = FEEDBACK_PATTERN_GENERAL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_GENERAL_ON_CALL:
+            outPattern = FEEDBACK_PATTERN_GENERAL_ON_CALL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_POWERON:
+            outPattern = FEEDBACK_PATTERN_POWERON;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_POWEROFF:
+            outPattern = FEEDBACK_PATTERN_POWEROFF;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_CHARGERCONN:
+            outPattern = FEEDBACK_PATTERN_CHARGERCONN;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_CHARGERCONN_ON_CALL:
+            outPattern = FEEDBACK_PATTERN_CHARGERCONN_ON_CALL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_FULLCHARGED:
+            outPattern = FEEDBACK_PATTERN_FULLCHARGED;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_FULLCHARGED_ON_CALL:
+            outPattern = FEEDBACK_PATTERN_FULLCHARGED_ON_CALL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_LOWBATT:
+            outPattern = FEEDBACK_PATTERN_LOWBATT;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_LOWBATT_ON_CALL:
+            outPattern = FEEDBACK_PATTERN_LOWBATT_ON_CALL;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_LOCK:
+            outPattern = FEEDBACK_PATTERN_LOCK;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_UNLOCK:
+            outPattern = FEEDBACK_PATTERN_UNLOCK;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_CALLCONNECT:
+            outPattern = FEEDBACK_PATTERN_CALLCONNECT;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_DISCALLCONNECT:
+            outPattern = FEEDBACK_PATTERN_DISCALLCONNECT;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_MINUTEMINDER:
+            outPattern = FEEDBACK_PATTERN_MINUTEMINDER;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_VIBRATION:
+            outPattern = FEEDBACK_PATTERN_VIBRATION;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_SHUTTER:
+            outPattern = FEEDBACK_PATTERN_SHUTTER;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_LIST_REORDER:
+            outPattern = FEEDBACK_PATTERN_LIST_REORDER;
+            break;
+        case Tizen::Ui::_RESOURCE_FEEDBACK_PATTERN_SLIDER_SWEEP:
+            outPattern = FEEDBACK_PATTERN_SLIDER_SWEEP;
+            break;
+        default:
+            break;
+    }
+    return outPattern;
+}
+}
+
+namespace Tizen { namespace Graphics
+{
+result
+_CreateCoordinateTransformer(_ICoordinateSystemTransformer*& pTransformer, int srcResolution, _BaseScreenSize srcBaseScreenSize, Dimension destResolution, _BaseScreenSize destBaseScreenSize);
+}}
+
+namespace Tizen { namespace Ui
+{
+
+int _SCREEN_HEIGHT_ = 0;
+
+Color _GetDefaultBackgroundColor(void)
+{
+    Color color;
+    GET_COLOR_CONFIG(BASIC::background, color);
+    return color;
+}
+Color _GetDefaultForegroundColor(void)
+{
+    Color color;
+    GET_COLOR_CONFIG(BASIC::foreground, color);
+    return color;
+}
+
+_ResourceManager* pRsrcMgr = null;
+
+_ResourceManager*
+_ResourceManager::GetInstance(void)
+{
+    static pthread_once_t onceBlock = PTHREAD_ONCE_INIT;
+
+    if (pRsrcMgr == null)
+    {
+        pthread_once(&onceBlock, CreateInstance);
+        pRsrcMgr->DoPostInitialization();
+    }
+    return pRsrcMgr;
+}
+
+void
+_ResourceManager::CreateInstance(void)
+{
+    static _ResourceManager pManager;
+    pRsrcMgr = &pManager;
+    _CanvasImpl::SetThemeInfoCallback(_GetDefaultForegroundColor, _GetDefaultBackgroundColor);
+}
+
+_ResourceManager::_ResourceManager(void)
+    : __pStringLoader(null)
+    , __pTransformer(null)
+    , __appBasePortraitMode("")
+    , __appBaseLandscapeMode("")
+    , __targetPortraitMode("")
+    , __targetLandscapeMode("")
+    , __defaultPortraitMode(L"720x1280")
+    , __defaultLandscapeMode(L"1280x720")
+    , __systemTheme(L"")
+    , __userTheme(L"")
+    , __appliedUserTheme(false)
+    , __initializeFeedback(false)
+    , __appBaseWidth(-1)
+    , __appBaseHeight(-1)
+    , __targetWidth(0)
+    , __targetHeight(0)
+    , __deviceDPI(0)
+    , __feedbackStatus(_RESOURCE_FEEDBACK_STATUS_INIT)
+    , __feedbackAcquireCount(0)
+    , __pFallbackList(null)
+{
+    __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT] = null;
+    __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE] = null;
+    __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT] = null;
+    __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE] = null;
+
+    int appBaseWidth = DEFAULT_SCREEN_WIDTH;
+    int appBaseHeight = DEFAULT_SCREEN_HEIGHT;
+
+    result r = E_SUCCESS;
+
+    int appLogicalResolution = _CoordinateSystem::GetInstance()->GetLogicalResolutionInt();
+
+    if (_CreateCoordinateTransformer(__pTransformer,DEFAULT_SCREEN_WIDTH, _CoordinateSystem::GetInstance()->GetLogicalBaseScreenSize(),
+            Dimension(appLogicalResolution, appLogicalResolution), _CoordinateSystem::GetInstance()->GetPhysicalBaseScreenSize()) != E_SUCCESS)
+    {
+
+        SysAssert(0);
+    }
+    r = Tizen::System::_SystemInfoImpl::GetSysInfo(L"http://tizen.org/feature/screen.dpi", __deviceDPI);
+    SysTryReturn(NID_UI, r == E_SUCCESS, , E_SYSTEM, "[E_SYSTEM] system error occurred");
+
+    _ControlManager::GetInstance()->SetScreenDpi(__deviceDPI);
+
+    switch(appLogicalResolution)
+    {
+        case 240:
+            appBaseWidth = 240;
+            appBaseHeight = 400;
+            break;
+        case 320:
+            appBaseWidth = 320;
+            appBaseHeight = 480;
+            break;
+        case 480:
+            appBaseWidth = 480;
+            appBaseHeight = 800;
+            break;
+        case 720:
+            appBaseWidth = 720;
+            appBaseHeight = 1280;
+            break;
+        default:
+            r = Tizen::System::_SystemInfoImpl::GetSysInfo("http://tizen.org/feature/screen.width", appBaseWidth);
+            SysTryReturn(NID_UI, r == E_SUCCESS, , E_SYSTEM, "[E_SYSTEM] system error occurred");
+            r = Tizen::System::_SystemInfoImpl::GetSysInfo("http://tizen.org/feature/screen.height", appBaseHeight);
+            SysTryReturn(NID_UI, r == E_SUCCESS, , E_SYSTEM, "[E_SYSTEM] system error occurred");
+            break;
+    }
+    __appBaseWidth = appBaseWidth;
+    __appBaseHeight = appBaseHeight;
+
+    __appBasePortraitMode.Append(appBaseWidth);
+    __appBasePortraitMode.Append(L"x");
+    __appBasePortraitMode.Append(appBaseHeight);
+
+    __appBaseLandscapeMode.Append(appBaseHeight);
+    __appBaseLandscapeMode.Append(L"x");
+    __appBaseLandscapeMode.Append(appBaseWidth);
+    int _width = 0;
+    int _height = 0;
+    r = Tizen::System::_SystemInfoImpl::GetSysInfo("http://tizen.org/feature/screen.width", _width);
+    SysTryReturn(NID_UI, r == E_SUCCESS, , E_SYSTEM, "[E_SYSTEM] system error occurred");
+    r = Tizen::System::_SystemInfoImpl::GetSysInfo("http://tizen.org/feature/screen.height", _height);
+    SysTryReturn(NID_UI, r == E_SUCCESS, , E_SYSTEM, "[E_SYSTEM] system error occurred");
+
+    __targetWidth = _width;
+    __targetHeight = _height;
+    __targetPortraitMode.Append(_width);
+    __targetPortraitMode.Append(L"x");
+    __targetPortraitMode.Append(_height);
+
+    __targetLandscapeMode.Append(_height);
+    __targetLandscapeMode.Append(L"x");
+    __targetLandscapeMode.Append(_width);
+
+    Dimension dim = _CoordinateSystemUtils::InverseTransform(Dimension(_Screen::GetWidth(), _Screen::GetHeight()));
+    __logicalWidth = dim.width;
+    __logicalHeight = dim.height;
+    LoadThemeInformation(__systemTheme, __userTheme);
+
+    // theme 2.0
+    __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT] = new (std::nothrow) MapContainer();
+    SysTryReturnVoidResult(NID_UI, __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT], E_OUT_OF_MEMORY, "[E_OUT_OF_MEMORY] Memory allocation is failed.");
+    __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->SetResolution(__appBasePortraitMode);
+    if (!(InitializeTheme(*__pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT])))
+    {
+        SysAssert(0);
+    }
+    __pStringLoader = new (std::nothrow) StringLoader();
+    SysTryReturnVoidResult(NID_UI, __pStringLoader, E_OUT_OF_MEMORY, "[E_OUT_OF_MEMORY] Memory allocation is failed.");
+}
+
+bool
+_ResourceManager::InitializeTheme(MapContainer& mapContainer)
+{
+    bool r = true;
+    String themeFile(L"");
+    mapContainer.CreateMap(RESOURCE_TYPE_SHAPE);
+    mapContainer.CreateMap(RESOURCE_TYPE_FIXED_VALUE);
+    mapContainer.CreateMap(RESOURCE_TYPE_DIMENSION);
+    mapContainer.CreateMap(RESOURCE_TYPE_IMAGE);
+    mapContainer.CreateMap(RESOURCE_TYPE_COLOR);
+    mapContainer.CreateMap(RESOURCE_TYPE_ANIMATION);
+    mapContainer.SetResolution(__appBasePortraitMode);
+
+    themeFile = String(L"/usr/share/osp/themes/"+__systemTheme + ".xml");
+
+    LoadPaletteInformation(__systemTheme);
+    LoadConfig(__appBasePortraitMode, mapContainer, __appBaseWidth, __appBaseHeight);
+    if (__userTheme.GetLength() > 0)
+    {
+        themeFile = String(_AppInfo::GetAppRootPath()+L"res/themes/" +__userTheme + L"/" +__userTheme + ".xml");
+        if(File::IsFileExist(themeFile))
+        {
+            ConfigParser* pParser = new (std::nothrow) ConfigParser();
+            SysTryReturn(NID_UI, pParser, false, E_OUT_OF_MEMORY, "[E_OUT_OF_MEMORY] Memory allocation is failed.");
+            r = pParser->Parse(themeFile, mapContainer);
+            delete pParser;
+        }
+    }
+
+    return r;
+}
+
+void
+_ResourceManager::LoadConfig(const String& resolution, MapContainer& mapContainer, int width, int height)
+{
+    _ICoordinateSystemTransformer* pTransformer = _CoordinateSystem::GetTransformerN(__appBaseWidth, _CoordinateSystem::GetInstance()->GetLogicalBaseScreenSize(),
+    Dimension(width, height), BASE_SCREEN_SIZE_NORMAL);
+
+    if (pTransformer)
+    {
+        _SCREEN_HEIGHT_ = pTransformer->Transform(__logicalHeight);
+    }
+    else
+    {
+        _SCREEN_HEIGHT_ = __logicalHeight;
+    }
+
+    SysLog(NID_UI, "_SCREEN_HEIGHT_ : %d, resolution : %ls", _SCREEN_HEIGHT_, resolution.GetPointer());
+    int count = ConfigLoader::GetInstance()->GetInitFuncCount();
+    for (int i = 0; i < count; i++)
+    {
+        _Init_Func func = null;
+        ConfigLoader::GetInstance()->GetInitFunc(i, func);
+        if (func)
+        {
+            func(mapContainer, resolution);
+        }
+    }
+    delete pTransformer;
+}
+
+void
+_ResourceManager::DoPostInitialization(void)
+{
+    if (_AppInfo::IsOspCompat())
+    {
+        SysLog(NID_UI, "Compatibility symbols are loaded.");
+        SetSystemColor();
+    }
+}
+
+MapContainer*
+_ResourceManager::GetMapContainer(MapContainerType type)
+{
+    MapContainer* pContainer = null;
+    switch (type)
+    {
+        case MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT:
+            pContainer = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT];
+            break;
+        case MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE:
+            if (__pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE])
+            {
+                pContainer = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE];
+            }
+            else
+            {
+                pContainer = new (std::nothrow) MapContainer();
+                SysTryReturn(NID_UI, pContainer, null, E_OUT_OF_MEMORY, "[E_OUT_OF_MEMORY] Memory allocation is failed.");
+                pContainer->SetResolution(__appBaseLandscapeMode);
+                pContainer->CreateMap(RESOURCE_TYPE_SHAPE);
+                pContainer->CreateMap(RESOURCE_TYPE_DIMENSION);
+                pContainer->CreateMap(RESOURCE_TYPE_FIXED_VALUE);
+                LoadConfig(__appBaseLandscapeMode, *pContainer, __appBaseWidth, __appBaseHeight);
+                __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE] = pContainer;
+            }
+            break;
+        case MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT:
+            if (__pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT])
+            {
+                pContainer = __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT];
+            }
+            else
+            {
+                if(__defaultPortraitMode == __appBasePortraitMode)
+                {
+                    __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT] = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT];
+                    __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE] = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE];
+                    pContainer = __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT];
+                }
+                else
+                {
+                    pContainer = new (std::nothrow) MapContainer();
+                    SysTryReturn(NID_UI, pContainer, null, E_OUT_OF_MEMORY, "[E_OUT_OF_MEMORY] Memory allocation is failed.");
+                    pContainer->SetResolution(__defaultPortraitMode);
+                    pContainer->CreateMap(RESOURCE_TYPE_SHAPE);
+                    pContainer->CreateMap(RESOURCE_TYPE_DIMENSION);
+                    pContainer->CreateMap(RESOURCE_TYPE_FIXED_VALUE);
+                    LoadConfig(__defaultPortraitMode, *pContainer, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
+                    __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT] = pContainer;
+                }
+            }
+            break;
+        case MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE:
+            if (__pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE])
+            {
+                pContainer = __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE];
+            }
+            else
+            {
+                if(__defaultPortraitMode == __appBasePortraitMode)
+                {
+                    __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT] = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT];
+                    __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE] = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE];
+                    pContainer = __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE];
+                }
+                else
+                {
+                    pContainer = new (std::nothrow) MapContainer();
+                    SysTryReturn(NID_UI, pContainer, null, E_OUT_OF_MEMORY, "[E_OUT_OF_MEMORY] Memory allocation is failed.");
+                    pContainer->SetResolution(__defaultLandscapeMode);
+                    pContainer->CreateMap(RESOURCE_TYPE_SHAPE);
+                    pContainer->CreateMap(RESOURCE_TYPE_DIMENSION);
+                    pContainer->CreateMap(RESOURCE_TYPE_FIXED_VALUE);
+                    LoadConfig(__defaultLandscapeMode, *pContainer, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
+                    __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE] = pContainer;
+                }
+            }
+            break;
+        default:
+            break;
+    }
+    return pContainer;
+}
+
+_ResourceManager::~_ResourceManager(void)
+{
+    delete __pStringLoader;
+    __pStringLoader = null;
+    delete __pTransformer;
+    __pTransformer = null;
+
+    if(__pFallbackList)
+    {
+        ResourceFallbackItem* pItem = null;
+        int count = __pFallbackList->GetCount();
+        for (int i = 0; i < count; i++)
+        {
+            __pFallbackList->GetAt(i, pItem);
+            delete pItem;
+        }
+        __pFallbackList->RemoveAll();
+        delete __pFallbackList;
+        __pFallbackList = null;
+    }
+
+    bool deleteDefaultMap = true;
+    if (__pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT] == __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT])
+    {
+        deleteDefaultMap = false;
+    }
+    delete __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT];
+    __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT] = null;
+    delete __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE];
+    __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE] = null;
+
+    if (deleteDefaultMap)
+    {
+        delete __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT];
+        __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT] = null;
+        delete __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE];
+        __pMapContainer[MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE] = null;
+    }
+
+    feedback_deinitialize();
+}
+void
+_ResourceManager::ReloadTheme(Tizen::Base::String& themeName, bool userdefine)
+{
+    if(userdefine)
+    {
+        __userTheme = themeName;
+    }
+    else
+    {
+        __systemTheme = themeName;
+    }
+}
+
+result
+_ResourceManager::GetBitmapInternalN(const String& fileName, BitmapPixelFormat pixelFormat, _ControlOrientation orientation, bool isCustom, Bitmap*& pBitmap)
+{
+    result r = E_SYSTEM;
+    Bitmap* pTempBitmap = null;
+    int foundFolderWidth = 0;
+    String fullName = FindImagePath(fileName, foundFolderWidth, isCustom);
+    if(foundFolderWidth == __targetWidth)
+    {
+        pTempBitmap = new (std::nothrow) Bitmap;
+        SysTryReturn(NID_UI, pTempBitmap, E_OUT_OF_MEMORY, E_OUT_OF_MEMORY, "[%s] Propagating.", GetErrorMessage(r));
+        r = _BitmapImpl::GetInstance(*pTempBitmap)->Construct(fullName, pixelFormat);
+        SysTryCatch(NID_UI, r == E_SUCCESS, , r, "[%s] Propagating.", GetErrorMessage(r));
+        pBitmap = pTempBitmap;
+        return r;
+    }
+    else
+    {
+        if (_BitmapImpl::HasNinePatchedBitmapTag(fileName))
+        {
+            pTempBitmap = new (std::nothrow) Bitmap;
+            SysTryReturn(NID_UI, pTempBitmap, E_OUT_OF_MEMORY, E_OUT_OF_MEMORY, "[%s] Propagating.", GetErrorMessage(r));
+            r = _BitmapImpl::GetInstance(*pTempBitmap)->Construct(fullName, pixelFormat);
+            SysTryCatch(NID_UI, r == E_SUCCESS, , r, "[%s] Propagating.", GetErrorMessage(r));
+            pBitmap = pTempBitmap;
+            return r;
+        }
+        else
+        {
+            ByteBuffer* pImageBuffer = null;
+            int imageWidth = 0;
+            int imageHeight = 0;
+            MediaPixelFormat format = ConvertBitmapPixelFormatToMediaPixelFormat(pixelFormat);
+            pImageBuffer = _ImageDecoder::DecodeToBufferN(fullName, format, imageWidth, imageHeight);
+            if (pImageBuffer)
+            {
+                pTempBitmap = _BitmapImpl::GetNonScaledBitmapN(*pImageBuffer, Dimension(imageWidth, imageHeight), pixelFormat);
+                delete pImageBuffer;
+            }
+            if(pTempBitmap != null)
+            {
+                if (_BitmapImpl::CheckNinePatchedBitmapStrictly(*pTempBitmap))
+                {
+                    pBitmap = pTempBitmap;
+                    r = E_SUCCESS;
+                }
+                else
+                {
+                    float scaleFactor = (float)((float)__targetWidth/(float)foundFolderWidth);
+                    r = pTempBitmap->Scale(Dimension(pTempBitmap->GetWidth()*scaleFactor, pTempBitmap->GetHeight()*scaleFactor));
+                    if (r == E_SUCCESS)
+                    {
+                        pBitmap = pTempBitmap;
+                    }
+                    else
+                    {
+                        delete pTempBitmap;
+                    }
+                }
+            }
+        }
+    }
+    return r;
+CATCH:
+    delete pTempBitmap;
+    return r;
+}
+
+result
+_ResourceManager::GetBitmapN(int bitmapId, BitmapPixelFormat pixelFormat, _ControlOrientation orientation, Bitmap*& pBitmap)
+{
+    result r = E_SYSTEM;
+    ResourceItem* pItem = null;
+    String fileName;
+    r = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetImageMap()->GetValue(bitmapId, pItem);
+    if (r == E_SUCCESS)
+    {
+        fileName = pItem->GetImageName();
+        if (fileName.IsEmpty())
+        {
+            r = E_OBJ_NOT_FOUND;
+        }
+        else
+        {
+            r = GetBitmapInternalN(fileName, pixelFormat, orientation, IsCustomBitmap(bitmapId), pBitmap);
+        }
+    }
+    return r;
+}
+
+result
+_ResourceManager::GetString(const char* stringId, String& string)
+{
+    return __pStringLoader->GetString(stringId, string);
+}
+
+result
+_ResourceManager::GetColor(int colorId, Color& color)
+{
+    result r = E_SYSTEM;
+    ResourceItem* pItem = null;
+    r = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetColorMap()->GetValue(colorId, pItem);
+    if(r == E_SUCCESS)
+    {
+        if(pItem->isInitialized())
+        {
+            color.SetRGB32(pItem->GetColor(), true);
+        }
+        else
+        {
+            unsigned int value = 0;
+            ResourceItem* pPaletteItem = null;
+            const char* key = pItem->GetRawString();
+            ResourceKey resourceKey(key);
+            __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetPalette()->GetValue(resourceKey, pPaletteItem);
+            if(pPaletteItem)
+            {
+                value = pPaletteItem->GetColor();
+                pItem->SetRawDataColor(value);
+                color.SetRGB32(value, true);
+            }
+            else
+            {
+                color.SetRGB32(0,true);
+            }
+        }
+    }
+    return r;
+}
+
+result
+_ResourceManager::GetDimension(int dimensionId, _ControlOrientation orientation, Dimension& dimension)
+{
+    result r = E_SUCCESS;
+    ResourceItem* pItem = null;
+
+    if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT)->GetDimensionMap()->GetValue(dimensionId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetDimensionMap()->GetValue(dimensionId, pItem);
+        }
+    }
+    else
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetDimensionMap()->GetValue(dimensionId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT)->GetDimensionMap()->GetValue(dimensionId, pItem);
+        }
+    }
+
+    if (r == E_SUCCESS)
+    {
+        dimension.SetSize(pItem->GetDimension().width, pItem->GetDimension().height);
+    }
+    else
+    {
+        r = GetDefaultShapeWithScaling(dimensionId, orientation, dimension);
+    }
+
+    return r;
+}
+
+result
+_ResourceManager::GetDimension(int dimensionId, _ControlOrientation orientation, Tizen::Graphics::FloatDimension& dimension)
+{
+    result r = E_SUCCESS;
+    ResourceItem* pItem = null;
+
+    if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT)->GetDimensionMap()->GetValue(dimensionId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetDimensionMap()->GetValue(dimensionId, pItem);
+        }
+    }
+    else
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetDimensionMap()->GetValue(dimensionId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT)->GetDimensionMap()->GetValue(dimensionId, pItem);
+        }
+    }
+
+    if (r == E_SUCCESS)
+    {
+        dimension = pItem->GetDimension();
+    }
+    else
+    {
+        r = GetDefaultShapeWithScaling(dimensionId, orientation, dimension);
+    }
+
+    return r;
+}
+
+result
+_ResourceManager::GetAnimationN(int animationId, ArrayList*& pList)
+{
+    ResourceAnimationFrameList* pFrameList = null;
+    AnimationFrame* pFrame = null;
+    Bitmap* pBitmap = null;
+    ResourceItem* pItem = null;
+
+    bool isCustom = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetAnimationMap()->IsUserThemeItem(animationId);
+    result r = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetAnimationMap()->GetValue(animationId, pItem);
+    SysTryReturnResult(NID_UI, r == E_SUCCESS, E_SYSTEM,"System error is occured.");
+
+    pFrameList = pItem->GetAnimationFrameList();
+    Tizen::Base::Collection::LinkedListT<ResourceAnimationFrame>* pAnimationList = static_cast<Tizen::Base::Collection::LinkedListT<ResourceAnimationFrame>* >(pFrameList->GetAnimationList());
+    if (pAnimationList == null)
+    {
+        return E_SYSTEM;
+    }
+    int count = pAnimationList->GetCount();
+    if (count == 0)
+    {
+        return E_SYSTEM;
+    }
+    pList = new (std::nothrow) ArrayList();
+    int i = 0;
+    for (; i < count ; i++)
+    {
+        ResourceAnimationFrame frame;
+        r = pAnimationList->GetAt(i, frame);
+        SysTryCatch(NID_UI, r == E_SUCCESS, , E_SYSTEM,"System error is occured.");
+        r = GetBitmapInternalN(frame.__fileName, BITMAP_PIXEL_FORMAT_ARGB8888, _CONTROL_ORIENTATION_PORTRAIT, isCustom, pBitmap);
+        SysTryCatch(NID_UI, r == E_SUCCESS, , E_SYSTEM,"System error is occured.");
+        pFrame = new (std::nothrow) AnimationFrame(*pBitmap, frame.__duration);
+        SysTryCatch(NID_UI, pFrame, , E_SYSTEM,"System error is occured.");
+        pList->Add(pFrame);
+        delete pBitmap;
+    }
+    return E_SUCCESS;
+
+CATCH:
+    delete pBitmap;
+    delete pFrame;
+    delete pList;
+    pList = null;
+    return E_SYSTEM;
+}
+result
+_ResourceManager::GetShape(int shapeId, _ControlOrientation orientation, int& value)
+{
+    result r = E_SUCCESS;
+    ResourceItem* pItem = null;
+
+    if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+    {
+        r = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetShapeMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetShapeMap()->GetValue(shapeId, pItem);
+        }
+    }
+    else
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetShapeMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetShapeMap()->GetValue(shapeId, pItem);
+        }
+    }
+
+    if (r == E_SUCCESS)
+    {
+        value = (int)pItem->GetFloat();
+    }
+    else
+    {
+        r = GetDefaultShapeWithScaling(shapeId, orientation, value);
+    }
+    return r;
+}
+
+result
+_ResourceManager::GetShape(int shapeId, _ControlOrientation orientation, float& value)
+{
+    result r = E_SUCCESS;
+    ResourceItem* pItem = null;
+
+    if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+    {
+        r = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetShapeMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetShapeMap()->GetValue(shapeId, pItem);
+        }
+    }
+    else
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetShapeMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetShapeMap()->GetValue(shapeId, pItem);
+        }
+    }
+
+    if (r == E_SUCCESS)
+    {
+        value = pItem->GetFloat();
+    }
+    else
+    {
+        r = GetDefaultShapeWithScaling(shapeId, orientation, value);
+    }
+
+    return r;
+}
+
+result
+_ResourceManager::GetFixedValue(int fixedValueId, _ControlOrientation orientation, int& value)
+{
+    result r = E_SUCCESS;
+    ResourceItem* pItem = null;
+
+    if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+        if (r != E_SUCCESS)
+        {
+
+            r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+        }
+    }
+    else
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+        }
+    }
+
+    if (r != E_SUCCESS)
+    {
+        if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+            if (r != E_SUCCESS)
+            {
+                r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+            }
+        }
+        else
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+            if (r != E_SUCCESS)
+            {
+                r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+            }
+        }
+    }
+
+    if (r == E_SUCCESS)
+    {
+        value = (int)(pItem->GetFloat());
+    }
+
+    return r;
+}
+
+result
+_ResourceManager::GetFixedValue(int fixedValueId, _ControlOrientation orientation, float& value)
+{
+    result r = E_SUCCESS;
+    ResourceItem* pItem = null;
+
+    if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+        if (r != E_SUCCESS)
+        {
+
+            r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+        }
+    }
+    else
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_LANDSCAPE)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+        }
+    }
+
+    if (r != E_SUCCESS)
+    {
+        if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+            if (r != E_SUCCESS)
+            {
+                r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+            }
+        }
+        else
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+            if (r != E_SUCCESS)
+            {
+                r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetFixedValueMap()->GetValue(fixedValueId, pItem);
+            }
+        }
+    }
+
+    if (r == E_SUCCESS)
+    {
+        value = pItem->GetFloat();
+    }
+
+    return r;
+}
+
+bool
+_ResourceManager::IsCustomColor(int colorId)
+{
+    return __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetColorMap()->IsUserThemeItem(colorId);
+}
+bool
+_ResourceManager::IsCustomBitmap(int bitmapId)
+{
+    return __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetImageMap()->IsUserThemeItem(bitmapId);
+}
+
+result
+_ResourceManager::PlayFeedback(_ResourceFeedbackPattern pattern, const _Control* pControl)
+{
+    if (unlikely(__initializeFeedback == false))
+    {
+        feedback_error_e error = (feedback_error_e)feedback_initialize();
+        if(error != FEEDBACK_ERROR_NONE)
+        {
+            SysLog(NID_UI, "It failed to initialize feedback module.");
+        }
+        __initializeFeedback = true;
+    }
+    if (__feedbackStatus == _RESOURCE_FEEDBACK_STATUS_PLAYED)
+    {
+        SysLog(NID_UI, "feedback is already played.");
+        return E_SUCCESS;
+    }
+
+    bool play = true;
+    _Control* pTempControl = const_cast<_Control*>(pControl);
+
+    while(pTempControl)
+    {
+        if (pTempControl->IsEffectSoundEnabled() == false)
+        {
+            play = false;
+            break;
+        }
+        pTempControl = pTempControl->GetParent();
+    }
+
+    if (!play)
+    {
+        SysLog(NID_UI, "feedback is disabled for this control");
+        return E_SUCCESS;
+    }
+
+    feedback_pattern_e playPattern = Convert_ResourceFeedbackPatternTofeedback_pattern_e(pattern);
+    __feedbackStatus = _RESOURCE_FEEDBACK_STATUS_PLAYED;
+    int r = feedback_play(playPattern);
+    if (r == FEEDBACK_ERROR_NONE)
+    {
+        SysLog(NID_UI, "It succeeded to play feedback.");
+        return E_SUCCESS;
+    }
+    else
+    {
+        SysLog(NID_UI, "It failed to play feedback.");
+        return E_SYSTEM;
+    }
+    return E_SUCCESS;
+}
+
+result
+_ResourceManager::GetDefaultShapeWithScaling(int shapeId, _ControlOrientation orientation, int& value)
+{
+    result r = E_SUCCESS;
+    ResourceItem* pItem = null;
+
+    if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetShapeMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetShapeMap()->GetValue(shapeId, pItem);
+        }
+    }
+    else
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetShapeMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetShapeMap()->GetValue(shapeId, pItem);
+        }
+    }
+
+    if (r == E_SUCCESS)
+    {
+        value = (int)pItem->GetFloat();
+    }
+
+    if (r == E_SUCCESS)
+    {
+        int temp = __pTransformer->Transform(value);
+        if (temp == 0 && value > 0)
+        {
+            value = 1;
+        }
+        else
+        {
+            value = temp;
+        }
+    }
+    return r;
+}
+
+result
+_ResourceManager::GetDefaultShapeWithScaling(int shapeId, _ControlOrientation orientation, Tizen::Graphics::FloatDimension& dimension)
+{
+    result r = E_SUCCESS;
+    ResourceItem* pItem = null;
+
+    if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetDimensionMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetDimensionMap()->GetValue(shapeId, pItem);
+        }
+    }
+    else
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetDimensionMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetDimensionMap()->GetValue(shapeId, pItem);
+        }
+    }
+
+    if (r == E_SUCCESS)
+    {
+        dimension = __pTransformer->Transform(pItem->GetDimension());
+    }
+
+    return r;
+}
+
+result
+_ResourceManager::GetDefaultShapeWithScaling(int shapeId, _ControlOrientation orientation, float& outValue)
+{
+    result r = E_SUCCESS;
+    ResourceItem* pItem = null;
+
+    if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetShapeMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetShapeMap()->GetValue(shapeId, pItem);
+        }
+    }
+    else
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetShapeMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetShapeMap()->GetValue(shapeId, pItem);
+        }
+    }
+
+    if (r == E_SUCCESS)
+    {
+        outValue = __pTransformer->Transform(pItem->GetFloat());
+    }
+
+    return r;
+}
+
+result
+_ResourceManager::GetDefaultShapeWithScaling(int shapeId, _ControlOrientation orientation, Dimension& dimension)
+{
+    result r = E_SUCCESS;
+    ResourceItem* pItem = null;
+
+    if (orientation == _CONTROL_ORIENTATION_PORTRAIT)
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetDimensionMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetDimensionMap()->GetValue(shapeId, pItem);
+        }
+    }
+    else
+    {
+        r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_LANDSCAPE)->GetDimensionMap()->GetValue(shapeId, pItem);
+        if (r != E_SUCCESS)
+        {
+            r = GetMapContainer(MAP_CONTAINER_TYPE_DEFAULT_PORTRAIT)->GetDimensionMap()->GetValue(shapeId, pItem);
+        }
+    }
+
+    if (r == E_SUCCESS)
+    {
+        Dimension dim((int)pItem->GetDimension().width, (int)pItem->GetDimension().height);
+        Dimension temp = __pTransformer->Transform(dim);
+        if (temp.width == 0 && dim.width > 0)
+        {
+            temp.width = 1;
+        }
+        if (temp.height == 0 && dim.height > 0)
+        {
+            temp.height = 1;
+        }
+        dimension = temp;
+    }
+    return r;
+}
+
+#define ADD_PALETTE(id, value)\
+        {\
+            ResourceKey resourceKey(#id);\
+            ResourceItem* pItem = new (std::nothrow) ResourceItem(RESOURCE_TYPE_COLOR); \
+            pItem->SetRawDataColor(value);\
+            __pMapContainer[MAP_CONTAINER_TYPE_APP_BASE_PORTRAIT]->GetPalette()->Add(resourceKey, pItem);\
+        }
+
+void
+_ResourceManager::LoadBlackPalette(void)
+{
+    ADD_PALETTE(BASIC::foreground, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::background, 0xFF000000);
+    ADD_PALETTE(BASIC::B011, 0xFF000000);
+    ADD_PALETTE(BASIC::B012, 0xFF000000);
+    ADD_PALETTE(BASIC::B013, 0xFF000000);
+    ADD_PALETTE(BASIC::B014, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::B015, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::B016, 0xFF000000);
+    ADD_PALETTE(BASIC::B017, 0xFF000000);
+    ADD_PALETTE(BASIC::B018, 0xFF6590FF);
+    ADD_PALETTE(BASIC::B0211, 0xFF000000);
+    ADD_PALETTE(BASIC::B0211D, 0xFF000000);
+    ADD_PALETTE(BASIC::B0212, 0xFF1C1E28);
+    ADD_PALETTE(BASIC::B0213, 0xFF404040);
+    ADD_PALETTE(BASIC::B0214, 0xFF222C47);
+    ADD_PALETTE(BASIC::B0215, 0xFF1D263C);
+    ADD_PALETTE(BASIC::B0216, 0xFF222C47);
+    ADD_PALETTE(BASIC::B0217, 0xFF11131B);
+    ADD_PALETTE(BASIC::B0217D, 0x7F11131B);
+    ADD_PALETTE(BASIC::B0221, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::B0221L1, 0xFF838CA3);
+    ADD_PALETTE(BASIC::B0221L2, 0xFF697082);
+    ADD_PALETTE(BASIC::B0221L3, 0xFF6B707E);
+    ADD_PALETTE(BASIC::B0221L4, 0xFF525252);
+    ADD_PALETTE(BASIC::B0222, 0x3FFFFFFF);
+    ADD_PALETTE(BASIC::B0223, 0x00000000);
+    ADD_PALETTE(BASIC::B0224, 0xFF27282B);
+    ADD_PALETTE(BASIC::B0225, 0xFF2A5181);
+    ADD_PALETTE(BASIC::B0226, 0xFF4B73A3);
+    ADD_PALETTE(BASIC::B0227, 0xFF000000);
+    ADD_PALETTE(BASIC::B0228, 0xFF1A5274);
+    ADD_PALETTE(BASIC::B0232, 0x00000000);
+    ADD_PALETTE(BASIC::B0233, 0x00000000);
+    ADD_PALETTE(BASIC::B031, 0x00000000);
+    ADD_PALETTE(BASIC::B041, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::B041P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B042, 0xFF2A39AC);
+    ADD_PALETTE(BASIC::B043, 0x00001BEA);
+    ADD_PALETTE(BASIC::B044, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::B0511, 0xFF313F66);
+    ADD_PALETTE(BASIC::B0511P, 0xFF2A39AC);
+    ADD_PALETTE(BASIC::B0512, 0x00000000);
+    ADD_PALETTE(BASIC::B0513, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::B0514, 0xFF313F66);
+    ADD_PALETTE(BASIC::B0514P1, 0xFF303FB2);
+    ADD_PALETTE(BASIC::B0514P2, 0xFF5163E9);
+    ADD_PALETTE(BASIC::B0514L3, 0xFF6590FF);
+    ADD_PALETTE(BASIC::B0515L1, 0xFF464C5E);
+    ADD_PALETTE(BASIC::B0515L2, 0x7F454442);
+    ADD_PALETTE(BASIC::B0516, 0x00000000);
+    ADD_PALETTE(BASIC::B0517, 0x00000000);
+    ADD_PALETTE(BASIC::B0517P1, 0x00000000);
+    ADD_PALETTE(BASIC::B0517P2, 0x00000000);
+    ADD_PALETTE(BASIC::B0518, 0xFF2E4468);
+    ADD_PALETTE(BASIC::B0518P, 0x00000000);
+    ADD_PALETTE(BASIC::B0519, 0xFFF25D28);
+    ADD_PALETTE(BASIC::B0520, 0xFF2E4468);
+    ADD_PALETTE(BASIC::B0520P, 0xFF3C649B);
+    ADD_PALETTE(BASIC::B052L1, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L1P, 0xFF5D83FF);
+    ADD_PALETTE(BASIC::B052L1D, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L2, 0x00000000);
+    ADD_PALETTE(BASIC::B052L2P, 0x005787B8);
+    ADD_PALETTE(BASIC::B052L3, 0x00000000);
+    ADD_PALETTE(BASIC::B052L3P, 0x00000000);
+    ADD_PALETTE(BASIC::B052L4, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L4P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L4D, 0x66FAFAFA);
+    ADD_PALETTE(BASIC::B052L5, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L5D, 0x66FAFAFA);
+    ADD_PALETTE(BASIC::B052L5P, 0xFF5D83FF);
+    ADD_PALETTE(BASIC::B052L6, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L6D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::B052L6P1, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L6P2, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L7, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L8, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L8P, 0xFF5D83FF);
+    ADD_PALETTE(BASIC::B052L8D, 0x66FAFAFA);
+    ADD_PALETTE(BASIC::B052L9, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L9P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L9D, 0x66FAFAFA);
+    ADD_PALETTE(BASIC::B052L10, 0x00000000);
+    ADD_PALETTE(BASIC::B0531, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::B0532, 0x00000000);
+    ADD_PALETTE(BASIC::B0533, 0x00000000);
+    ADD_PALETTE(BASIC::B0534, 0x00000000);
+    ADD_PALETTE(BASIC::B0535, 0x00000000);
+    ADD_PALETTE(BASIC::B0536, 0x00000000);
+    ADD_PALETTE(BASIC::B0537, 0x00000000);
+    ADD_PALETTE(BASIC::B0541, 0xFF6B728A);
+    ADD_PALETTE(BASIC::B0541P, 0xFF0D1D96);
+    ADD_PALETTE(BASIC::B0541D, 0x996B728A);
+    ADD_PALETTE(BASIC::B0542, 0x00000000);
+    ADD_PALETTE(BASIC::B0542P, 0x00000000);
+    ADD_PALETTE(BASIC::B0543, 0x00000000);
+    ADD_PALETTE(BASIC::B0544, 0x00000000);
+    ADD_PALETTE(BASIC::B0545, 0x00000000);
+    ADD_PALETTE(BASIC::B0551, 0x00000000);
+    ADD_PALETTE(BASIC::B0552, 0x00000000);
+    ADD_PALETTE(BASIC::B0553, 0xFFA5A5A5);
+    ADD_PALETTE(BASIC::B0554, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::B0555, 0x00000000);
+    ADD_PALETTE(BASIC::B0556, 0x00000000);
+    ADD_PALETTE(BASIC::B0557, 0x00000000);
+    ADD_PALETTE(BASIC::B0558, 0x00000000);
+    ADD_PALETTE(BASIC::B061L1, 0xFF1D263C);
+    ADD_PALETTE(BASIC::B061L2, 0xFF49577B);
+    ADD_PALETTE(BASIC::B061L3, 0xFF969A9C);
+    ADD_PALETTE(BASIC::B061L4, 0xFF1D263C);
+    ADD_PALETTE(BASIC::B061L5, 0xFF000000);
+    ADD_PALETTE(BASIC::B061L6, 0xFF333537);
+    ADD_PALETTE(BASIC::B0621L1, 0x00000000);
+    ADD_PALETTE(BASIC::B0621L2, 0x00000000);
+    ADD_PALETTE(BASIC::B0622L1, 0x001D263C);
+    ADD_PALETTE(BASIC::B0622L2, 0x3FFFFFFF);
+    ADD_PALETTE(BASIC::B0623L1, 0xFF1D263C);
+    ADD_PALETTE(BASIC::B0623L2, 0xFF626675);
+    ADD_PALETTE(BASIC::B0624L1, 0xFF1D263C);
+    ADD_PALETTE(BASIC::B0624L2, 0xFF626675);
+    ADD_PALETTE(BASIC::B0624L3, 0xFF313F66);
+    ADD_PALETTE(BASIC::B0624L4, 0xFF000000);
+    ADD_PALETTE(BASIC::B0624L5, 0xFF5783FF);
+    ADD_PALETTE(BASIC::B0624L6, 0xFF5783FF);
+    ADD_PALETTE(BASIC::B063L1, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L1P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L1D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::B063L2, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L3, 0xFF6E6F76);
+    ADD_PALETTE(BASIC::B063L4, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L5, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L5D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::B063L6, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L6P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L6D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::B063L7, 0xFF656565);
+    ADD_PALETTE(BASIC::B063L8, 0xFF6E6F76);
+    ADD_PALETTE(BASIC::B063L8P, 0x00000000);
+    ADD_PALETTE(BASIC::B063L8D, 0x996E6F76);
+    ADD_PALETTE(BASIC::B063L9, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B064L1, 0xFF6890FF);
+    ADD_PALETTE(BASIC::B064L2, 0xFFD7D7D7);
+    ADD_PALETTE(BASIC::B064L2P, 0xFFD7D7D7);
+    ADD_PALETTE(BASIC::B064L2D, 0xFFD7D7D7);
+    ADD_PALETTE(BASIC::B064L3, 0xFF000000);
+    ADD_PALETTE(BASIC::B064L3P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B064L3D, 0x7F000000);
+    ADD_PALETTE(BASIC::B065L1, 0x00000000);
+    ADD_PALETTE(BASIC::B065L2, 0x00000000);
+    ADD_PALETTE(BASIC::B065L3, 0x00000000);
+    ADD_PALETTE(BASIC::B065L3P, 0x00000000);
+    ADD_PALETTE(BASIC::B065L4, 0xFFEEEEEE);
+    ADD_PALETTE(BASIC::B065L4D, 0x99EEEEEE);
+    ADD_PALETTE(BASIC::B065L4P, 0xFF2A39AC);
+    ADD_PALETTE(BASIC::B065L5, 0x00000000);
+    ADD_PALETTE(BASIC::B071, 0xFF393B41);
+    ADD_PALETTE(BASIC::B0721, 0xFFA09F9A);
+    ADD_PALETTE(BASIC::B0722, 0xFF5D83FF);
+    ADD_PALETTE(BASIC::B0723, 0xFF212428);
+    ADD_PALETTE(BASIC::B0724, 0xFF404040);
+    ADD_PALETTE(BASIC::B0725, 0xFF4F66A7);
+    ADD_PALETTE(BASIC::B0726, 0xFF404040);
+    ADD_PALETTE(BASIC::B0731, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::B0732, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B0741, 0xFFA09F9A);
+    ADD_PALETTE(BASIC::B0742, 0xFF5D83FF);
+    ADD_PALETTE(BASIC::B0743, 0xFF212428);
+    ADD_PALETTE(BASIC::B0744, 0xFF404040);
+    ADD_PALETTE(BASIC::B0745, 0x00000000);
+    ADD_PALETTE(BASIC::B0751, 0xFF3B73B6);
+    ADD_PALETTE(BASIC::F011L1, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F011L1P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F011L1D, 0x7FFAFAFA);
+    ADD_PALETTE(BASIC::F011L2, 0xFF6890FF);
+    ADD_PALETTE(BASIC::F011L2D, 0x996890FF);
+    ADD_PALETTE(BASIC::F011L3, 0xFF6E6F76);
+    ADD_PALETTE(BASIC::F011L3D, 0x996E6F76);
+    ADD_PALETTE(BASIC::F011L4, 0xFF6E6F76);
+    ADD_PALETTE(BASIC::F011L4D, 0x996E6F76);
+    ADD_PALETTE(BASIC::F011L5, 0xFF5D83FF);
+    ADD_PALETTE(BASIC::F011L6, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F011L7, 0xFF6E6F76);
+    ADD_PALETTE(BASIC::F011L7D, 0x996E6F76);
+    ADD_PALETTE(BASIC::F011L8, 0xFFD10000);
+    ADD_PALETTE(BASIC::F011L9, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::F011L10, 0xFFF9F9F9);
+    ADD_PALETTE(BASIC::F011L11, 0xFF808080);
+    ADD_PALETTE(BASIC::F011L12, 0xFF4093F7);
+    ADD_PALETTE(BASIC::F011L13, 0x00000000);
+    ADD_PALETTE(BASIC::F011L14, 0x00000000);
+    ADD_PALETTE(BASIC::F011L15, 0xFFD10000);
+    ADD_PALETTE(BASIC::F011L16, 0xFF6E6F76);
+    ADD_PALETTE(BASIC::F011L17, 0xFF8B8B8B);
+    ADD_PALETTE(BASIC::F011L18, 0xFF686868);
+    ADD_PALETTE(BASIC::F011L19, 0xFF6E6F76);
+    ADD_PALETTE(BASIC::F011L20, 0x00000000);
+    ADD_PALETTE(BASIC::F011L21, 0xFF6E6F76);
+    ADD_PALETTE(BASIC::F011L22, 0xFF6E6F76);
+    ADD_PALETTE(BASIC::F011L23, 0xFF1382FF);
+    ADD_PALETTE(BASIC::F021L1i, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F021L1iP, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F021L1iD, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::F022L1i, 0xFF6C6E77);
+    ADD_PALETTE(BASIC::F022L2i, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::F022L2iD, 0x992B3AAF);
+    ADD_PALETTE(BASIC::F031L1, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F031L1P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F031L1D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::F031L2, 0x00000000);
+    ADD_PALETTE(BASIC::F031L2P, 0x00000000);
+    ADD_PALETTE(BASIC::F031L2D, 0x00000000);
+    ADD_PALETTE(BASIC::F031L3, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F031L3P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F031L3D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::F032L1, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F032L1P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F032L1D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::F032L2, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F032L2P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F032L2D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::F032L3, 0xFFF9F9F9);
+    ADD_PALETTE(BASIC::F032L3P, 0xFFF9F9F9);
+    ADD_PALETTE(BASIC::F041i, 0xFF5D6176);
+    ADD_PALETTE(BASIC::F041iD, 0x995D6176);
+    ADD_PALETTE(BASIC::F051, 0xFF485D93);
+    ADD_PALETTE(BASIC::F052, 0xFF3A72FF);
+    ADD_PALETTE(BASIC::F053, 0xFF485D93);
+    ADD_PALETTE(BASIC::F053P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F053D, 0x99485D93);
+    ADD_PALETTE(BASIC::F054, 0xFF202432);
+    ADD_PALETTE(BASIC::F055, 0xFF3A72FF);
+    ADD_PALETTE(BASIC::W011, 0xFF4B4D56);
+    ADD_PALETTE(BASIC::W011D, 0x994B4D56);
+    ADD_PALETTE(BASIC::W012, 0xFF095FD4);
+    ADD_PALETTE(BASIC::W012D, 0x99095FD4);
+    ADD_PALETTE(BASIC::W012P, 0xFF232F91);
+    ADD_PALETTE(BASIC::W013, 0x00000000);
+    ADD_PALETTE(BASIC::W0141, 0xFFDB0000);
+    ADD_PALETTE(BASIC::W0141P, 0xFFA10808);
+    ADD_PALETTE(BASIC::W0141D, 0x99DB0000);
+    ADD_PALETTE(BASIC::W015, 0xFF343432);
+    ADD_PALETTE(BASIC::W021L1, 0xFF000000);
+    ADD_PALETTE(BASIC::W021L1P, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::W021L2, 0xFF425790);
+    ADD_PALETTE(BASIC::W021L2P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W021L3, 0xFF425790);
+    ADD_PALETTE(BASIC::W021L3P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W021L4, 0xFFF0F0F0);
+    ADD_PALETTE(BASIC::W031L1, 0xFF000000);
+    ADD_PALETTE(BASIC::W031L1D, 0x99000000);
+    ADD_PALETTE(BASIC::W031L2, 0xFF000000);
+    ADD_PALETTE(BASIC::W031L2D, 0x99000000);
+    ADD_PALETTE(BASIC::W032, 0xFF5D6176);
+    ADD_PALETTE(BASIC::W032P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W032D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::W041, 0xFFE1DDD1);
+    ADD_PALETTE(BASIC::W051, 0xFF000000);
+    ADD_PALETTE(BASIC::W0611, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W0611P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W0611D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::W062L1, 0xFF555861);
+    ADD_PALETTE(BASIC::W062L1D, 0x99555861);
+    ADD_PALETTE(BASIC::W062L2, 0xFF415BFE);
+    ADD_PALETTE(BASIC::W062L2D, 0x7F415BFE);
+    ADD_PALETTE(BASIC::W062L3, 0xFFD8D7D2);
+    ADD_PALETTE(BASIC::W062L3D, 0x4CD8D7D2);
+    ADD_PALETTE(BASIC::W062L4, 0xFF3677C3);
+    ADD_PALETTE(BASIC::W062L4D, 0x4C3677C3);
+    ADD_PALETTE(BASIC::W062L5, 0xFFC7D3E3);
+    ADD_PALETTE(BASIC::W0631, 0xFFEEEEEE);
+    ADD_PALETTE(BASIC::W0632, 0xFF4C5158);
+    ADD_PALETTE(BASIC::W0641, 0xFF6B6D79);
+    ADD_PALETTE(BASIC::W0641P, 0xFF2A39AC);
+    ADD_PALETTE(BASIC::W0641D, 0x996B6D79);
+    ADD_PALETTE(BASIC::W0651, 0xFF3A3A3A);
+    ADD_PALETTE(BASIC::W0711, 0xFF525767);
+    ADD_PALETTE(BASIC::W0711P, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::W0711D, 0xFF3E414E);
+    ADD_PALETTE(BASIC::W0712, 0xFF4267A9);
+    ADD_PALETTE(BASIC::W0713, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::W0714, 0xFF263E5F);
+    ADD_PALETTE(BASIC::W0715, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::W0721, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W0721P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W0721D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::W0811, 0xFF253296);
+    ADD_PALETTE(BASIC::W0812, 0x00000000);
+    ADD_PALETTE(BASIC::W0813, 0xFF595959);
+    ADD_PALETTE(BASIC::W082, 0x00000000);
+    ADD_PALETTE(BASIC::W083, 0x00000000);
+    ADD_PALETTE(BASIC::W084, 0xB2FAFAFA);
+    ADD_PALETTE(BASIC::W084P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W085, 0x00000000);
+    ADD_PALETTE(BASIC::W091, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::W092, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W101, 0xFF4884D6);
+    ADD_PALETTE(BASIC::W111, 0xFFC8CEDB);
+    ADD_PALETTE(BASIC::W112L1, 0xFF8995AE);
+    ADD_PALETTE(BASIC::W112L2, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W1121, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W1122, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W1123, 0x4C000000);
+    ADD_PALETTE(BASIC::W1211, 0x00000000);
+    ADD_PALETTE(BASIC::W1212, 0x00000000);
+    ADD_PALETTE(BASIC::W1221, 0xFF000000);
+    ADD_PALETTE(BASIC::W1222, 0xFF878580);
+    ADD_PALETTE(BASIC::W1223, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::W131, 0xFF343739);
+    ADD_PALETTE(BASIC::W132, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::W141, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W151, 0x66000000);
+    ADD_PALETTE(BASIC::W152, 0xFF42434B);
+    ADD_PALETTE(BASIC::W153, 0xFF2B3AAF);
+    ADD_PALETTE(BASIC::W154, 0xFF1C1E28);
+    ADD_PALETTE(BASIC::W161, 0xFF001BEA);
+}
+
+void
+_ResourceManager::LoadWhitePalette(void)
+{
+    ADD_PALETTE(BASIC::foreground, 0xFF000000);
+    ADD_PALETTE(BASIC::background, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::B011, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::B012, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::B013, 0xFF000000);
+    ADD_PALETTE(BASIC::B014, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::B015, 0xFF202327);
+    ADD_PALETTE(BASIC::B016, 0xFF000000);
+    ADD_PALETTE(BASIC::B017, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B018, 0xFF6590FF);
+    ADD_PALETTE(BASIC::B0211, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::B0211D, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::B0212, 0xFFEDEBE4);
+    ADD_PALETTE(BASIC::B0213, 0xFF5B5656);
+    ADD_PALETTE(BASIC::B0214, 0xFFDCDAD3);
+    ADD_PALETTE(BASIC::B0215, 0xFFDEDCD5);
+    ADD_PALETTE(BASIC::B0216, 0xFFBDBBB5);
+    ADD_PALETTE(BASIC::B0217, 0xFFEFEDE5);
+    ADD_PALETTE(BASIC::B0217D, 0x7FEFEDE5);
+    ADD_PALETTE(BASIC::B0221, 0xFF8A8A8A);
+    ADD_PALETTE(BASIC::B0221L1, 0xFF8A8A8A);
+    ADD_PALETTE(BASIC::B0221L2, 0xFF808080);
+    ADD_PALETTE(BASIC::B0221L3, 0xFF8C8C8C);
+    ADD_PALETTE(BASIC::B0221L4, 0xFFCCCBC7);
+    ADD_PALETTE(BASIC::B0222, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::B0223, 0xFFD3D1CB);
+    ADD_PALETTE(BASIC::B0224, 0xFFB9B8B2);
+    ADD_PALETTE(BASIC::B0225, 0xFF2A5181);
+    ADD_PALETTE(BASIC::B0226, 0xFF4B73A3);
+    ADD_PALETTE(BASIC::B0227, 0xFF000000);
+    ADD_PALETTE(BASIC::B0228, 0xFF1A5274);
+    ADD_PALETTE(BASIC::B0232, 0x00000000);
+    ADD_PALETTE(BASIC::B0233, 0x00000000);
+    ADD_PALETTE(BASIC::B031, 0x00000000);
+    ADD_PALETTE(BASIC::B041, 0xFF5787C2);
+    ADD_PALETTE(BASIC::B041P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B042, 0xFF0079D4);
+    ADD_PALETTE(BASIC::B043, 0xFF5787C2);
+    ADD_PALETTE(BASIC::B044, 0xFF2A89C2);
+    ADD_PALETTE(BASIC::B0511, 0xFFEDEBE4);
+    ADD_PALETTE(BASIC::B0511P, 0xFF0E66AA);
+    ADD_PALETTE(BASIC::B0512, 0x00000000);
+    ADD_PALETTE(BASIC::B0513, 0xFF202327);
+    ADD_PALETTE(BASIC::B0514, 0xFFEDEBE4);
+    ADD_PALETTE(BASIC::B0514P1, 0xFF0E66AA);
+    ADD_PALETTE(BASIC::B0514P2, 0xFF007BDA);
+    ADD_PALETTE(BASIC::B0514L3, 0xFF6590FF);
+    ADD_PALETTE(BASIC::B0515L1, 0xFFDEDCD5);
+    ADD_PALETTE(BASIC::B0515L2, 0x7F626262);
+    ADD_PALETTE(BASIC::B0516, 0x00000000);
+    ADD_PALETTE(BASIC::B0517, 0x00000000);
+    ADD_PALETTE(BASIC::B0517P1, 0x00000000);
+    ADD_PALETTE(BASIC::B0517P2, 0x00000000);
+    ADD_PALETTE(BASIC::B0518, 0x003567A3);
+    ADD_PALETTE(BASIC::B0518P, 0x00000000);
+    ADD_PALETTE(BASIC::B0519, 0xFFF25D28);
+    ADD_PALETTE(BASIC::B0520, 0xFF3567A3);
+    ADD_PALETTE(BASIC::B0520P, 0xFF2A89C2);
+    ADD_PALETTE(BASIC::B052L1, 0xFF656565);
+    ADD_PALETTE(BASIC::B052L1P, 0xFF007BDA);
+    ADD_PALETTE(BASIC::B052L1D, 0x7F656565);
+    ADD_PALETTE(BASIC::B052L2, 0xFF525252);
+    ADD_PALETTE(BASIC::B052L2P, 0xFF4093F7);
+    ADD_PALETTE(BASIC::B052L3, 0x00000000);
+    ADD_PALETTE(BASIC::B052L3P, 0x00000000);
+    ADD_PALETTE(BASIC::B052L4, 0xFF282828);
+    ADD_PALETTE(BASIC::B052L4P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L4D, 0x7F282828);
+    ADD_PALETTE(BASIC::B052L5, 0xFF282828);
+    ADD_PALETTE(BASIC::B052L5D, 0x7F282828);
+    ADD_PALETTE(BASIC::B052L5P, 0xFF007BDA);
+    ADD_PALETTE(BASIC::B052L6, 0xFF282828);
+    ADD_PALETTE(BASIC::B052L6D, 0x7F282828);
+    ADD_PALETTE(BASIC::B052L6P1, 0xFF0E68AD);
+    ADD_PALETTE(BASIC::B052L6P2, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L7, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L8, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L8P, 0xFF4093F7);
+    ADD_PALETTE(BASIC::B052L8D, 0x7FFAFAFA);
+    ADD_PALETTE(BASIC::B052L9, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L9P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B052L9D, 0x7FFAFAFA);
+    ADD_PALETTE(BASIC::B052L10, 0x00000000);
+    ADD_PALETTE(BASIC::B0531, 0xFF202327);
+    ADD_PALETTE(BASIC::B0532, 0x00000000);
+    ADD_PALETTE(BASIC::B0533, 0x00000000);
+    ADD_PALETTE(BASIC::B0534, 0x00000000);
+    ADD_PALETTE(BASIC::B0535, 0x00000000);
+    ADD_PALETTE(BASIC::B0536, 0x00000000);
+    ADD_PALETTE(BASIC::B0537, 0x00000000);
+    ADD_PALETTE(BASIC::B0541, 0xFFF7F5ED);
+    ADD_PALETTE(BASIC::B0541P, 0xFF007AD8);
+    ADD_PALETTE(BASIC::B0541D, 0x7FF7F5ED);
+    ADD_PALETTE(BASIC::B0542, 0x00000000);
+    ADD_PALETTE(BASIC::B0542P, 0x00000000);
+    ADD_PALETTE(BASIC::B0543, 0x00000000);
+    ADD_PALETTE(BASIC::B0544, 0x00000000);
+    ADD_PALETTE(BASIC::B0545, 0x00000000);
+    ADD_PALETTE(BASIC::B0551, 0x00000000);
+    ADD_PALETTE(BASIC::B0552, 0x00000000);
+    ADD_PALETTE(BASIC::B0553, 0xFF0C0F14);
+    ADD_PALETTE(BASIC::B0554, 0xFF414447);
+    ADD_PALETTE(BASIC::B0555, 0x00000000);
+    ADD_PALETTE(BASIC::B0556, 0x00000000);
+    ADD_PALETTE(BASIC::B0557, 0x00000000);
+    ADD_PALETTE(BASIC::B0558, 0x00000000);
+    ADD_PALETTE(BASIC::B061L1, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::B061L2, 0xFFDBD9CE);
+    ADD_PALETTE(BASIC::B061L3, 0xFFD6D3C9);
+    ADD_PALETTE(BASIC::B061L4, 0xFF444444);
+    ADD_PALETTE(BASIC::B061L5, 0xFF000000);
+    ADD_PALETTE(BASIC::B061L6, 0xFF17191C);
+    ADD_PALETTE(BASIC::B0621L1, 0x00000000);
+    ADD_PALETTE(BASIC::B0621L2, 0x00000000);
+    ADD_PALETTE(BASIC::B0622L1, 0x00444444);
+    ADD_PALETTE(BASIC::B0622L2, 0x3FFFFFFF);
+    ADD_PALETTE(BASIC::B0623L1, 0xFF2D2D2D);
+    ADD_PALETTE(BASIC::B0623L2, 0xFF5B5B5B);
+    ADD_PALETTE(BASIC::B0624L1, 0xFFCDCDCD);
+    ADD_PALETTE(BASIC::B0624L2, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B0624L3, 0xFF303337);
+    ADD_PALETTE(BASIC::B0624L4, 0xFF000000);
+    ADD_PALETTE(BASIC::B0624L5, 0xFF007BDA);
+    ADD_PALETTE(BASIC::B0624L6, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L1, 0xFF000000);
+    ADD_PALETTE(BASIC::B063L1P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L1D, 0x7F000000);
+    ADD_PALETTE(BASIC::B063L2, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L3, 0xFF808080);
+    ADD_PALETTE(BASIC::B063L4, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L5, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B063L5D, 0x7FFAFAFA);
+    ADD_PALETTE(BASIC::B063L6, 0xFF454545);
+    ADD_PALETTE(BASIC::B063L6P, 0xFF454545);
+    ADD_PALETTE(BASIC::B063L6D, 0x7F454545);
+    ADD_PALETTE(BASIC::B063L7, 0xFFBABABA);
+    ADD_PALETTE(BASIC::B063L8, 0xFF808080);
+    ADD_PALETTE(BASIC::B063L8P, 0x00000000);
+    ADD_PALETTE(BASIC::B063L8D, 0x7F808080);
+    ADD_PALETTE(BASIC::B063L9, 0xFF252525);
+    ADD_PALETTE(BASIC::B064L1, 0xFF3B73B6);
+    ADD_PALETTE(BASIC::B064L2, 0xFF808080);
+    ADD_PALETTE(BASIC::B064L2P, 0xFF808080);
+    ADD_PALETTE(BASIC::B064L2D, 0xFF808080);
+    ADD_PALETTE(BASIC::B064L3, 0xFF3A3A3A);
+    ADD_PALETTE(BASIC::B064L3P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B064L3D, 0x7F3A3A3A);
+    ADD_PALETTE(BASIC::B065L1, 0x00000000);
+    ADD_PALETTE(BASIC::B065L2, 0x00000000);
+    ADD_PALETTE(BASIC::B065L3, 0x00000000);
+    ADD_PALETTE(BASIC::B065L3P, 0x00000000);
+    ADD_PALETTE(BASIC::B065L4, 0xFFF7F5ED);
+    ADD_PALETTE(BASIC::B065L4D, 0x7FF7F5ED);
+    ADD_PALETTE(BASIC::B065L4P, 0xFF007AD8);
+    ADD_PALETTE(BASIC::B065L5, 0x00000000);
+    ADD_PALETTE(BASIC::B071, 0xFFC6C4BE);
+    ADD_PALETTE(BASIC::B0721, 0xFFA09F9A);
+    ADD_PALETTE(BASIC::B0722, 0xFF3B73B6);
+    ADD_PALETTE(BASIC::B0723, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::B0724, 0xFFD1CFC9);
+    ADD_PALETTE(BASIC::B0725, 0xFF3B73B6);
+    ADD_PALETTE(BASIC::B0726, 0xFFE2DFD5);
+    ADD_PALETTE(BASIC::B0731, 0xFF3B73B6);
+    ADD_PALETTE(BASIC::B0732, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::B0741, 0xFFA09F9A);
+    ADD_PALETTE(BASIC::B0742, 0xFF3B73B6);
+    ADD_PALETTE(BASIC::B0743, 0xFFE6E3D8);
+    ADD_PALETTE(BASIC::B0744, 0xFFC5C2B7);
+    ADD_PALETTE(BASIC::B0745, 0x00000000);
+    ADD_PALETTE(BASIC::B0751, 0xFF3B73B6);
+    ADD_PALETTE(BASIC::F011L1, 0xFF000000);
+    ADD_PALETTE(BASIC::F011L1P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F011L1D, 0x7F000000);
+    ADD_PALETTE(BASIC::F011L2, 0xFF3B73B6);
+    ADD_PALETTE(BASIC::F011L2D, 0x7F3B73B6);
+    ADD_PALETTE(BASIC::F011L3, 0xFF4F4F4F);
+    ADD_PALETTE(BASIC::F011L3D, 0xFF4F4F4F);
+    ADD_PALETTE(BASIC::F011L4, 0xFF4F4F4F);
+    ADD_PALETTE(BASIC::F011L4D, 0x7F4F4F4F);
+    ADD_PALETTE(BASIC::F011L5, 0xFF3B73B6);
+    ADD_PALETTE(BASIC::F011L6, 0xFF808080);
+    ADD_PALETTE(BASIC::F011L7, 0xFF686866);
+    ADD_PALETTE(BASIC::F011L7D, 0xCC686866);
+    ADD_PALETTE(BASIC::F011L8, 0xFFC24747);
+    ADD_PALETTE(BASIC::F011L9, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::F011L10, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F011L11, 0xFF808080);
+    ADD_PALETTE(BASIC::F011L12, 0xFF4093F7);
+    ADD_PALETTE(BASIC::F011L13, 0x00000000);
+    ADD_PALETTE(BASIC::F011L14, 0x00000000);
+    ADD_PALETTE(BASIC::F011L15, 0xFFE94949);
+    ADD_PALETTE(BASIC::F011L16, 0xFF8B8B8B);
+    ADD_PALETTE(BASIC::F011L17, 0xFF8B8B8B);
+    ADD_PALETTE(BASIC::F011L18, 0xFF686868);
+    ADD_PALETTE(BASIC::F011L19, 0xFF8B8B8B);
+    ADD_PALETTE(BASIC::F011L20, 0x00000000);
+    ADD_PALETTE(BASIC::F011L21, 0xFF808080);
+    ADD_PALETTE(BASIC::F011L22, 0xFF9A9A9A);
+    ADD_PALETTE(BASIC::F011L23, 0xFF1382FF);
+    ADD_PALETTE(BASIC::F021L1i, 0xFF808080);
+    ADD_PALETTE(BASIC::F021L1iP, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F021L1iD, 0x7F808080);
+    ADD_PALETTE(BASIC::F022L1i, 0xFFB8B8B8);
+    ADD_PALETTE(BASIC::F022L2i, 0xFF4C85C9);
+    ADD_PALETTE(BASIC::F022L2iD, 0x4C4C85C9);
+    ADD_PALETTE(BASIC::F031L1, 0xFF282828);
+    ADD_PALETTE(BASIC::F031L1P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F031L1D, 0x7F282828);
+    ADD_PALETTE(BASIC::F031L2, 0x00000000);
+    ADD_PALETTE(BASIC::F031L2P, 0x00000000);
+    ADD_PALETTE(BASIC::F031L2D, 0x00000000);
+    ADD_PALETTE(BASIC::F031L3, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F031L3P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F031L3D, 0x7FFAFAFA);
+    ADD_PALETTE(BASIC::F032L1, 0xFF282828);
+    ADD_PALETTE(BASIC::F032L1P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F032L1D, 0x7F282828);
+    ADD_PALETTE(BASIC::F032L2, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F032L2P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::F032L2D, 0x7FFAFAFA);
+    ADD_PALETTE(BASIC::F032L3, 0xFFF9F9F9);
+    ADD_PALETTE(BASIC::F032L3P, 0xFFF9F9F9);
+    ADD_PALETTE(BASIC::F041i, 0xFF808080);
+    ADD_PALETTE(BASIC::F041iD, 0x7F808080);
+    ADD_PALETTE(BASIC::F051, 0xFF90A9C7);
+    ADD_PALETTE(BASIC::F052, 0xFF007BDB);
+    ADD_PALETTE(BASIC::F053, 0xFF808080);
+    ADD_PALETTE(BASIC::F053P, 0xFF000000);
+    ADD_PALETTE(BASIC::F053D, 0x7F808080);
+    ADD_PALETTE(BASIC::F054, 0xFFE3E1D9);
+    ADD_PALETTE(BASIC::F055, 0xFF007BDA);
+    ADD_PALETTE(BASIC::W011, 0xFFF7F5ED);
+    ADD_PALETTE(BASIC::W011D, 0x7FF7F5ED);
+    ADD_PALETTE(BASIC::W012, 0xFF0058D0);
+    ADD_PALETTE(BASIC::W012D, 0x7F0058D0);
+    ADD_PALETTE(BASIC::W012P, 0xFF0051BF);
+    ADD_PALETTE(BASIC::W013, 0x00000000);
+    ADD_PALETTE(BASIC::W0141, 0xFFC12C21);
+    ADD_PALETTE(BASIC::W0141P, 0xFFC12C21);
+    ADD_PALETTE(BASIC::W0141D, 0x7FC12C21);
+    ADD_PALETTE(BASIC::W015, 0xFF343432);
+    ADD_PALETTE(BASIC::W021L1, 0xFFF8F6EF);
+    ADD_PALETTE(BASIC::W021L1P, 0xFF5787C2);
+    ADD_PALETTE(BASIC::W021L2, 0xFF0E68AD);
+    ADD_PALETTE(BASIC::W021L2P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W021L3, 0xFF0E68AD);
+    ADD_PALETTE(BASIC::W021L3P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W021L4, 0xFF000000);
+    ADD_PALETTE(BASIC::W031L1, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W031L1D, 0x7FFAFAFA);
+    ADD_PALETTE(BASIC::W031L2, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W031L2D, 0x7FFAFAFA);
+    ADD_PALETTE(BASIC::W032, 0xFF878580);
+    ADD_PALETTE(BASIC::W032P, 0xFF000000);
+    ADD_PALETTE(BASIC::W032D, 0x7F878580);
+    ADD_PALETTE(BASIC::W041, 0xFF17191C);
+    ADD_PALETTE(BASIC::W051, 0xFF000000);
+    ADD_PALETTE(BASIC::W0611, 0xFF3B73B6);
+    ADD_PALETTE(BASIC::W0611P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W0611D, 0x7F3B73B6);
+    ADD_PALETTE(BASIC::W062L1, 0xFFC5C5C5);
+    ADD_PALETTE(BASIC::W062L1D, 0x4CC5C5C5);
+    ADD_PALETTE(BASIC::W062L2, 0xFF007DDE);
+    ADD_PALETTE(BASIC::W062L2D, 0x7F007DDE);
+    ADD_PALETTE(BASIC::W062L3, 0xFF615F5B);
+    ADD_PALETTE(BASIC::W062L3D, 0x4C615F5B);
+    ADD_PALETTE(BASIC::W062L4, 0xFF70A9EE);
+    ADD_PALETTE(BASIC::W062L4D, 0x4C70A9EE);
+    ADD_PALETTE(BASIC::W062L5, 0xFF223148);
+    ADD_PALETTE(BASIC::W0631, 0xFF656565);
+    ADD_PALETTE(BASIC::W0632, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W0641, 0xFFF7F5ED);
+    ADD_PALETTE(BASIC::W0641P, 0xFF0079D4);
+    ADD_PALETTE(BASIC::W0641D, 0x7FF7F5ED);
+    ADD_PALETTE(BASIC::W0651, 0xFFBFBFBF);
+    ADD_PALETTE(BASIC::W0711, 0xFF6C90BC);
+    ADD_PALETTE(BASIC::W0711P, 0xFF4093F7);
+    ADD_PALETTE(BASIC::W0711D, 0xFF607DA1);
+    ADD_PALETTE(BASIC::W0712, 0x00000000);
+    ADD_PALETTE(BASIC::W0713, 0xFF4093F7);
+    ADD_PALETTE(BASIC::W0714, 0x00000000);
+    ADD_PALETTE(BASIC::W0715, 0xFF2889FF);
+    ADD_PALETTE(BASIC::W0721, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W0721P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W0721D, 0x99FAFAFA);
+    ADD_PALETTE(BASIC::W0811, 0xFF5787C2);
+    ADD_PALETTE(BASIC::W0812, 0x00000000);
+    ADD_PALETTE(BASIC::W0813, 0xFF494949);
+    ADD_PALETTE(BASIC::W082, 0x00000000);
+    ADD_PALETTE(BASIC::W083, 0x00000000);
+    ADD_PALETTE(BASIC::W084, 0xB2FAFAFA);
+    ADD_PALETTE(BASIC::W084P, 0xFFFAFAFA);
+    ADD_PALETTE(BASIC::W085, 0x00000000);
+    ADD_PALETTE(BASIC::W091, 0xFF444444);
+    ADD_PALETTE(BASIC::W092, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::W101, 0xFF5893E4);
+    ADD_PALETTE(BASIC::W111, 0xFFE7E5DE);
+    ADD_PALETTE(BASIC::W112L1, 0xFFB4B4B4);
+    ADD_PALETTE(BASIC::W112L2, 0xFFFFFFFF);
+    ADD_PALETTE(BASIC::W1121, 0xFF000000);
+    ADD_PALETTE(BASIC::W1122, 0xFF000000);
+    ADD_PALETTE(BASIC::W1123, 0x4C000000);
+    ADD_PALETTE(BASIC::W1211, 0x00000000);
+    ADD_PALETTE(BASIC::W1212, 0x00000000);
+    ADD_PALETTE(BASIC::W1221, 0x00000000);
+    ADD_PALETTE(BASIC::W1222, 0x00000000);
+    ADD_PALETTE(BASIC::W1223, 0x00000000);
+    ADD_PALETTE(BASIC::W131, 0xFF959595);
+    ADD_PALETTE(BASIC::W132, 0xFF5787C2);
+    ADD_PALETTE(BASIC::W141, 0xFF808080);
+    ADD_PALETTE(BASIC::W151, 0xFF95948F);
+    ADD_PALETTE(BASIC::W152, 0xFF878787);
+    ADD_PALETTE(BASIC::W153, 0xFF5787C2);
+    ADD_PALETTE(BASIC::W154, 0xFFEFECE0);
+    ADD_PALETTE(BASIC::W161, 0xFF007BDA);
+}
+
+#undef ADD_PALETTE
+
+void
+_ResourceManager::LoadDefaultPalette(void)
+{
+}
+void
+_ResourceManager::LoadPaletteInformation(const Tizen::Base::String& systemTheme)
+{
+    if(systemTheme == L"black")
+    {
+        LoadBlackPalette();
+    }
+    else if (systemTheme == L"white")
+    {
+        LoadWhitePalette();
+    }
+    else if (systemTheme == L"default")
+    {
+        LoadBlackPalette();
+    }
+    else
+    {
+        SysAssert(0);
+    }
+}
+
+result
+_ResourceManager::LoadThemeInformation(String& systemTheme, String& userTheme)
+{
+    AppId appId = _AppInfo::GetApplicationId();
+    SysLog(NID_UI, "%ls" , appId.GetPointer());
+    _PackageAppInfoImpl packageManager;
+    packageManager.Construct(appId);
+    String key = packageManager.GetAppFeature(L"UserDefinedTheme");
+    if (!(key.IsEmpty()))
+    {
+        SysLog(NID_UI, "custem theme %ls" , key.GetPointer());
+        userTheme = key;
+    }
+    key = packageManager.GetAppFeature(L"SystemTheme");
+    if (key.IsEmpty())
+    {
+        systemTheme = L"black";
+    }
+    else
+    {
+        SysLog(NID_UI, "System  theme %ls" , key.GetPointer());
+        systemTheme = key;
+        systemTheme.ToLowerCase();
+    }
+    return E_SUCCESS;
+}
+
+void
+_ResourceManager::GetThemeName(String& systemTheme, String& userTheme) const
+{
+    systemTheme = __systemTheme;
+    userTheme = __userTheme;
+}
+
+void
+_ResourceManager::SetSystemColor(void)
+{
+    void* handle =null;
+    Color* pColor = null;
+    Color* (*GetSystemColor)(const String&) = null;
+
+    handle = dlopen ("libosp-compat.so", RTLD_LAZY);
+    if (!handle)
+    {
+        return;
+    }
+    GetSystemColor = reinterpret_cast<Color*(*)(const String&)>(dlsym(handle, "_GetSystemColor"));
+    if (dlerror() != NULL)
+    {
+        goto CATCH;
+    }
+
+    pColor = GetSystemColor(L"TITLE_TEXT");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(HEADER::TITLE_TEXT_NORMAL, *pColor);
+    }
+
+    pColor = GetSystemColor(L"BODY_TEXT");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(BUTTON::TEXT_NORMAL, *pColor);
+    }
+
+    pColor = GetSystemColor(L"FOREGROUND");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(BASIC::foreground, *pColor);
+    }
+
+    pColor = GetSystemColor(L"BACKGROUND");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(BASIC::background, *pColor);
+    }
+
+    pColor = GetSystemColor(L"LIST_BACKGROUND");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(FORM::BG_NORMAL, *pColor);
+    }
+
+    pColor = GetSystemColor(L"FORM_BACKGROUND");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(FORM::BG_NORMAL, *pColor);
+    }
+
+    pColor = GetSystemColor(L"FORM_GROUP_BACKGROUND");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(PANEL::GROUPED_STYLE_BG_NORMAL, *pColor);
+    }
+
+    pColor = GetSystemColor(L"POPUP_BACKGROUND");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(POPUP::BG_NORMAL, *pColor);
+    }
+
+    pColor = GetSystemColor(L"GROUP_ITEM_TEXT");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(CHECKBUTTON::TEXT_NORMAL, *pColor);
+    }
+
+    pColor = GetSystemColor(L"LIST_ITEM_TEXT");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(TABLEVIEW::ITEM_TEXT_NORMAL, *pColor);
+    }
+
+    pColor = GetSystemColor(L"LIST_ITEM_PRESSED_TEXT");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(TABLEVIEW::ITEM_TEXT_PRESSED, *pColor);
+    }
+
+    pColor = GetSystemColor(L"LIST_ITEM_HIGHLIGHTED_TEXT");
+    if (pColor != null)
+    {
+        GET_COLOR_CONFIG(TABLEVIEW::ITEM_TEXT_HIGHLIGHTED, *pColor);
+    }
+
+    //fall through
+CATCH:
+    dlclose(handle);
+    return;
+}
+bool
+_ResourceManager::GetDensityDirectory(const String& directoryName, float& scaleFactor)
+{
+    float denominator = 0.0;
+    float numerator = 0.0;
+    if(!(directoryName.StartsWith(L"screen-density",0)))
+    {
+        return false;
+    }
+
+    if (__deviceDPI >= DPI_FOR_XHIGH)
+    {
+        numerator = 9.0;
+    }
+    else if (__deviceDPI >= DPI_FOR_HIGH)
+    {
+        numerator = 6.0;
+    }
+    else if (__deviceDPI >= DPI_FOR_MIDDLE)
+    {
+        numerator = 4.0;
+    }
+    else if (__deviceDPI < DPI_FOR_MIDDLE && __deviceDPI > DPI_FOR_LOW)
+    {
+        numerator = 3.0;
+    }
+    else
+    {
+        return false;
+    }
+
+    if(directoryName.Contains(L"xhigh"))
+    {
+        denominator = 9.0;
+    }
+    else if(directoryName.Contains(L"high"))
+    {
+        denominator = 6.0;
+    }
+    else if(directoryName.Contains(L"middle"))
+    {
+        denominator = 4.0;
+    }
+    else if(directoryName.Contains(L"low"))
+    {
+        denominator = 3.0;
+    }
+    else
+    {
+        return false;
+    }
+
+    scaleFactor = numerator / denominator;
+    return true;
+}
+
+bool
+_ResourceManager::GetResolutionDirectory(const String& directoryName, float& scaleFactor)
+{
+    if(!(directoryName.Contains(L"0")))
+    {
+        return false;
+    }
+
+    int index = 0;
+    if(directoryName.IndexOf(L"x", 0, index) != E_SUCCESS)
+    {
+        return false;
+    }
+    String width = 0;
+
+    if(directoryName.SubString(0, index - 1, width))
+    {
+        int denominatorInt = 0;
+        float denominator = 0;
+        float numerator = 0;
+        if(Integer::Parse(width, denominatorInt) == E_SUCCESS)
+        {
+            denominator = (float)denominatorInt;
+            numerator = __targetWidth;
+            scaleFactor = numerator / denominator;
+            return true;
+        }
+    }
+    return false;
+}
+
+String
+_ResourceManager::FindImagePath(const String& fileName, int& foundFolderWidth, bool isCustom)
+{
+    bool find = false;
+    String fullName(L"");
+    ResourceFallbackItem* pItem = null;
+
+    if(isCustom)
+    {
+        String resDirectory = _AppInfo::GetAppRootPath() + L"res/themes/"+__userTheme;
+        if(__pFallbackList == null)
+        {
+            __pFallbackList = new (std::nothrow) ArrayListT<ResourceFallbackItem*>;
+            SysTryReturn(NID_UI, __pFallbackList, L"", E_OUT_OF_MEMORY, "[E_OUT_OF_MEMORY] Memory allocation is failed.");
+            Directory dir;
+            result r = dir.Construct(resDirectory);
+            if (r == E_SUCCESS)
+            {
+                DirEnumerator* pDirEnum = dir.ReadN();
+                if (pDirEnum != null)
+                {
+                    while (pDirEnum->MoveNext() == E_SUCCESS)
+                    {
+                        DirEntry entry = pDirEnum->GetCurrentDirEntry();
+                        if(entry.IsDirectory())
+                        {
+                            float scaleFactor = 0;
+                            String directoryName = entry.GetName();
+                            if(GetDensityDirectory(directoryName, scaleFactor))
+                            {
+                                pItem = new (std::nothrow) ResourceFallbackItem;
+                                SysTryCatch(NID_UI, pItem, , E_OUT_OF_MEMORY, "[E_OUT_OF_MEMORY] Memory allocation is failed.");
+                                pItem->scaleFactor = scaleFactor;
+                                pItem->directoryName = directoryName;
+                                __pFallbackList->Add(pItem);
+                            }
+                            else if(GetResolutionDirectory(directoryName, scaleFactor))
+                            {
+                                pItem = new (std::nothrow) ResourceFallbackItem;
+                                SysTryCatch(NID_UI, pItem, , E_OUT_OF_MEMORY, "[E_OUT_OF_MEMORY] Memory allocation is failed.");
+                                pItem->scaleFactor = scaleFactor;
+                                pItem->directoryName = directoryName;
+                                __pFallbackList->Add(pItem);
+                            }
+                        }
+                    }
+                    ResourceFallbackItemComparer<ResourceFallbackItem*> comparer;
+                    __pFallbackList->Sort(comparer);
+                    delete pDirEnum;
+                }
+                for(int i = 0 ; i < __pFallbackList->GetCount() ; i++)
+                {
+                    ResourceFallbackItem* pItem;
+                    if(__pFallbackList->GetAt(i,pItem) == E_SUCCESS)
+                    {
+                        if(pItem->scaleFactor < 1.001 && pItem->scaleFactor > 0.999)
+                        {
+                            __pFallbackList->RemoveAt(i);
+                            __pFallbackList->InsertAt(pItem,0);
+                            if(pItem->directoryName.Contains(L"0"))
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for(int i = 0 ; i <__pFallbackList->GetCount() ; i++)
+        {
+            ResourceFallbackItem* pItem;
+            __pFallbackList->GetAt(i,pItem);
+            fullName = resDirectory + L"/" + pItem->directoryName + L"/" + fileName;
+            if (File::IsFileExist(fullName))
+            {
+                find = true;
+                foundFolderWidth = __targetWidth / pItem->scaleFactor;
+                if(foundFolderWidth > __targetWidth)
+                {
+                    if( foundFolderWidth < __targetWidth + 3)
+                    {
+                        foundFolderWidth = __targetWidth;
+                    }
+                }
+                else
+                {
+                    if( foundFolderWidth >__targetWidth - 3)
+                    {
+                        foundFolderWidth = __targetWidth;
+                    }
+                }
+                break;
+            }
+        }
+    }
+    if(!find)
+    {
+        fullName = String(L"/usr/share/osp/bitmaps/" + __targetPortraitMode+ "/" + __systemTheme + L"/" + fileName);
+        if (File::IsFileExist(fullName))
+        {
+            find = true;
+            foundFolderWidth = __targetWidth;
+        }
+        else
+        {
+            fullName = String(L"/usr/share/osp/bitmaps/" + __defaultPortraitMode+ "/" + __systemTheme + L"/" + fileName);
+            if (File::IsFileExist(fullName))
+            {
+                find = true;
+                foundFolderWidth = DEFAULT_SCREEN_WIDTH;
+            }
+        }
+    }
+
+    if(!find)
+    {
+        fullName = String(L"/usr/share/osp/bitmaps/" + __targetPortraitMode + "/" + fileName);
+        if (File::IsFileExist(fullName))
+        {
+            find = true;
+            foundFolderWidth = __targetWidth;
+        }
+        else
+        {
+            fullName = String(L"/usr/share/osp/bitmaps/" + __defaultPortraitMode+ "/" + fileName);
+            if (File::IsFileExist(fullName))
+            {
+                find = true;
+                foundFolderWidth = DEFAULT_SCREEN_WIDTH;
+            }
+        }
+    }
+
+    if(!find)
+    {
+        return L"";
+    }
+    else
+    {
+        return fullName;
+    }
+CATCH:
+    if(__pFallbackList)
+    {
+        ResourceFallbackItem* pItem = null;
+        int count = __pFallbackList->GetCount();
+        for (int i = 0; i < count; i++)
+        {
+            __pFallbackList->GetAt(i, pItem);
+            delete pItem;
+        }
+        __pFallbackList->RemoveAll();
+        delete __pFallbackList;
+        __pFallbackList = null;
+    }
+    return L"";
+}
+
+bool
+_ResourceManager::IsFeedbackPlayed(void)
+{
+    if (__feedbackStatus == _RESOURCE_FEEDBACK_STATUS_INIT)
+    {
+        return false;
+    }
+    return true;
+}
+
+void
+_ResourceManager::AcquireFeedback(void)
+{
+    ++__feedbackAcquireCount;
+}
+
+void
+_ResourceManager::ReleaseFeedback(void)
+{
+    __feedbackAcquireCount >0 ? --__feedbackAcquireCount : __feedbackAcquireCount = 0;
+    if(__feedbackAcquireCount == 0)
+    {
+        __feedbackStatus = _RESOURCE_FEEDBACK_STATUS_INIT;
+    }
+}
+void
+_ResourceManager::ResetFeedback(void)
+{
+    __feedbackAcquireCount = 0;
+    __feedbackStatus = _RESOURCE_FEEDBACK_STATUS_INIT;
+}
+Dimension
+_ResourceManager::GetLogicalScreenSizen(void)
+{
+    return Dimension(__logicalWidth, __logicalHeight);
+}
+}}//Tizen::Ui

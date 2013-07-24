@@ -40,10 +40,7 @@ Style {
         Image {
             id:icon
             anchors.fill: parent
-            source: control.enabled ? ( control.pressed ? Theme.checkBox.onOff.icon.source.pressed : Theme.checkBox.onOff.icon.source.normal) :  Theme.checkBox.onOff.icon.source.disabled
-            Image {
-                source: control.enabled ? ( control.pressed ? Theme.checkBox.onOff.handlerSource.pressed : Theme.checkBox.onOff.handlerSource.normal) :  Theme.checkBox.onOff.handlerSource.disabled
-            }
+            source: control.enabled ? ( control.checked ? Theme.checkBox.onOff.on.handler.source.normal : Theme.checkBox.onOff.off.handler.source.normal) :  ( control.checked ? Theme.checkBox.onOff.on.handler.source.disabled : Theme.checkBox.onOff.off.handler.source.disabled)
         }
     }
 
@@ -56,11 +53,7 @@ Style {
         Image {
             id:onOffBackground
             anchors.fill: parent
-            source: if (control.checked) {
-                        control.enabled ? Theme.checkBox.onOff.backgroundSource.on.normal :  Theme.checkBox.onOff.backgroundSource.on.disabled
-                    } else {
-                        control.enabled ? Theme.checkBox.onOff.backgroundSource.off.normal :  Theme.checkBox.onOff.backgroundSource.off.disabled
-                    }
+            source: control.enabled ? Theme.checkBox.onOff.source.normal :  Theme.checkBox.on.source.disabled
         }
     }
 
@@ -70,8 +63,8 @@ Style {
     */
     property Component panel: Item {
         id: root
-        property int handleWidth: handleLoader.width
-        property int handleHeight: handleLoader.height
+        property int handleWidth: handleLoader.implicitWidth
+        property int handleHeight: handleLoader.implicitHeight
 
         property bool horizontal : control.orientation === Qt.Horizontal
         property int horizontalSize: grooveLoader.implicitWidth + padding.left + padding.right
@@ -85,16 +78,15 @@ Style {
         transformOrigin: Item.TopLeft
 
         Item {
-
             anchors.fill: parent
-
             Loader {
                 id: grooveLoader
                 property int handlePosition: handleLoader.x + handleLoader.width/2
                 x: padding.left
                 sourceComponent: groove
                 width: (horizontal ? parent.width : parent.height) - padding.left - padding.right
-                y:  padding.top +  (Math.round(horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2
+                height:(horizontal ? parent.height : parent.width) - padding.top - padding.bottom
+                y: padding.top
             }
             Loader {
                 id: handleLoader

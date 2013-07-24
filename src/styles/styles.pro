@@ -23,6 +23,8 @@ QML_FILES = \
     ToolBarStyle.qml \
     ToolBarButton.qml
 
+QML_FILES += themes/Colors.js \
+             Images.js
 
 QML_FILES += \
     private/DateEditField.qml\
@@ -34,6 +36,8 @@ QML_FILES += \
     images/720x1280/*.sci \
     images/720x1280/white/*.png \
     images/720x1280/white/*.sci \
+    images/720x1280/black/*.png \
+    images/720x1280/black/*.sci \
     TizenSansRegular.ttf
 
 CONFIG += force_independent

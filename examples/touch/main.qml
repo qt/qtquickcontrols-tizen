@@ -49,94 +49,107 @@ ApplicationWindow {
     y: 60
     width: 720
     height: 1220
-    View {
-        id: view
-        anchors.fill: parent
-
-        titleBar.text: "Controls Gallery"
-        titleBar.subText: pageStack.depth > 1 ? pageStack.currentItem: "Main Page"
-        property bool active:Qt.application.active
-
-
-        /*SOME UGLY HACK - FIXME*/
-        onActiveChanged: {
-            /* quit only on device*/
-            if (!active && Screen.width == 720 && Screen.height == 1280) {
-                Qt.quit()
-            }
-        }
-        backAction.onTriggered: pageStack.depth > 1 ? pageStack.pop() : Qt.quit()
-        // Implements back key navigation
-        Keys.onReleased: {
-            if (event.key === Qt.Key_Back) {
-                if (pageStack.depth > 1) {
-                    pageStack.pop();
-                    event.accepted = true;
-                } else { Qt.quit(); }
-            }
-        }
-
-        ListModel {
-            id: pageModel
-            ListElement {
-                title: "Buttons"
-                page: "content/ButtonPage.qml"
-            }
-            ListElement {
-                title: "Sliders"
-                page: "content/SliderPage.qml"
-            }
-            ListElement {
-                title: "ProgressBar"
-                page: "content/ProgressBarPage.qml"
-            }
-            ListElement {
-                title: "Tabs"
-                page: "content/TabBarPage.qml"
-            }
-            ListElement {
-                title: "CheckBoxes"
-                page: "content/CheckBoxPage.qml"
-            }
-            ListElement {
-                title: "ContextMenu"
-                page: "content/ContextMenuPage.qml"
-            }
-            ListElement {
-                title: "SplitView"
-                page: "content/SplitViewPage.qml"
-            }
-            ListElement {
-                title: "DateTimeEdit"
-                page: "content/DateTimeEditPage.qml"
-            }
-        }
-
-        StackView {
-            id: pageStack
+    function reload() {
+        loader.sourceComponent = null
+        loader.sourceComponent = mainComponent
+    }
+    Component {
+        id: mainComponent
+        View {
+            id: view
             anchors.fill: parent
 
-            initialItem: Item {
-                width: parent.width
-                height: parent.height
+            titleBar.text: "Controls Gallery"
+            titleBar.subText: pageStack.depth > 1 ? pageStack.currentItem: "Main Page"
+            property bool active:Qt.application.active
 
 
-                ListView {
-                    id:listView
-                    model: pageModel
-                    anchors.fill: parent
-                    clip:true
+            /*SOME UGLY HACK - FIXME*/
+            onActiveChanged: {
+                /* quit only on device*/
+                if (!active && Screen.width == 720 && Screen.height == 1280) {
+                    Qt.quit()
+                }
+            }
+            backAction.onTriggered: pageStack.depth > 1 ? pageStack.pop() : Qt.quit()
+            // Implements back key navigation
+            Keys.onReleased: {
+                if (event.key === Qt.Key_Back) {
+                    if (pageStack.depth > 1) {
+                        pageStack.pop();
+                        event.accepted = true;
+                    } else { Qt.quit(); }
+                }
+            }
 
-                    delegate: AndroidDelegate {
-                        text: title
-                        onClicked: {
-                            view.titleBar.subText = Qt.binding(function() {return pageStack.depth > 1 ? title: "Main Page"})
-                            pageStack.push(Qt.resolvedUrl(page))
+            ListModel {
+                id: pageModel
+                ListElement {
+                    title: "Buttons"
+                    page: "content/ButtonPage.qml"
+                }
+                ListElement {
+                    title: "Sliders"
+                    page: "content/SliderPage.qml"
+                }
+                ListElement {
+                    title: "ProgressBar"
+                    page: "content/ProgressBarPage.qml"
+                }
+                ListElement {
+                    title: "Tabs"
+                    page: "content/TabBarPage.qml"
+                }
+                ListElement {
+                    title: "CheckBoxes"
+                    page: "content/CheckBoxPage.qml"
+                }
+                ListElement {
+                    title: "ContextMenu"
+                    page: "content/ContextMenuPage.qml"
+                }
+                ListElement {
+                    title: "SplitView"
+                    page: "content/SplitViewPage.qml"
+                }
+                ListElement {
+                    title: "DateTimeEdit"
+                    page: "content/DateTimeEditPage.qml"
+                }
+            }
+
+            StackView {
+                id: pageStack
+                anchors.fill: parent
+
+                initialItem: Item {
+                    width: parent.width
+                    height: parent.height
+
+
+                    ListView {
+                        id:listView
+                        model: pageModel
+                        anchors.fill: parent
+                        clip:true
+
+                        delegate: AndroidDelegate {
+                            text: title
+                            onClicked: {
+                                view.titleBar.subText = Qt.binding(function() {return pageStack.depth > 1 ? title: "Main Page"})
+                                pageStack.push(Qt.resolvedUrl(page))
+                            }
                         }
+                        ScrollDecorator {flickableItem: listView}
                     }
-                    ScrollDecorator {flickableItem: listView}
                 }
             }
         }
+    }
+
+    Loader {
+        id:loader
+        sourceComponent: mainComponent
+        anchors.fill: parent
     }
 }

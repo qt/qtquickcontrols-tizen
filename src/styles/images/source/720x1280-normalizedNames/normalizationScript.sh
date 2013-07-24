@@ -27,6 +27,14 @@
 #
 # 
 
+SCRIPT_DIR=$(dirname $0)
+
+cd $SCRIPT_DIR
+
+rm  -rf *.png *.sci default/ black/ white/
+
+cp -r ../720x1280/* .
+
 for file in `find . -name "*#.png"`; do
     normalized=$(echo -n $file | sed s/#\./9\./);
     mv $file $normalized;
@@ -38,3 +46,8 @@ done
 for file in `find . -name '*.9.png'`; do
     9patch2sci $file;
 done
+
+cd ../../720x1280
+rm  -rf *.png *.sci default/ black/ white/
+
+cp -r ../sources/720x1280-normalizedNames/* .

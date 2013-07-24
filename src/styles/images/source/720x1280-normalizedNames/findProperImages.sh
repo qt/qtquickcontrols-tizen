@@ -25,24 +25,51 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+FILE=../../../Images.js
 
 
-echo "var images = {"
+echo "
+/*
+ * Copyright (C) 2013 Tomasz Olszak <olszak.tomasz@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+" > $FILE
 
+echo ".pragma library" >> $FILE
+echo "var theme = \"white\"" >> $FILE
+echo "var imagesPath = \"images\"" >> $FILE
+echo "function getImages() {" >> $FILE
+echo "    var images = {" >> $FILE
 
 for baseName in `find . -name '*.png' | sed s#.*\./## | sed s/\.png// | sort | uniq`; do
     path="imagesPath +"
     subPath=""
     extension=".png"
     if [ -e "white/$baseName$extension" ]; then
-	subPath="white/"
-	path="$path theme +"
+        subPath="white/"
+        path="$path theme + \"/\" +"
     fi 
     if [ -e "$subPath$baseName.sci" ]; then
-	extension=".sci"
+        extension=".sci"
     fi
     normalizedBaseName=$(echo -n $baseName | sed s/\.9$/_9/)
-    echo -n "    img_$normalizedBaseName" && echo ": $path \"$baseName$extension\","
+    echo -n "        img_$normalizedBaseName" >> $FILE
+    echo ": $path \"$baseName$extension\"," >> $FILE
 done
-
-echo "}"
+echo "    }" >> $FILE
+echo "    return images" >> $FILE
+echo "}" >> $FILE

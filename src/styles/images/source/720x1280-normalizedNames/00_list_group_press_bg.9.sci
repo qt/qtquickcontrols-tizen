@@ -1,5 +1,5 @@
-border.left: 15
-border.right: 15
+border.left: 17
+border.right: 17
 border.top: 8
-border.bottom: 10
+border.bottom: 8
 source: 00_list_group_press_bg.9.png

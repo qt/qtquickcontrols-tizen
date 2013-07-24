@@ -1,5 +1,5 @@
-border.left: 37
-border.right: 36
-border.top: 58
-border.bottom: 77
+border.left: 29
+border.right: 28
+border.top: 44
+border.bottom: 45
 source: pd_btn_bg.9.png
