@@ -21,7 +21,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 Style {
     id: styleitem
@@ -40,7 +40,7 @@ Style {
         Image {
             id:icon
             anchors.fill: parent
-            source: control.enabled ? ( control.checked ? Theme.checkBox.onOff.on.handler.source.normal : Theme.checkBox.onOff.off.handler.source.normal) :  ( control.checked ? Theme.checkBox.onOff.on.handler.source.disabled : Theme.checkBox.onOff.off.handler.source.disabled)
+            source: control.enabled ? ( control.checked ? TizenConfig.checkBox.onOff.on.handler.source.normal : TizenConfig.checkBox.onOff.off.handler.source.normal) :  ( control.checked ? TizenConfig.checkBox.onOff.on.handler.source.disabled : TizenConfig.checkBox.onOff.off.handler.source.disabled)
         }
     }
 
@@ -53,7 +53,7 @@ Style {
         Image {
             id:onOffBackground
             anchors.fill: parent
-            source: control.enabled ? Theme.checkBox.onOff.source.normal :  Theme.checkBox.on.source.disabled
+            source: control.enabled ? TizenConfig.checkBox.onOff.source.normal :  TizenConfig.checkBox.on.source.disabled
         }
     }
 

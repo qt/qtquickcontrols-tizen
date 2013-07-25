@@ -17,14 +17,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-import QtQuick 2.1
-import QtQuick.Controls.Styles.Tizen 1.0
+#ifndef QQUICKTIZENSTYLEEXTENSIONPLUGIN_H
+#define QQUICKTIZENSTYLEEXTENSIONPLUGIN_H
 
-TizenBorderImage {
-    implicitWidth: 200
-    implicitHeight: 100
-    property bool pressed:false
-    source: pressed ? TizenConfig.panel.source.pressed : TizenConfig.panel.source.normal
-    effectSource: pressed ? TizenConfig.panel.effectSource.pressed : (activeFocus ? TizenConfig.panel.effectSource.selected : TizenConfig.panel.effectSource.normal)
-    backgroundColor: pressed ? TizenConfig.panel.color.pressed: TizenConfig.panel.color.normal
-}
+#include <QtQml/QQmlExtensionPlugin>
+
+class QQuickTizenStyleExtensionPlugin : public QQmlExtensionPlugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
+public:
+    explicit QQuickTizenStyleExtensionPlugin(QObject *parent = 0);
+    void registerTypes(const char *uri);
+    void initializeEngine(QQmlEngine *engine, const char *uri);
+};
+
+#endif // QQUICKTIZENSTYLEEXTENSIONPLUGIN_H

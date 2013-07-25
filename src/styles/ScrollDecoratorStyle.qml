@@ -21,7 +21,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 Style {
     id: style
@@ -39,7 +39,7 @@ Style {
             property real positionRatio: flickableItem ? flickableItem.visibleArea.xPosition : 0
             property real sizeRatio: flickableItem ? flickableItem.visibleArea.widthRatio : 0
             property real maxPosition: flickableItem ? flickableItem.width : 0
-            property real minSize: Theme.scroll.handler.horizontal.minimumWidth
+            property real minSize: TizenConfig.scroll.handler.horizontal.minimumWidth
 
             property real sizeUnderflow: (sizeRatio * maxPosition) < minSize ? minSize - (sizeRatio * maxPosition) : 0
 
@@ -65,7 +65,7 @@ Style {
             property real positionRatio: flickableItem ? flickableItem.visibleArea.yPosition : 0
             property real sizeRatio: flickableItem ? flickableItem.visibleArea.heightRatio : 0
             property real maxPosition: flickableItem ? flickableItem.height : 0
-            property real minSize: Theme.scroll.handler.vertical.minimumHeight
+            property real minSize: TizenConfig.scroll.handler.vertical.minimumHeight
 
             property real sizeUnderflow: (sizeRatio * maxPosition) < minSize ? minSize - (sizeRatio * maxPosition) : 0
 
@@ -91,8 +91,8 @@ Style {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.right: parent.right
-            height: Theme.scroll.overscrolling.top.height
-            source: Theme.scroll.overscrolling.top.source
+            height: TizenConfig.scroll.overscrolling.top.height
+            source: TizenConfig.scroll.overscrolling.top.source
             opacity:0
             states: State {
                 name:"visible"
@@ -124,8 +124,8 @@ Style {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            height: Theme.scroll.overscrolling.bottom.height
-            source: Theme.scroll.overscrolling.bottom.source
+            height: TizenConfig.scroll.overscrolling.bottom.height
+            source: TizenConfig.scroll.overscrolling.bottom.source
             opacity:0
             states: State {
                 name:"visible"
@@ -157,8 +157,8 @@ Style {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            width: Theme.scroll.overscrolling.left.right
-            source: Theme.scroll.overscrolling.right.source
+            width: TizenConfig.scroll.overscrolling.left.right
+            source: TizenConfig.scroll.overscrolling.right.source
             opacity:0
             states: State {
                 name:"visible"
@@ -190,8 +190,8 @@ Style {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            width: Theme.scroll.overscrolling.left.width
-            source: Theme.scroll.overscrolling.left.source
+            width: TizenConfig.scroll.overscrolling.left.width
+            source: TizenConfig.scroll.overscrolling.left.source
             opacity:0
             states: State {
                 name:"visible"
@@ -225,10 +225,10 @@ Style {
             opacity: 0
             width: horizontalHelper.size
             anchors.bottom: parent.bottom
-            height: Theme.scroll.handler.horizontal.minimumHeight
-            source: Theme.scroll.handler.horizontal.source
-            backgroundColor: Theme.scroll.handler.color
-            effectSource: Theme.scroll.handler.horizontal.effectSource
+            height: TizenConfig.scroll.handler.horizontal.minimumHeight
+            source: TizenConfig.scroll.handler.horizontal.source
+            backgroundColor: TizenConfig.scroll.handler.color
+            effectSource: TizenConfig.scroll.handler.horizontal.effectSource
             states: State {
                 name: "visible"
                 when: flickableItem.movingHorizontally
@@ -259,12 +259,12 @@ Style {
             y: verticalHelper.position
             anchors.right: parent.right
             opacity: 0
-            anchors.margins: Theme.scroll.handler.vertical.margin
-            width: Theme.scroll.handler.vertical.minimumWidth
+            anchors.margins: TizenConfig.scroll.handler.vertical.margin
+            width: TizenConfig.scroll.handler.vertical.minimumWidth
             height: verticalHelper.size
-            source: Theme.scroll.handler.vertical.source
-            backgroundColor: Theme.scroll.handler.color
-            effectSource: Theme.scroll.handler.vertical.effectSource
+            source: TizenConfig.scroll.handler.vertical.source
+            backgroundColor: TizenConfig.scroll.handler.color
+            effectSource: TizenConfig.scroll.handler.vertical.effectSource
             states: State {
                 name: "visible"
                 when: flickableItem.movingVertically

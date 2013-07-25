@@ -21,7 +21,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 Style {
     id: style
@@ -29,11 +29,11 @@ Style {
 
     property Component panel: Rectangle {
 
-        color: Theme.titleBar.backgroundColor
+        color: TizenConfig.titleBar.backgroundColor
         implicitWidth: 720
         implicitHeight: header.height + header2.height + 30 + 30
 
-        FontLoader { source: Theme.fonts.defaultSource }
+        FontLoader { source: TizenConfig.fonts.defaultSource }
 
         Text {
             id: header
@@ -45,7 +45,7 @@ Style {
             anchors.topMargin: 30
             height: contentHeight
             color: "#3b73b6"
-            font.family: Theme.fonts.defaultFamily
+            font.family: TizenConfig.fonts.defaultFamily
             font.capitalization: Font.AllUppercase
             text: control.text
             font.pixelSize: 36

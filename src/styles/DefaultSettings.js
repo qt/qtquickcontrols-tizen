@@ -21,24 +21,32 @@
 
 .import "themes/Colors.js" as Colors
 .import "Images.js" as Images
-.import QtQml 2.0 as Qml
 
 var resolution="720x1280"
 var theme = "black"
-Images.theme = theme
+var imagesPath = "images/"+resolution+"/"
 
-Images.imagesPath = "images/"+resolution+"/"
-
-var colors = (theme == "white") ? Colors.colorsWhite : Colors.colorsBlack
-
-var images = Images.getImages()
+var whiteColors = Colors.colorsWhite
+var blackColors = Colors.colorsBlack
+var whiteImages = Images.getImages("white",imagesPath)
+var blackImages = Images.getImages("black",imagesPath)
 
 var fonts = {
     defaultFamily: 'TizenSans',
     defaultSource: 'TizenSansRegular.ttf'
 }
 
-function createPanel() {
+function createPanel(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
+
     var ret = {
         color: {
             normal:colors.B0217,
@@ -62,7 +70,16 @@ function createPanel() {
     return ret
 }
 
-function createProgress() {
+function createProgress(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         margins:{left:8,right:8,top:0,bottom:0},
 
@@ -87,7 +104,16 @@ function createProgress() {
     return ret
 }
 
-function createSlider() {
+function createSlider(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         handle:{
             backgroundColor:{
@@ -131,7 +157,16 @@ function createSlider() {
     return ret
 }
 
-function createButton() {
+function createButton(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         backgroundColor: {
             normal:colors.W011,
@@ -171,7 +206,16 @@ function createButton() {
     return ret
 }
 
-function createToolBar() {
+function createToolBar(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         backgroundColor: colors.background,
         iconColor: {
@@ -198,7 +242,16 @@ function createToolBar() {
     return ret
 }
 
-function createCheckBox() {
+function createCheckBox(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         indicator: {
             color: {
@@ -312,7 +365,16 @@ function createCheckBox() {
     return ret
 }
 
-function createTabBar() {
+function createTabBar(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         color: colors.W0813,
         source: images.img_00_category_panel_bg_9,
@@ -358,7 +420,16 @@ function createTabBar() {
     return ret
 }
 
-function createDetailButton() {
+function createDetailButton(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         color: {
             normal: checkBox.details.color.normal,
@@ -390,7 +461,16 @@ function createDetailButton() {
     return ret
 }
 
-function createContextMenu() {
+function createContextMenu(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         color: colors.B061L4,
         listItemDividerColor1: colors.B0622L1,
@@ -463,7 +543,16 @@ function createContextMenu() {
     return ret
 }
 
-function createSplitView() {
+function createSplitView(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         color: {
             normal: colors.W131,
@@ -484,7 +573,16 @@ function createSplitView() {
     return ret
 }
 
-function createScroll() {
+function createScroll(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         fastScrollHandler: {
             horizontal: {
@@ -534,7 +632,16 @@ function createScroll() {
     return ret
 }
 
-function createPopup() {
+function createPopup(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         color: colors.B061L1,
         source: images.img_00_popup_bg_9,
@@ -552,7 +659,16 @@ function createPopup() {
     return ret
 }
 
-function createTitleBar() {
+function createTitleBar(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         backgroundColor: colors.background,
         text: {
@@ -571,7 +687,16 @@ function createTitleBar() {
     return ret
 }
 
-function createBusyIndicator() {
+function createBusyIndicator(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         source: images.img_00_list_process_01,
         duration: 1500
@@ -579,7 +704,16 @@ function createBusyIndicator() {
     return ret
 }
 
-function createDateEdit() {
+function createDateEdit(th) {
+    var colors
+    var images
+    if (th === "white") {
+        colors = whiteColors
+        images = whiteImages
+    } else {
+        colors = blackColors
+        images = blackImages
+    }
     var ret = {
         bar: {
             color: colors.W0811,
@@ -645,41 +779,41 @@ function createDateEdit() {
     return ret
 }
 
-var panel = createPanel()
-var progress = createProgress()
-var slider = createSlider()
-var button = createButton()
-var toolBar = createToolBar()
-var checkBox = createCheckBox()
-var tabBar = createTabBar()
-var detailButton = createDetailButton()
-var contextMenu = createContextMenu()
-var splitView = createSplitView()
-var scroll = createScroll()
-var popup = createPopup()
-var titleBar = createTitleBar()
-var busyIndicator = createBusyIndicator()
-var dateEdit = createDateEdit()
+var panel = createPanel(theme)
+var progress = createProgress(theme)
+var slider = createSlider(theme)
+var button = createButton(theme)
+var toolBar = createToolBar(theme)
+var checkBox = createCheckBox(theme)
+var tabBar = createTabBar(theme)
+var detailButton = createDetailButton(theme)
+var contextMenu = createContextMenu(theme)
+var splitView = createSplitView(theme)
+var scroll = createScroll(theme)
+var popup = createPopup(theme)
+var titleBar = createTitleBar(theme)
+var busyIndicator = createBusyIndicator(theme)
+var dateEdit = createDateEdit(theme)
 
 function setTheme(th) {
+    if (theme === th)
+        return
     theme = th
-    Images.theme = theme
-    images = Images.getImages()
-    colors = (theme == "white") ? Colors.colorsWhite : Colors.colorsBlack
 
-    panel = createPanel()
-    progress = createProgress()
-    slider = createSlider()
-    button = createButton()
-    toolBar = createToolBar()
-    checkBox = createCheckBox()
-    tabBar = createTabBar()
-    detailButton = createDetailButton()
-    contextMenu = createContextMenu()
-    splitView = createSplitView()
-    scroll = createScroll()
-    popup = createPopup()
-    titleBar = createTitleBar()
-    busyIndicator = createBusyIndicator()
-    dateEdit = createDateEdit()
+    panel = createPanel(theme)
+    progress = createProgress(theme)
+    slider = createSlider(theme)
+    button = createButton(theme)
+    toolBar = createToolBar(theme)
+    checkBox = createCheckBox(theme)
+    tabBar = createTabBar(theme)
+    detailButton = createDetailButton(theme)
+    contextMenu = createContextMenu(theme)
+    splitView = createSplitView(theme)
+    scroll = createScroll(theme)
+    popup = createPopup(theme)
+    titleBar = createTitleBar(theme)
+    busyIndicator = createBusyIndicator(theme)
+    dateEdit = createDateEdit(theme)
 }
+

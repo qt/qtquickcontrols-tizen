@@ -21,7 +21,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 Style {
     id: style
@@ -39,18 +39,21 @@ Style {
             width:control.root.width
             height:control.root.height
             color:"#AA000000"
+            MouseArea {
+                anchors.fill: parent
+            }
         }
 
         TizenBorderImage {
             id: contentOfControl
             anchors.fill: parent
-            source: Theme.popup.source
-            effectSource: Theme.popup.effectSource
-            backgroundColor: Theme.popup.color
-            anchors.topMargin: -Theme.popup.margins.top
-            anchors.leftMargin: -Theme.popup.margins.left
-            anchors.rightMargin: -Theme.popup.margins.right
-            anchors.bottomMargin: -Theme.popup.margins.bottom
+            source: TizenConfig.popup.source
+            effectSource: TizenConfig.popup.effectSource
+            backgroundColor: TizenConfig.popup.color
+            anchors.topMargin: -TizenConfig.popup.margins.top
+            anchors.leftMargin: -TizenConfig.popup.margins.left
+            anchors.rightMargin: -TizenConfig.popup.margins.right
+            anchors.bottomMargin: -TizenConfig.popup.margins.bottom
         }
 
         state: styleData.state === "hidden" ? "contentHidden" : "contentShown"

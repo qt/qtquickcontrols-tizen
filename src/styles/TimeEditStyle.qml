@@ -21,7 +21,7 @@ import QtQuick 2.1
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 import "private"
 Style {
     id:style
@@ -34,7 +34,7 @@ Style {
     property Component panel: Item {
         id: timeItem
         implicitWidth: row.width
-        implicitHeight: Theme.dateEdit.content.date.height
+        implicitHeight: TizenConfig.dateEdit.content.date.height
         anchors.fill: parent
         StateGroup {
             id:stateGroup
@@ -58,7 +58,7 @@ Style {
         Row {
             id:row
             height: timeItem.height
-            spacing: Theme.dateEdit.content.margin
+            spacing: TizenConfig.dateEdit.content.margin
             anchors.centerIn: parent
             DateEditField {
                 id:hoursField
@@ -67,7 +67,7 @@ Style {
             }
             Text {
                 width: 12 + 5 + 5
-                height: Theme.dateEdit.content.date.height
+                height: TizenConfig.dateEdit.content.date.height
                 text: ":"
                 font.pixelSize: 34
                 minimumPixelSize: 1

@@ -20,8 +20,7 @@
 import QtQuick 2.1
 import QtQuick.Controls.Tizen 1.0
 import QtQuick.Controls.Private 1.0
-import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 //import "utils.js" as Utils
 
 Style {
@@ -45,6 +44,6 @@ Style {
         implicitWidth: 720
         implicitHeight: 1280
 
-        color: Theme.colors.background
+        color: TizenConfig.colors.background
     }
 }

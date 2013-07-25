@@ -1,4 +1,11 @@
+
+TEMPLATE = lib
+CONFIG += qt plugin
+QT += qml quick
+TARGET=tizenstyleplugin
 TARGETPATH = QtQuick/Controls/Styles/Tizen
+
+QT+=qml
 
 QML_FILES = \
     TizenBorderImage.qml \
@@ -42,6 +49,21 @@ QML_FILES += \
 
 CONFIG += force_independent
 
-OTHER_FILES += qmldir
+OTHER_FILES += qmldir \
+    private/TizenStyleConfig.qml
 
 load(qml_module)
+
+target.base = $$_PRO_FILE_PWD_
+target.path = $$instbase/$$TARGETPATH
+
+HEADERS += \
+    qquicktizenstyleextensionplugin.h
+
+SOURCES += \
+    qquicktizenstyleextensionplugin.cpp
+INSTALLS += target
+#error($$INSTALLS)
+
+RESOURCES += \
+    internal_resources.qrc

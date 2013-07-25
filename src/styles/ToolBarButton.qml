@@ -19,13 +19,13 @@
 
 import QtQuick 2.1
 import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 TizenBorderImage {
     id: root
     signal clicked
 
-    backgroundColor: mouseArea.pressed ? Theme.toolBar.iconColor.pressed : Theme.toolBar.iconColor.normal
+    backgroundColor: mouseArea.pressed ? TizenConfig.toolBar.iconColor.pressed : TizenConfig.toolBar.iconColor.normal
     anchors.bottom: parent.bottom
     anchors.bottomMargin: 15
 

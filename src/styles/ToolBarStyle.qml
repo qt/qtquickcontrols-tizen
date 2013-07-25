@@ -21,7 +21,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 Style {
     id: style
@@ -30,19 +30,19 @@ Style {
     property Component panel: Rectangle {
         implicitWidth: 720
         implicitHeight: 98
-        color: Theme.toolBar.backgroundColor
+        color: TizenConfig.toolBar.backgroundColor
 
         ToolBarButton {
             id: moreButton
-            source: Theme.toolBar.more.source
-            effectSource: Theme.toolBar.more.effectSource.normal
+            source: TizenConfig.toolBar.more.source
+            effectSource: TizenConfig.toolBar.more.effectSource.normal
             anchors.left: parent.left
             anchors.leftMargin: 26
         }
         ToolBarButton {
             id: backButton
-            source: Theme.toolBar.back.source
-            effectSource: Theme.toolBar.back.effectSource.normal
+            source: TizenConfig.toolBar.back.source
+            effectSource: TizenConfig.toolBar.back.effectSource.normal
             anchors.right: parent.right
             anchors.rightMargin: 26
             onClicked: { /*console.log("back clicked");*/ view.backAction.trigger(); }

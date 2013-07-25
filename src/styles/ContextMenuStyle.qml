@@ -21,7 +21,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 Style {
     id: style
@@ -97,13 +97,13 @@ Style {
 
         function updatePosition() {
             var pos = Qt.BottomEdge
-            if (arrow.height/2 + bg.height - Theme.contextMenu.arrow.anchors.bottomMargin < (menu.height - __menuAnchorPoint.y) ) {
+            if (arrow.height/2 + bg.height - TizenConfig.contextMenu.arrow.anchors.bottomMargin < (menu.height - __menuAnchorPoint.y) ) {
                 pos = Qt.BottomEdge
-            } else if ( arrow.height/2 + bg.height - Theme.contextMenu.arrow.anchors.topMargin < __menuAnchorPoint.y ) {
+            } else if ( arrow.height/2 + bg.height - TizenConfig.contextMenu.arrow.anchors.topMargin < __menuAnchorPoint.y ) {
                 pos = Qt.TopEdge
-            } else if (arrow.width/2 + bg.width - Theme.contextMenu.arrow.anchors.rightMargin < (menu.width - __menuAnchorPoint.x))  {
+            } else if (arrow.width/2 + bg.width - TizenConfig.contextMenu.arrow.anchors.rightMargin < (menu.width - __menuAnchorPoint.x))  {
                 pos = Qt.RightEdge
-            } else if (arrow.width/2 + bg.width - Theme.contextMenu.arrow.anchors.leftMargin < __menuAnchorPoint.x)  {
+            } else if (arrow.width/2 + bg.width - TizenConfig.contextMenu.arrow.anchors.leftMargin < __menuAnchorPoint.x)  {
                 pos = Qt.LeftEdge
             }
             return pos
@@ -128,9 +128,9 @@ Style {
         TizenBorderImage {
             id:arrow
 
-            source: Theme.contextMenu.arrow.source.top
-            effectSource: Theme.contextMenu.arrow.effectSource.top
-            backgroundColor: Theme.contextMenu.color
+            source: TizenConfig.contextMenu.arrow.source.top
+            effectSource: TizenConfig.contextMenu.arrow.effectSource.top
+            backgroundColor: TizenConfig.contextMenu.color
 
             states: [
                 State {
@@ -148,7 +148,7 @@ Style {
                     }
                     PropertyChanges {
                         target: bg
-                        anchors.topMargin: -Theme.contextMenu.arrow.anchors.bottomMargin
+                        anchors.topMargin: -TizenConfig.contextMenu.arrow.anchors.bottomMargin
                         x: Math.min(Math.max(arrow.x+arrow.width/2-bg.width/2,0),menu.width - bg.width)
                     }
                 },
@@ -167,7 +167,7 @@ Style {
                     }
                     PropertyChanges {
                         target: bg
-                        anchors.bottomMargin: -Theme.contextMenu.arrow.anchors.topMargin
+                        anchors.bottomMargin: -TizenConfig.contextMenu.arrow.anchors.topMargin
                         x: Math.min(Math.max(arrow.x+arrow.width/2-bg.width/2,0),menu.width - bg.width)
                     }
                 },
@@ -186,7 +186,7 @@ Style {
                     }
                     PropertyChanges {
                         target: bg
-                        anchors.leftMargin: -Theme.contextMenu.arrow.anchors.rightMargin
+                        anchors.leftMargin: -TizenConfig.contextMenu.arrow.anchors.rightMargin
                         y: Math.min(Math.max(arrow.y+arrow.height/2-bg.height/2,0),menu.height-bg.height)
                     }
 
@@ -206,7 +206,7 @@ Style {
                     }
                     PropertyChanges {
                         target: bg
-                        anchors.rightMargin: -Theme.contextMenu.arrow.anchors.leftMargin
+                        anchors.rightMargin: -TizenConfig.contextMenu.arrow.anchors.leftMargin
                         y: Math.min(Math.max(arrow.y+arrow.height/2-bg.height/2,0),menu.height-bg.height)
                     }
                 }
@@ -214,11 +214,11 @@ Style {
         }
         TizenBorderImage {
             id:bg
-            width: Math.min(layout.contentWidth + layout.anchors.leftMargin + layout.anchors.rightMargin,Theme.contextMenu.maximumWidth)
+            width: Math.min(layout.contentWidth + layout.anchors.leftMargin + layout.anchors.rightMargin,TizenConfig.contextMenu.maximumWidth)
             height: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
-            source: Theme.contextMenu.source
-            effectSource: Theme.contextMenu.effectSource
-            backgroundColor: Theme.contextMenu.color
+            source: TizenConfig.contextMenu.source
+            effectSource: TizenConfig.contextMenu.effectSource
+            backgroundColor: TizenConfig.contextMenu.color
 
             MouseArea {
                 anchors.fill: bg
@@ -229,19 +229,19 @@ Style {
             id:layout
             anchors.fill: bg
 
-            anchors.leftMargin: Theme.contextMenu.listLeftMargin + Theme.contextMenu.screen.leftMargin
-            anchors.rightMargin: Theme.contextMenu.listRightMargin + Theme.contextMenu.screen.rightMargin
-            anchors.topMargin: Theme.contextMenu.listTopMargin + Theme.contextMenu.screen.topMargin
-            anchors.bottomMargin: Theme.contextMenu.listBottomMargin + Theme.contextMenu.screen.bottomMargin
+            anchors.leftMargin: TizenConfig.contextMenu.listLeftMargin + TizenConfig.contextMenu.screen.leftMargin
+            anchors.rightMargin: TizenConfig.contextMenu.listRightMargin + TizenConfig.contextMenu.screen.rightMargin
+            anchors.topMargin: TizenConfig.contextMenu.listTopMargin + TizenConfig.contextMenu.screen.topMargin
+            anchors.bottomMargin: TizenConfig.contextMenu.listBottomMargin + TizenConfig.contextMenu.screen.bottomMargin
 
-            property real contentWidth: Theme.contextMenu.minimumWidth
+            property real contentWidth: TizenConfig.contextMenu.minimumWidth
             Repeater {
                 model: menuItems
 
                 Item {
                     id: delegateRoot
                     implicitWidth: Math.max(itemBg.implicitWidth,label.contentWidth)
-                    implicitHeight: Theme.contextMenu.item.height// Math.max(itemBg.implicitHeight+separator.height,label.contentHeight+separator.height)
+                    implicitHeight: TizenConfig.contextMenu.item.height// Math.max(itemBg.implicitHeight+separator.height,label.contentHeight+separator.height)
                     width: layout.contentWidth
                     MouseArea {
                         id: mouseArea
@@ -249,29 +249,29 @@ Style {
                         TizenBorderImage {
                             id:itemBg
                             anchors.fill: parent
-                            source: Theme.contextMenu.item.source.pressed
-                            backgroundColor: mouseArea.pressed && enabled ? Theme.contextMenu.item.color.pressed: Theme.contextMenu.item.color.normal
+                            source: TizenConfig.contextMenu.item.source.pressed
+                            backgroundColor: mouseArea.pressed && enabled ? TizenConfig.contextMenu.item.color.pressed: TizenConfig.contextMenu.item.color.normal
                         }
                         Image {
                             id:icon
                             anchors.left:parent.left
                             anchors.verticalCenter: parent.verticalCenter
                             source: modelData.iconSource
-                            width: Theme.contextMenu.item.iconWidth
-                            height: Theme.contextMenu.item.iconHeight
+                            width: TizenConfig.contextMenu.item.iconWidth
+                            height: TizenConfig.contextMenu.item.iconHeight
                         }
 
                         Text {
                             id:label
                             anchors.left: icon.right
-                            anchors.leftMargin: Theme.contextMenu.item.spacing
+                            anchors.leftMargin: TizenConfig.contextMenu.item.spacing
                             anchors.top: parent.top
                             anchors.bottom: parent.bottom
                             anchors.right: parent.right
                             anchors.bottomMargin: 3
                             text: modelData.text
-                            color: Theme.contextMenu.item.text.color.normal
-                            font.pixelSize: Theme.contextMenu.item.text.font.pixelSize
+                            color: TizenConfig.contextMenu.item.text.color.normal
+                            font.pixelSize: TizenConfig.contextMenu.item.text.font.pixelSize
                             verticalAlignment: Text.AlignVCenter
                         }
                         Rectangle {
@@ -280,7 +280,7 @@ Style {
                             anchors.left: parent.left
                             anchors.right: parent.right
                             height: 2
-                            color: Theme.contextMenu.listItemDividerColor2
+                            color: TizenConfig.contextMenu.listItemDividerColor2
                             visible: index < menuItems.length -1
                         }
                         onClicked: menu.visible = false

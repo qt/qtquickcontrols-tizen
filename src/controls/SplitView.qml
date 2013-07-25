@@ -26,15 +26,15 @@ SplitView {
     id: splitView
     handleDelegate: TizenBorderImage {
         id:bg
-        width: splitView.orientation === Qt.Horizontal ? (!styleData.pressed ? Theme.splitView.width : Theme.splitView.pressedWidth) : 1
-        height: splitView.orientation === Qt.Horizontal ? 1 : (!styleData.pressed ? Theme.splitView.width : Theme.splitView.pressedWidth)
-        source: "../Styles/Tizen/"+Theme.splitView.source
-        backgroundColor: styleData.pressed ? Theme.splitView.color.pressed : Theme.splitView.color.normal
+        width: splitView.orientation === Qt.Horizontal ? (!styleData.pressed ? TizenConfig.splitView.width : TizenConfig.splitView.pressedWidth) : 1
+        height: splitView.orientation === Qt.Horizontal ? 1 : (!styleData.pressed ? TizenConfig.splitView.width : TizenConfig.splitView.pressedWidth)
+        source: "../Styles/Tizen/"+TizenConfig.splitView.source
+        backgroundColor: styleData.pressed ? TizenConfig.splitView.color.pressed : TizenConfig.splitView.color.normal
         TizenBorderImage {
             anchors.centerIn: parent
             visible: styleData.pressed
-            source: splitView.orientation === Qt.Horizontal ? "../Styles/Tizen/"+Theme.splitView.horizontal.source : "../Styles/Tizen/"+Theme.splitView.vertical.source
-            effectSource: splitView.orientation === Qt.Horizontal ? "../Styles/Tizen/"+Theme.splitView.horizontal.effectSource : "../Styles/Tizen/"+Theme.splitView.vertical.effectSource
+            source: splitView.orientation === Qt.Horizontal ? "../Styles/Tizen/"+TizenConfig.splitView.horizontal.source : "../Styles/Tizen/"+TizenConfig.splitView.vertical.source
+            effectSource: splitView.orientation === Qt.Horizontal ? "../Styles/Tizen/"+TizenConfig.splitView.horizontal.effectSource : "../Styles/Tizen/"+TizenConfig.splitView.vertical.effectSource
         }
     }
 }

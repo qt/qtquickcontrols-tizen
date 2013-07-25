@@ -18,31 +18,29 @@
  */
 
 import QtQuick 2.1
-import ".."
-import "../DefaultSettings.js" as Theme
-
+import QtQuick.Controls.Styles.Tizen 1.0
 
 TizenBorderImage {
     id: root
-    implicitWidth: Theme.dateEdit.content.day.width
-    implicitHeight: Theme.dateEdit.content.date.height
+    implicitWidth: TizenConfig.dateEdit.content.day.width
+    implicitHeight: TizenConfig.dateEdit.content.date.height
 
-    source: "../"+Theme.dateEdit.content.source.normal
+    source: "../"+TizenConfig.dateEdit.content.source.normal
 
     property alias text: dayText.text
 
-    effectSource: enabled ? (pressed ? "../"+Theme.dateEdit.content.effectSource.pressed : "../"+Theme.dateEdit.content.effectSource.normal) : "../"+Theme.dateEdit.content.effectSource.disabled
+    effectSource: enabled ? (pressed ? "../"+TizenConfig.dateEdit.content.effectSource.pressed : "../"+TizenConfig.dateEdit.content.effectSource.normal) : "../"+TizenConfig.dateEdit.content.effectSource.disabled
 
-    backgroundColor: pressed ? Theme.dateEdit.content.color.pressed : Theme.dateEdit.content.color.normal
+    backgroundColor: pressed ? TizenConfig.dateEdit.content.color.pressed : TizenConfig.dateEdit.content.color.normal
 
     property bool pressed: false
 
     Text {
         id:dayText
         anchors.fill: parent
-        font.pixelSize: Theme.dateEdit.content.date.fontSize
+        font.pixelSize: TizenConfig.dateEdit.content.date.fontSize
         fontSizeMode: Text.Fit
-        color: enabled ? (pressed ? Theme.dateEdit.content.text.color.pressed : Theme.dateEdit.content.text.color.normal):Theme.dateEdit.content.text.color.disabled
+        color: enabled ? (pressed ? TizenConfig.dateEdit.content.text.color.pressed : TizenConfig.dateEdit.content.text.color.normal):TizenConfig.dateEdit.content.text.color.disabled
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
     }

@@ -20,31 +20,31 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 CheckBoxStyle {
     id: checkboxStyle
 
     label: Text {
         text: control.text
-        font.pointSize: Theme.checkBox.font.pixelSize
+        font.pointSize: TizenConfig.checkBox.font.pixelSize
         color:if (control.enabled) {
                   if (control.pressed) {
-                      Theme.checkBox.text.color.pressed
+                      TizenConfig.checkBox.text.color.pressed
                   } else {
-                      Theme.checkBox.text.color.normal
+                      TizenConfig.checkBox.text.color.normal
                   }
               } else {
-                  Theme.checkBox.text.color.disabled
+                  TizenConfig.checkBox.text.color.disabled
               }
         verticalAlignment: Text.AlignVCenter
     }
 
     indicator: Image {
-        source: control.enabled ? (control.pressed? Theme.checkBox.indicator.source.pressed: Theme.checkBox.indicator.source.normal):Theme.checkBox.indicator.source.disabled
+        source: control.enabled ? (control.pressed? TizenConfig.checkBox.indicator.source.pressed: TizenConfig.checkBox.indicator.source.normal):TizenConfig.checkBox.indicator.source.disabled
         Image {
             visible: control.checked
-            source: control.enabled ? (control.pressed || !control.checked ? Theme.checkBox.indicator.markSource.pressed: Theme.checkBox.indicator.markSource.normal):Theme.checkBox.indicator.markSource.disabled
+            source: control.enabled ? (control.pressed || !control.checked ? TizenConfig.checkBox.indicator.markSource.pressed: TizenConfig.checkBox.indicator.markSource.normal):TizenConfig.checkBox.indicator.markSource.disabled
         }
     }
 
@@ -52,8 +52,8 @@ CheckBoxStyle {
     background: Panel {
         id:panel
         pressed: control.pressed
-        property var pressedColor: control.styleHints && control.styleHints["pressedColor"] ? control.styleHints["pressedColor"]: Theme.panel.color.pressed
-        property var normalColor: control.styleHints && control.styleHints["color"] ? control.styleHints["color"]: Theme.panel.color.normal
+        property var pressedColor: control.styleHints && control.styleHints["pressedColor"] ? control.styleHints["pressedColor"]: TizenConfig.panel.color.pressed
+        property var normalColor: control.styleHints && control.styleHints["color"] ? control.styleHints["color"]: TizenConfig.panel.color.normal
         backgroundColor: control.pressed ? pressedColor : normalColor
         implicitWidth: 600
         implicitHeight: 100

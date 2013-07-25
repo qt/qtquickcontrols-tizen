@@ -18,8 +18,7 @@
  */
 
 import QtQuick 2.0
-import ".."
-import "../DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 MouseArea {
     id: rootItem
@@ -74,8 +73,8 @@ MouseArea {
         id:tail
         x: anchorPoint.x - width/2
         y: anchorPoint.y
-        source: "../"+Theme.dateEdit.tail.source
-        backgroundColor: Theme.dateEdit.bar.color
+        source: "../"+TizenConfig.dateEdit.tail.source
+        backgroundColor: TizenConfig.dateEdit.bar.color
     }
 
     TizenBorderImage {
@@ -83,9 +82,9 @@ MouseArea {
         x:0
         anchors.top: tail.bottom
         width: root.width
-        height: Theme.dateEdit.height
-        source: "../"+Theme.dateEdit.source
-        backgroundColor: Theme.dateEdit.bar.color
+        height: TizenConfig.dateEdit.height
+        source: "../"+TizenConfig.dateEdit.source
+        backgroundColor: TizenConfig.dateEdit.bar.color
     }
     PathView {
         id: view
@@ -126,8 +125,8 @@ MouseArea {
             text: modelData //view.delegateText(rootItem.model === "Month" || rootItem.model === "Hours" || rootItem.model === "Minutes" ? modelData : modelData+1)
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: Theme.dateEdit.bar.day.fontSize
-            color: PathView.isCurrentItem ? Theme.dateEdit.bar.text.color.pressed : Theme.dateEdit.bar.text.color.normal
+            font.pixelSize: TizenConfig.dateEdit.bar.day.fontSize
+            color: PathView.isCurrentItem ? TizenConfig.dateEdit.bar.text.color.pressed : TizenConfig.dateEdit.bar.text.color.normal
             MouseArea {
                 anchors.fill: parent
                 onClicked: {

@@ -20,13 +20,13 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 ProgressBarStyle {
     id: progressBarStyle
 
-    padding.left: Theme.progress.margins.left
-    padding.right: Theme.progress.margins.right
+    padding.left: TizenConfig.progress.margins.left
+    padding.right: TizenConfig.progress.margins.right
     progress: Item {
         implicitWidth: bar.implicitWidth
         implicitHeight: bar.implicitHeight
@@ -34,9 +34,9 @@ ProgressBarStyle {
             id:bar
             anchors.centerIn: parent
             width: parent.width
-            source: Theme.progress.source.normal
-            backgroundColor: Theme.progress.progressColor
-            effectSource: Theme.progress.effectSource.normal
+            source: TizenConfig.progress.source.normal
+            backgroundColor: TizenConfig.progress.progressColor
+            effectSource: TizenConfig.progress.effectSource.normal
         }
     }
 
@@ -48,10 +48,10 @@ ProgressBarStyle {
             id:bg
             anchors.centerIn: parent
             width:parent.width
-            height:Theme.progress.height
-            source: Theme.progress.backgroundSource.normal
-            backgroundColor: Theme.progress.backgroundColor
-            effectSource: Theme.progress.backgroundEffectSource.normal
+            height:TizenConfig.progress.height
+            source: TizenConfig.progress.backgroundSource.normal
+            backgroundColor: TizenConfig.progress.backgroundColor
+            effectSource: TizenConfig.progress.backgroundEffectSource.normal
         }
     }
 }

@@ -33,6 +33,9 @@
 
 extern "C" int OspMain(int argc, char *argv[])
 {
+#ifdef Q_OS_TIZEN_SIMULATOR
+    qputenv("QML_BAD_GUI_RENDER_LOOP","1");
+#endif
     qputenv("QT_QUICK_CONTROLS_STYLE","Tizen");
     QGuiApplication app(argc,argv);
 

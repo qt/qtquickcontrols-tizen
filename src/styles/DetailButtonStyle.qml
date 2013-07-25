@@ -21,7 +21,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Controls.Tizen 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 ButtonStyle {
     id: buttonstyle
@@ -30,9 +30,9 @@ ButtonStyle {
 
     background: TizenBorderImage {
         id:detailsBg
-        source: Theme.detailButton.source.normal
-        backgroundColor: control.enabled ? (control.pressed ? Theme.detailButton.color.pressed : Theme.detailButton.color.normal) : Theme.detailButton.color.disabled
-        effectSource: control.enabled ? (control.pressed ? Theme.detailButton.effectSource.pressed : Theme.detailButton.effectSource.normal) : Theme.detailButton.effectSource.disabled
+        source: TizenConfig.detailButton.source.normal
+        backgroundColor: control.enabled ? (control.pressed ? TizenConfig.detailButton.color.pressed : TizenConfig.detailButton.color.normal) : TizenConfig.detailButton.color.disabled
+        effectSource: control.enabled ? (control.pressed ? TizenConfig.detailButton.effectSource.pressed : TizenConfig.detailButton.effectSource.normal) : TizenConfig.detailButton.effectSource.disabled
     }
 
     /*! The label of the button. */
@@ -48,9 +48,9 @@ ButtonStyle {
             }
         }
         rotation: __rotation(control.arrowType)
-        source: Theme.detailButton.iconSource.normal
-        backgroundColor: control.enabled ? (control.pressed ? Theme.detailButton.iconColor.pressed : Theme.detailButton.iconColor.normal) : Theme.detailButton.iconColor.disabled
-        effectSource: Theme.detailButton.iconEffectSource.normal
+        source: TizenConfig.detailButton.iconSource.normal
+        backgroundColor: control.enabled ? (control.pressed ? TizenConfig.detailButton.iconColor.pressed : TizenConfig.detailButton.iconColor.normal) : TizenConfig.detailButton.iconColor.disabled
+        effectSource: TizenConfig.detailButton.iconEffectSource.normal
     }
 }
 

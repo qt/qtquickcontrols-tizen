@@ -20,7 +20,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 SliderStyle {
     id: styleitem
@@ -45,20 +45,20 @@ SliderStyle {
         Floater {
             id:floater
             content: TizenBorderImage {
-                implicitWidth: Math.max(txt.contentWidth+txt.anchors.margins, Theme.slider.handle.overlay.width)
-                implicitHeight: Theme.slider.handle.overlay.height
-                source: Theme.slider.handle.overlay.source
-                backgroundColor: Theme.slider.handle.overlay.backgroundColor
+                implicitWidth: Math.max(txt.contentWidth+txt.anchors.margins, TizenConfig.slider.handle.overlay.width)
+                implicitHeight: TizenConfig.slider.handle.overlay.height
+                source: TizenConfig.slider.handle.overlay.source
+                backgroundColor: TizenConfig.slider.handle.overlay.backgroundColor
                 Text {
                     id:txt
                     anchors.top: parent.top
                     anchors.left:  parent.left
                     anchors.right: parent.right
-                    height: Theme.slider.handle.overlay.heightWithoutArrow
-                    anchors.leftMargin: Theme.slider.handle.overlay.margin
-                    anchors.rightMargin:  Theme.slider.handle.overlay.margin
-                    font.pixelSize: Theme.slider.handle.overlay.font.pixelSize
-                    color: Theme.slider.handle.overlay.text.color
+                    height: TizenConfig.slider.handle.overlay.heightWithoutArrow
+                    anchors.leftMargin: TizenConfig.slider.handle.overlay.margin
+                    anchors.rightMargin:  TizenConfig.slider.handle.overlay.margin
+                    font.pixelSize: TizenConfig.slider.handle.overlay.font.pixelSize
+                    color: TizenConfig.slider.handle.overlay.text.color
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     text: control.value
@@ -77,27 +77,27 @@ SliderStyle {
             id:bg
 
             anchors.centerIn: parent
-            source: Theme.slider.handle.source.normal
+            source: TizenConfig.slider.handle.source.normal
             effectSource: if (control.enabled) {
                               control.pressed ?
-                                          Theme.slider.handle.effectSource.pressed:
-                                          Theme.slider.handle.effectSource.normal
+                                          TizenConfig.slider.handle.effectSource.pressed:
+                                          TizenConfig.slider.handle.effectSource.normal
                           } else {
-                              Theme.slider.handle.effectSource.disabled
+                              TizenConfig.slider.handle.effectSource.disabled
                           }
 
-            backgroundColor: control.enabled ? (control.pressed ? Theme.slider.handle.backgroundColor.pressed : Theme.slider.handle.backgroundColor.normal):Theme.slider.handle.backgroundColor.disabled
+            backgroundColor: control.enabled ? (control.pressed ? TizenConfig.slider.handle.backgroundColor.pressed : TizenConfig.slider.handle.backgroundColor.normal):TizenConfig.slider.handle.backgroundColor.disabled
 
             Text {
                 visible:!control.pressed
                 text: control.value
                 anchors.fill: parent
-                anchors.margins: Theme.slider.handle.text.margins
+                anchors.margins: TizenConfig.slider.handle.text.margins
                 fontSizeMode: Text.Fit
-                font.pointSize: Theme.slider.handle.font.pointSize
+                font.pointSize: TizenConfig.slider.handle.font.pointSize
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                color: control.enabled ? Theme.slider.handle.text.color.normal : Theme.slider.handle.text.color.disabled
+                color: control.enabled ? TizenConfig.slider.handle.text.color.normal : TizenConfig.slider.handle.text.color.disabled
             }
         }
     }

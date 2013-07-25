@@ -21,6 +21,7 @@
         <file>content/ButtonPage.qml</file>
         <file>content/AndroidDelegate.qml</file>
         <file>content/DateTimeEditPage.qml</file>
+        <file>content/PageCurl.qml</file>
     </qresource>
     <qresource prefix="/qt/etc">
         <file>qt.conf</file>

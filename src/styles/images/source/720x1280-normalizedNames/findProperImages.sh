@@ -49,10 +49,7 @@ echo "
  */
 " > $FILE
 
-echo ".pragma library" >> $FILE
-echo "var theme = \"white\"" >> $FILE
-echo "var imagesPath = \"images\"" >> $FILE
-echo "function getImages() {" >> $FILE
+echo "function getImages(theme,imagesPath) {" >> $FILE
 echo "    var images = {" >> $FILE
 
 for baseName in `find . -name '*.png' | sed s#.*\./## | sed s/\.png// | sort | uniq`; do

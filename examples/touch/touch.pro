@@ -18,7 +18,8 @@ OTHER_FILES += \
     content/ContextMenuPage.qml \
     content/SplitViewPage.qml \
     content/DateTimeEditPage.qml\
-    qt.conf
+    qt.conf \
+    content/PageCurl.qml
 
 
 SOURCES += \

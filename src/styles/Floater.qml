@@ -5,8 +5,8 @@ Item {
     objectName: "floaterBehavior"
     visible: false
     property Component content
-    width: contentLoader ? contentLoader.item.implicitWidth:0
-    height: contentLoader ? contentLoader.item.implicitHeight:0
+    width: contentLoader && contentLoader.item ? contentLoader.item.implicitWidth:0
+    height: contentLoader && contentLoader.item ? contentLoader.item.implicitHeight:0
     property Item root: findRoot()
 
     function findRoot() {

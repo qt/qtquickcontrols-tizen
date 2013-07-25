@@ -20,7 +20,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
-import "DefaultSettings.js" as Theme
+import QtQuick.Controls.Styles.Tizen 1.0
 
 ButtonStyle {
     id: buttonstyle
@@ -29,12 +29,12 @@ ButtonStyle {
         implicitWidth: 400
         implicitHeight: 80
 
-        property color bgColorNormal: control.styleHints && control.styleHints.color ? control.styleHints.color :Theme.button.backgroundColor.normal
-        property color bgColorPressed: control.styleHints && control.styleHints.pressedColor ? control.styleHints.pressedColor :Theme.button.backgroundColor.pressed
-        property color bgColorDisabled: control.styleHints && control.styleHints.disabledColor ? control.styleHints.disabledColor : Theme.button.backgroundColor.disabled
+        property color bgColorNormal: control.styleHints && control.styleHints.color ? control.styleHints.color :TizenConfig.button.backgroundColor.normal
+        property color bgColorPressed: control.styleHints && control.styleHints.pressedColor ? control.styleHints.pressedColor :TizenConfig.button.backgroundColor.pressed
+        property color bgColorDisabled: control.styleHints && control.styleHints.disabledColor ? control.styleHints.disabledColor : TizenConfig.button.backgroundColor.disabled
 
-        source: control.enabled ? (control.pressed ? Theme.button.source.pressed: Theme.button.source.normal) : Theme.button.source.disabled
-        effectSource: control.enabled ? (control.pressed ? Theme.button.effectSource.pressed: Theme.button.effectSource.normal) : Theme.button.effectSource.disabled
+        source: control.enabled ? (control.pressed ? TizenConfig.button.source.pressed: TizenConfig.button.source.normal) : TizenConfig.button.source.disabled
+        effectSource: control.enabled ? (control.pressed ? TizenConfig.button.effectSource.pressed: TizenConfig.button.effectSource.normal) : TizenConfig.button.effectSource.disabled
         backgroundColor: control.enabled ? (control.pressed ? bgColorPressed : bgColorNormal) : bgColorDisabled
     }
 
@@ -44,18 +44,18 @@ ButtonStyle {
         implicitHeight: 0
         Text {
             id:txt
-            anchors.leftMargin: Theme.button.text.margins.left
-            anchors.rightMargin: Theme.button.text.margins.right
-            anchors.topMargin: Theme.button.text.margins.top
-            anchors.bottomMargin: Theme.button.text.margins.bottom
+            anchors.leftMargin: TizenConfig.button.text.margins.left
+            anchors.rightMargin: TizenConfig.button.text.margins.right
+            anchors.topMargin: TizenConfig.button.text.margins.top
+            anchors.bottomMargin: TizenConfig.button.text.margins.bottom
             anchors.fill:parent
-            font.pixelSize: Theme.button.font.pixelSize
-            color: control.enabled ? (control.pressed ? Theme.button.text.color.pressed : Theme.button.text.color.normal) : Theme.button.text.color.disabled
+            font.pixelSize: TizenConfig.button.font.pixelSize
+            color: control.enabled ? (control.pressed ? TizenConfig.button.text.color.pressed : TizenConfig.button.text.color.normal) : TizenConfig.button.text.color.disabled
             fontSizeMode: Text.Fit
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             text:control.text
-            minimumPixelSize: Theme.button.font.minimumPixelSize
+            minimumPixelSize: TizenConfig.button.font.minimumPixelSize
             maximumLineCount:2
             wrapMode: Text.Wrap
         }

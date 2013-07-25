@@ -41,6 +41,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Tizen 1.0
+import QtQuick.Controls.Styles.Tizen 1.0
 import QtQuick.Window 2.0
 import "content"
 
@@ -49,28 +50,129 @@ ApplicationWindow {
     y: 60
     width: 720
     height: 1220
-    function reload() {
-        loader.sourceComponent = null
-        loader.sourceComponent = mainComponent
+    property real curlValue: 0.05
+
+    Item {
+        id:content
+        anchors.fill: parent
+        Loader {
+            id:loader
+            anchors.fill: parent
+            asynchronous: false
+            sourceComponent: mainComponent
+        }
     }
+    Rectangle {
+        id: backgroundRect
+        color:"black"
+        width: 300
+        height: 130
+        anchors.right: parent.right
+        anchors.top: parent.top
+
+    }
+    ShaderEffectSource {
+        id: shaderSource
+        anchors.fill: parent
+        sourceItem: content
+        layer.enabled: true
+        layer.effect: PageCurl {
+            id: pageCurl
+            curlExtent: curlValue
+        }
+    }
+
+    SequentialAnimation {
+        id: curlAnimation
+        property int to: 1.0
+        SmoothedAnimation {
+            velocity: 1.5
+            target: appWindow
+            property: "curlValue"
+            to: curlAnimation.to
+        }
+        ScriptAction {
+            script: {
+                if (!curlMouseArea.roll) {
+                    flipTheme()
+                }
+                shaderSource.live = true
+                curlValue = 0.05
+                backgroundRect.color = (TizenConfig.theme === "white") ? "black" : "white"
+                backgroundRect.visible = true
+            }
+        }
+    }
+    function flipTheme() {
+        if (TizenConfig.theme === "white") {
+            TizenConfig.theme = "black"
+        } else {
+            TizenConfig.theme = "white"
+        }
+        backgroundRect.visible = false
+    }
+
+    MouseArea {
+        id: curlMouseArea
+        anchors.fill: parent
+        enabled: !curlAnimation.running
+        property bool dragStarted: false
+        property bool themeChanged: false
+        property int initialY: 0
+        property real oldCurlValue
+        property bool roll: true
+        onPressed: {
+            if (mouse.x > appWindow.width - 100 && mouse.y < 100) {
+                roll =  true
+                themeChanged = false
+                oldCurlValue = curlValue
+                shaderSource.live = false
+                initialY = mouse.y
+                dragStarted = true
+            } else {
+                mouse.accepted = false
+            }
+
+        }
+        onMouseYChanged: {
+            mouse.accepted = dragStarted
+            if (dragStarted) {
+                curlValue = mouse.y / shaderSource.height
+                if (Math.abs(curlValue - oldCurlValue) > 0.05) {
+                    roll = oldCurlValue < curlValue
+                    oldCurlValue = curlValue
+                }
+                if (!themeChanged && (mouse.y - initialY > 50)) {
+                    flipTheme()
+                    themeChanged = true
+                }
+            }
+        }
+        onReleased: {
+            mouse.accepted = dragStarted
+            if (dragStarted) {
+                initialY = 0
+                dragStarted = false
+                if (themeChanged && roll) {
+                    curlAnimation.to = 1
+                } else {
+                    curlAnimation.to = 0.05
+                }
+                curlAnimation.start()
+            }
+        }
+    }
+
     Component {
         id: mainComponent
         View {
             id: view
             anchors.fill: parent
 
-            titleBar.text: "Controls Gallery"
+            titleBar.text: "Controls Gallery (Theme: " + TizenConfig.theme+")"
             titleBar.subText: pageStack.depth > 1 ? pageStack.currentItem: "Main Page"
             property bool active:Qt.application.active
 
-
-            /*SOME UGLY HACK - FIXME*/
-            onActiveChanged: {
-                /* quit only on device*/
-                if (!active && Screen.width == 720 && Screen.height == 1280) {
-                    Qt.quit()
-                }
-            }
             backAction.onTriggered: pageStack.depth > 1 ? pageStack.pop() : Qt.quit()
             // Implements back key navigation
             Keys.onReleased: {
@@ -147,9 +249,4 @@ ApplicationWindow {
         }
     }
 
-    Loader {
-        id:loader
-        sourceComponent: mainComponent
-        anchors.fill: parent
-    }
 }

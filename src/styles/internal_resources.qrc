@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/QtQuick/Controls/Styles/Tizen">
+        <file>private/TizenStyleConfig.qml</file>
+        <file>DefaultSettings.js</file>
+        <file>themes/Colors.js</file>
+        <file>Images.js</file>
+    </qresource>
+</RCC>

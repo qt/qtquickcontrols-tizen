@@ -58,7 +58,7 @@ Item {
 
     Text {
         id: textitem
-        color: Theme.colors.foreground
+        color: TizenConfig.colors.foreground
         font.pixelSize: 32
         text: modelData
         anchors.verticalCenter: parent.verticalCenter

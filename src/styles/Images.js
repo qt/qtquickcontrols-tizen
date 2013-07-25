@@ -18,10 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-.pragma library
-var theme = "white"
-var imagesPath = "images"
-function getImages() {
+function getImages(theme,imagesPath) {
     var images = {
         img_00_arrow_left: imagesPath + "00_arrow_left.png",
         img_00_arrow_right: imagesPath + "00_arrow_right.png",
