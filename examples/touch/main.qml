@@ -52,14 +52,76 @@ ApplicationWindow {
     height: 1220
     property real curlValue: 0.05
 
-    Item {
-        id:content
+    View {
+        id: content
         anchors.fill: parent
-        Loader {
-            id:loader
+
+        titleBar.text: "Controls Gallery (Theme: " + TizenConfig.theme+")"
+        titleBar.subText: pageStack.depth > 1 ? pageStack.currentItem: "Main Page"
+
+        backAction.onTriggered: pageStack.depth > 1 ? pageStack.pop() : Qt.quit()
+
+        ListModel {
+            id: pageModel
+            ListElement {
+                title: "Buttons"
+                page: "content/ButtonPage.qml"
+            }
+            ListElement {
+                title: "Sliders"
+                page: "content/SliderPage.qml"
+            }
+            ListElement {
+                title: "ProgressBar"
+                page: "content/ProgressBarPage.qml"
+            }
+            ListElement {
+                title: "Tabs"
+                page: "content/TabBarPage.qml"
+            }
+            ListElement {
+                title: "CheckBoxes"
+                page: "content/CheckBoxPage.qml"
+            }
+            ListElement {
+                title: "ContextMenu"
+                page: "content/ContextMenuPage.qml"
+            }
+            ListElement {
+                title: "SplitView"
+                page: "content/SplitViewPage.qml"
+            }
+            ListElement {
+                title: "DateTimeEdit"
+                page: "content/DateTimeEditPage.qml"
+            }
+        }
+
+        StackView {
+            id: pageStack
             anchors.fill: parent
-            asynchronous: false
-            sourceComponent: mainComponent
+
+            initialItem: Item {
+                width: parent.width
+                height: parent.height
+
+
+                ListView {
+                    id:listView
+                    model: pageModel
+                    anchors.fill: parent
+                    clip:true
+
+                    delegate: AndroidDelegate {
+                        text: title
+                        onClicked: {
+                            content.titleBar.subText = Qt.binding(function() {return pageStack.depth > 1 ? title: "Main Page"})
+                            pageStack.push(Qt.resolvedUrl(page))
+                        }
+                    }
+                    ScrollDecorator {flickableItem: listView}
+                }
+            }
         }
     }
     Rectangle {
@@ -162,91 +224,4 @@ ApplicationWindow {
             }
         }
     }
-
-    Component {
-        id: mainComponent
-        View {
-            id: view
-            anchors.fill: parent
-
-            titleBar.text: "Controls Gallery (Theme: " + TizenConfig.theme+")"
-            titleBar.subText: pageStack.depth > 1 ? pageStack.currentItem: "Main Page"
-            property bool active:Qt.application.active
-
-            backAction.onTriggered: pageStack.depth > 1 ? pageStack.pop() : Qt.quit()
-            // Implements back key navigation
-            Keys.onReleased: {
-                if (event.key === Qt.Key_Back) {
-                    if (pageStack.depth > 1) {
-                        pageStack.pop();
-                        event.accepted = true;
-                    } else { Qt.quit(); }
-                }
-            }
-
-            ListModel {
-                id: pageModel
-                ListElement {
-                    title: "Buttons"
-                    page: "content/ButtonPage.qml"
-                }
-                ListElement {
-                    title: "Sliders"
-                    page: "content/SliderPage.qml"
-                }
-                ListElement {
-                    title: "ProgressBar"
-                    page: "content/ProgressBarPage.qml"
-                }
-                ListElement {
-                    title: "Tabs"
-                    page: "content/TabBarPage.qml"
-                }
-                ListElement {
-                    title: "CheckBoxes"
-                    page: "content/CheckBoxPage.qml"
-                }
-                ListElement {
-                    title: "ContextMenu"
-                    page: "content/ContextMenuPage.qml"
-                }
-                ListElement {
-                    title: "SplitView"
-                    page: "content/SplitViewPage.qml"
-                }
-                ListElement {
-                    title: "DateTimeEdit"
-                    page: "content/DateTimeEditPage.qml"
-                }
-            }
-
-            StackView {
-                id: pageStack
-                anchors.fill: parent
-
-                initialItem: Item {
-                    width: parent.width
-                    height: parent.height
-
-
-                    ListView {
-                        id:listView
-                        model: pageModel
-                        anchors.fill: parent
-                        clip:true
-
-                        delegate: AndroidDelegate {
-                            text: title
-                            onClicked: {
-                                view.titleBar.subText = Qt.binding(function() {return pageStack.depth > 1 ? title: "Main Page"})
-                                pageStack.push(Qt.resolvedUrl(page))
-                            }
-                        }
-                        ScrollDecorator {flickableItem: listView}
-                    }
-                }
-            }
-        }
-    }
-
 }

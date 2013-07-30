@@ -41,9 +41,23 @@ Style {
         Binding { target: styleData.toolBar; property: "anchors.left"; value: control.left }
         Binding { target: styleData.toolBar; property: "anchors.right"; value: control.right }
 
+        focus: true
+
+        Keys.onReleased: {
+            if (event.key === Qt.Key_Back || event.key === Qt.Key_Escape) {
+                backAction.trigger()
+                event.accepted = true
+            } else if (event.key === Qt.Key_Menu || event.key === Qt.Key_F2) {
+                console.log("NOT IMPLEMENTED: ContextMenu should be shown")
+                event.accepted = true
+            }
+        }
+
         implicitWidth: 720
         implicitHeight: 1280
 
         color: TizenConfig.colors.background
+        Binding {target: parent/*panelLoader*/; property:"focus"; value: true}
+        Binding {target: control; property:"focus"; value: true}
     }
 }

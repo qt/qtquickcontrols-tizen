@@ -27,25 +27,8 @@ Style {
     id: style
     property ToolBar control: __control
 
-    property Component panel: Rectangle {
+    property Component panel: Item {
         implicitWidth: 720
-        implicitHeight: 98
-        color: TizenConfig.toolBar.backgroundColor
-
-        ToolBarButton {
-            id: moreButton
-            source: TizenConfig.toolBar.more.source
-            effectSource: TizenConfig.toolBar.more.effectSource.normal
-            anchors.left: parent.left
-            anchors.leftMargin: 26
-        }
-        ToolBarButton {
-            id: backButton
-            source: TizenConfig.toolBar.back.source
-            effectSource: TizenConfig.toolBar.back.effectSource.normal
-            anchors.right: parent.right
-            anchors.rightMargin: 26
-            onClicked: { /*console.log("back clicked");*/ view.backAction.trigger(); }
-        }
+        implicitHeight: 0
     }
 }

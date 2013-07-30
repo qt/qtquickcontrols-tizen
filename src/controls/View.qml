@@ -43,8 +43,5 @@ Control {
     TitleBar { id: prvTitleBar }
     Item { id: prvContent   }
     ToolBar { id: prvToolBar; view: root }
-    Action {
-        id: prvBackAction
-//        onTriggered: { console.debug("Quit!"); Qt.quit(); }
-    }
+    Action {id: prvBackAction }
 }
