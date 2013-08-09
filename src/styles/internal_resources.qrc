@@ -4,5 +4,6 @@
         <file>DefaultSettings.js</file>
         <file>themes/Colors.js</file>
         <file>Images.js</file>
+        <file alias="private/TizenSansRegular.ttf">TizenSansRegular.ttf</file>
     </qresource>
 </RCC>

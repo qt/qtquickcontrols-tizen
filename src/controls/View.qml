@@ -41,7 +41,18 @@ Control {
     }
 
     TitleBar { id: prvTitleBar }
-    Item { id: prvContent   }
+    Item { id: prvContent }
     ToolBar { id: prvToolBar; view: root }
     Action {id: prvBackAction }
+    focus: true
+
+    Keys.onReleased: {
+        if (event.key === Qt.Key_Back || event.key === Qt.Key_Escape) {
+            backAction.trigger()
+            event.accepted = true
+        } else if (event.key === Qt.Key_Menu || event.key === Qt.Key_F2) {
+            console.log("NOT IMPLEMENTED: ContextMenu should be shown")
+            event.accepted = true
+        }
+    }
 }

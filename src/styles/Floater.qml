@@ -11,7 +11,8 @@ Item {
 
     function findRoot() {
         var p = parent;
-        while(p.parent != undefined)
+
+        while (p.parent.parent != undefined)
             p = p.parent;
 
         return p;

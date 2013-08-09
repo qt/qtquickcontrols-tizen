@@ -33,8 +33,6 @@ Style {
         implicitWidth: 720
         implicitHeight: header.height + header2.height + 30 + 30
 
-        FontLoader { source: TizenConfig.fonts.defaultSource }
-
         Text {
             id: header
             anchors.top: parent.top

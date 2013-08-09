@@ -41,6 +41,7 @@
 import QtQuick 2.1
 import QtQuick.Controls.Styles.Tizen 1.0
 import QtQuick.Controls.Tizen 1.0
+import QtQuick.Controls 1.0
 
 Item {
     id: root
@@ -56,11 +57,11 @@ Item {
         visible: detailButton.pressed
     }
 
-    Text {
+    Label {
         id: textitem
         color: TizenConfig.colors.foreground
         font.pixelSize: 32
-        text: modelData
+        font.family: TizenConfig.fonts.defaultFamily
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 30
@@ -78,7 +79,6 @@ Item {
         id: mouse
         anchors.fill: parent
         onClicked: root.clicked()
-
     }
 
 

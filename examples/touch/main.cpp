@@ -30,6 +30,7 @@
 #include <QtDebug>
 #include <QtGlobal>
 #include <QQmlApplicationEngine>
+#include <QScreen>
 
 extern "C" int OspMain(int argc, char *argv[])
 {
@@ -42,6 +43,12 @@ extern "C" int OspMain(int argc, char *argv[])
     QQmlApplicationEngine engine(QUrl("qrc:///main.qml"));
     QQuickWindow *window = qobject_cast<QQuickWindow *>(engine.rootObjects().at(0));
     if (window) {
+        window->setIcon(QIcon(":/images/mainmenu.png"));
+        window->screen()->setOrientationUpdateMask(Qt::PortraitOrientation | Qt::LandscapeOrientation |
+                                                   Qt::InvertedPortraitOrientation | Qt::InvertedLandscapeOrientation);
+#ifdef Q_OS_TIZEN
+        window->setProperty("contentFollowsContentOrientation",true);
+#endif
         window->show();
         return app.exec();
     } else {

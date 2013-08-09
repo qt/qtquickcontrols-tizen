@@ -22,8 +22,7 @@
         <file>content/AndroidDelegate.qml</file>
         <file>content/DateTimeEditPage.qml</file>
         <file>content/PageCurl.qml</file>
-    </qresource>
-    <qresource prefix="/qt/etc">
-        <file>qt.conf</file>
+        <file>content/ConfigurationPage.qml</file>
+        <file>images/mainmenu.png</file>
     </qresource>
 </RCC>

@@ -18,6 +18,7 @@
  */
 
 import QtQml 2.0
+import QtQuick 2.0
 import QtQuick.Controls.Styles.Tizen 1.0
 
 QtObject {
@@ -30,6 +31,9 @@ QtObject {
         } else {
             return TizenConfig.blackColors[key]
         }
+    }
+    property QtObject fontLoader: FontLoader {
+        source: Theme.fonts.defaultSource
     }
     property var panel : Theme.createPanel(theme)
     property var progress : Theme.createProgress(theme)

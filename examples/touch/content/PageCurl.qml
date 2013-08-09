@@ -39,7 +39,9 @@ ShaderEffect {
     property double curlExtent
 
     fragmentShader: "
+#ifndef highp
 precision lowp float;
+#endif
 uniform lowp float curlExtent;
 uniform lowp sampler2D source;
 uniform lowp float qt_Opacity;

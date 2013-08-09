@@ -1,4 +1,3 @@
-
 TEMPLATE = lib
 CONFIG += qt plugin
 QT += qml quick
@@ -44,13 +43,14 @@ QML_FILES += \
     images/720x1280/white/*.png \
     images/720x1280/white/*.sci \
     images/720x1280/black/*.png \
-    images/720x1280/black/*.sci \
-    TizenSansRegular.ttf
+    images/720x1280/black/*.sci
 
 CONFIG += force_independent
 
 OTHER_FILES += qmldir \
-    private/TizenStyleConfig.qml
+    private/TizenStyleConfig.qml \
+    TizenSansRegular.ttf \
+    $$QML_FILES
 
 load(qml_module)
 
@@ -63,7 +63,6 @@ HEADERS += \
 SOURCES += \
     qquicktizenstyleextensionplugin.cpp
 INSTALLS += target
-#error($$INSTALLS)
 
 RESOURCES += \
     internal_resources.qrc

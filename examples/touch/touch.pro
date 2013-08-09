@@ -1,9 +1,11 @@
 TEMPLATE=app
 
-QMAKE_LFLAGS+=-pie -rdynamic
-
-TARGET=QtControls.exe
-
+tizen {
+    QMAKE_LFLAGS+=-pie -rdynamic
+    TARGET=QtControls.exe
+} else {
+    TARGET=QtControls
+}
 QT += qml quick
 
 OTHER_FILES += \
@@ -18,15 +20,15 @@ OTHER_FILES += \
     content/ContextMenuPage.qml \
     content/SplitViewPage.qml \
     content/DateTimeEditPage.qml\
-    qt.conf \
-    content/PageCurl.qml
+    content/PageCurl.qml \
+    content/ConfigurationPage.qml \
+    tizen/qt.conf
 
 
 SOURCES += \
     main.cpp
 
-RESOURCES += \
-    touch.qrc
+RESOURCES += touch-default.qrc
 
-
+tizen: RESOURCES += touch-tizen.qrc
 
