@@ -17,9 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-import QtQml 2.0
 import QtQuick 2.0
-import QtQuick.Controls.Styles.Tizen 1.0
+import "../DefaultSettings.js" as Theme
 
 QtObject {
     property string theme: "black"

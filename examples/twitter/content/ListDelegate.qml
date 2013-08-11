@@ -38,7 +38,6 @@
 
 import QtQuick 2.1
 import QtQuick.Controls.Tizen 1.0
-import QtQuick.Controls.Styles.Tizen 1.0 // tmp
 import "utils.js" as Utils
 
 Item {
@@ -89,7 +88,7 @@ Item {
               + Utils.prettyDate(model.date)
               + '</span><br/>'
               + '<span style="color:'
-              + (mouse.pressed ? 'white' : 'black')
+              + (mouse.pressed ? 'white' : TizenControls.palette.foreground)
               + ';">'
               + richStatus(model.statusText)
               + '</span></body></html>'
@@ -98,12 +97,11 @@ Item {
         x: 30
         y: 40
         z: 2
-
         anchors.rightMargin: 30
         anchors.bottomMargin: 40
         wrapMode: Text.Wrap
         textFormat: Text.RichText
-        font.family: Theme.fonts.defaultFamily
+        font.family: TizenControls.defaultFontFamily
         font.pixelSize: 36
         elide: Text.ElideLeft
         MouseArea {

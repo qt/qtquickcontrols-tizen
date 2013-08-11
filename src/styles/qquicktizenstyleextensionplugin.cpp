@@ -26,10 +26,8 @@ QQuickTizenStyleExtensionPlugin::QQuickTizenStyleExtensionPlugin(QObject *parent
 }
 
 
-static QObject *tizen_style_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+static QObject *tizen_style_singletontype_provider(QQmlEngine *engine, QJSEngine */*scriptEngine*/)
 {
-    Q_UNUSED(scriptEngine)
-
     QObject *ret = 0;
 
     QQmlComponent c(engine,QUrl("qrc:///QtQuick/Controls/Styles/Tizen/private/TizenStyleConfig.qml"),QQmlComponent::PreferSynchronous);

@@ -41,7 +41,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Tizen 1.0
-import QtQuick.Controls.Styles.Tizen 1.0
 import QtQuick.Window 2.0
 import "content"
 
@@ -64,7 +63,7 @@ ApplicationWindow {
             id: content
             anchors.fill: parent
 
-            titleBar.text: "Controls Gallery (Theme: " + TizenConfig.theme+")"
+            titleBar.text: "Controls Gallery (Theme: " + TizenControls.currentTheme+")"
             titleBar.subText: pageStack.depth > 1 ? pageStack.currentItem: "Main Page"
 
             backAction.onTriggered: pageStack.depth > 1 ? pageStack.pop() : Qt.quit()
@@ -139,7 +138,7 @@ ApplicationWindow {
         Rectangle {
             id: backgroundRect
             visible: appWindow.pageCurlEffectEnabled
-            color: (TizenConfig.theme === "black") ? "white" : " black"
+            color: (TizenControls.currentTheme === "black") ? "white" : " black"
             width: 300
             height: 130
             anchors.right: parent.right
@@ -227,11 +226,13 @@ ApplicationWindow {
             }
         }
         function flipTheme() {
-            if (TizenConfig.theme === "white") {
-                TizenConfig.theme = "black"
+            var theme
+            if (TizenControls.currentTheme === "white") {
+                theme = "black"
             } else {
-                TizenConfig.theme = "white"
+                theme = "white"
             }
+            TizenControls.changeTheme(theme)
             backgroundRect.visible = false
         }
     }

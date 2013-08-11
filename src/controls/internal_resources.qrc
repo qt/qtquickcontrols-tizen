@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/QtQuick/Controls/Tizen">
+        <file>private/TizenControls.qml</file>
+    </qresource>
+</RCC>

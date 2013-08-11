@@ -39,7 +39,6 @@
 ****************************************************************************/
 
 import QtQuick 2.1
-import QtQuick.Controls.Styles.Tizen 1.0
 import QtQuick.Controls.Tizen 1.0
 import QtQuick.Controls 1.0
 
@@ -59,9 +58,9 @@ Item {
 
     Label {
         id: textitem
-        color: TizenConfig.colors.foreground
+        color: TizenControls.palette.foreground
         font.pixelSize: 32
-        font.family: TizenConfig.fonts.defaultFamily
+        font.family: TizenControls.defaultFontFamily
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 30
@@ -80,7 +79,6 @@ Item {
         anchors.fill: parent
         onClicked: root.clicked()
     }
-
 
     DetailButton {
         id:detailButton

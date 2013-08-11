@@ -49,10 +49,10 @@ Item {
                 anchors.bottom: parent.bottom
                 anchors.right: pageEffectSwitch.left
                 text: "Page effect "+ ((pageEffectSwitch.checked) ? "on" : "off")
-                color: TizenConfig.colors.foreground
+                color: TizenControls.palette.foreground
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
-                font.family: TizenConfig.fonts.defaultFamily
+                font.family: TizenControls.defaultFontFamily
                 font.pixelSize: parent.height/2
                 fontSizeMode: Text.Fit
             }
@@ -82,11 +82,11 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height:parent.implicitHeight
-                text: "Theme: "+ TizenConfig.theme
-                color: TizenConfig.colors.foreground
+                text: "Theme: "+ TizenControls.currentTheme
+                color: TizenControls.palette.foreground
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
-                font.family: TizenConfig.fonts.defaultFamily
+                font.family: TizenControls.defaultFontFamily
                 font.pixelSize: parent.height/2
                 fontSizeMode: Text.Fit
                 MouseArea {
@@ -131,24 +131,24 @@ Item {
                 state = ""
             }
 
-            property string theme: TizenConfig.theme
+            property string theme: TizenControls.currentTheme
             onThemeChanged: {
-                checkBoxWhite.checked = TizenConfig.theme === "white"
-                checkBoxBlack.checked = TizenConfig.theme === "black"
+                checkBoxWhite.checked = TizenControls.currentTheme === "white"
+                checkBoxBlack.checked = TizenControls.currentTheme === "black"
             }
             CheckBox {
                 id: checkBoxWhite
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 text: "White"
-                onClicked: TizenConfig.theme = "white"
+                onClicked: TizenControls.changeTheme("white")
             }
             CheckBox {
                 id: checkBoxBlack
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 text: "Black"
-                onClicked: TizenConfig.theme = "black"
+                onClicked: TizenControls.changeTheme("black")
             }
         }
     }

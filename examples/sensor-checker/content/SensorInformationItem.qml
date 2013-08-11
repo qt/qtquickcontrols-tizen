@@ -28,7 +28,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Tizen 1.0
-import QtQuick.Controls.Styles.Tizen 1.0
 import QtQuick.Layouts 1.0
 
 Panel {
@@ -49,13 +48,13 @@ Panel {
         anchors.right: parent.right
         Label {
             id: switchLabel
-            color: TizenConfig.colors.foreground
+            color: TizenControls.palette.foreground
             text: "Compass"
             height: 50
             Layout.fillWidth: true
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
-            font.family: TizenConfig.fonts.defaultFamily
+            font.family: TizenControls.defaultFontFamily
             font.pixelSize: parent.height/2
             fontSizeMode: Text.Fit
         }
@@ -67,7 +66,7 @@ Panel {
     Label {
         id: compassLabel
         anchors.margins: 10
-        color: TizenConfig.colors.foreground
+        color: TizenControls.palette.foreground
         text: "Sensor inactive"
         anchors.top: switchRow.bottom
         anchors.left: parent.left
@@ -76,7 +75,7 @@ Panel {
         Layout.fillWidth: true
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
-        font.family: TizenConfig.fonts.defaultFamily
+        font.family: TizenControls.defaultFontFamily
         font.pixelSize: parent.height/2
         fontSizeMode: Text.Fit
     }

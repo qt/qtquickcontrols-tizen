@@ -29,7 +29,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Tizen 1.0
-import QtQuick.Controls.Styles.Tizen 1.0
 
 Item {
     id:root
@@ -73,7 +72,7 @@ Item {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
-        color: TizenConfig.colors.foreground
+        color: TizenControls.palette.foreground
         Rectangle {
             anchors.fill: parent
             border.width: 1

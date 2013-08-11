@@ -17,7 +17,6 @@ QML_FILES = \
     Floater.qml \
     SwitchStyle.qml\
     DetailButtonStyle.qml\
-    DefaultSettings.js\
     ScrollDecoratorStyle.qml\
     ContextMenuStyle.qml\
     PopupStyle.qml\
@@ -28,9 +27,6 @@ QML_FILES = \
     TimeEditStyle.qml \
     ToolBarStyle.qml \
     ToolBarButton.qml
-
-QML_FILES += themes/Colors.js \
-             Images.js
 
 QML_FILES += \
     private/DateEditField.qml\
@@ -50,6 +46,9 @@ CONFIG += force_independent
 OTHER_FILES += qmldir \
     private/TizenStyleConfig.qml \
     TizenSansRegular.ttf \
+    themes/Colors.js \
+    Images.js \
+    DefaultSettings.js \
     $$QML_FILES
 
 load(qml_module)

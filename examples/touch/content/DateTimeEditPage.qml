@@ -39,7 +39,7 @@ Item {
         spacing: 50
         Column {
             Label {
-
+                color: TizenControls.palette.foreground
                 text:"Today"
             }
             DateEdit {
@@ -48,6 +48,7 @@ Item {
         }
         Column {
             Label {
+                color: TizenControls.palette.foreground
                 text:"Tomorrow"
             }
 
@@ -58,6 +59,7 @@ Item {
         }
         Column {
             Label {
+                color: TizenControls.palette.foreground
                 text:"Disabled"
             }
 
@@ -67,6 +69,7 @@ Item {
         }
         Column {
             Label {
+                color: TizenControls.palette.foreground
                 text:"Time"
             }
 
@@ -74,6 +77,7 @@ Item {
         }
         Column {
             Label {
+                color: TizenControls.palette.foreground
                 text:"Time AM/PM"
             }
 
