@@ -39,7 +39,7 @@ ShaderEffect {
     property double curlExtent
 
     fragmentShader: "
-#ifndef highp
+#ifdef GL_ES
 precision lowp float;
 #endif
 uniform lowp float curlExtent;
