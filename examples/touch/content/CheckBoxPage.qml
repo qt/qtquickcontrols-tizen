@@ -97,7 +97,7 @@ Item {
             x:100
             width:root.width/2
             height: root.height/10
-            styleHints: {"color": "yellow","pressedColor": "red"}
+            styleHints: {"color": "orange","pressedColor": "red"}
             LayoutMirroring.enabled: true
             LayoutMirroring.childrenInherit: true
 

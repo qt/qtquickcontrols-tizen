@@ -17,7 +17,8 @@ QML_FILES += \
     TimeEdit.qml \
     TitleBar.qml \
     ToolBar.qml \
-    View.qml
+    View.qml \
+    Panel.qml
 
 CONFIG += force_independent
 

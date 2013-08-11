@@ -23,8 +23,8 @@ import QtQuick.Controls.Styles.Tizen 1.0
 TizenBorderImage {
     implicitWidth: 200
     implicitHeight: 100
-    property bool pressed:false
-    source: pressed ? TizenConfig.panel.source.pressed : TizenConfig.panel.source.normal
-    effectSource: pressed ? TizenConfig.panel.effectSource.pressed : (activeFocus ? TizenConfig.panel.effectSource.selected : TizenConfig.panel.effectSource.normal)
+    property bool pressed: false
+    source:  "../" + (pressed ? TizenConfig.panel.source.pressed : TizenConfig.panel.source.normal)
+    effectSource: "../" + (pressed ? TizenConfig.panel.effectSource.pressed : (activeFocus ? TizenConfig.panel.effectSource.selected : TizenConfig.panel.effectSource.normal))
     backgroundColor: pressed ? TizenConfig.panel.color.pressed: TizenConfig.panel.color.normal
 }

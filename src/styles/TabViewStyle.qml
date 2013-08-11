@@ -21,13 +21,14 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Controls.Styles.Tizen 1.0
+import "private"
 TabViewStyle {
     id:root
     tabsAlignment: Qt.AlignLeft
     tabOverlap: 0
     frameOverlap: 0
 
-    frame: Panel {
+    frame: PrivatePanel {
         anchors.fill: parent
     }
 

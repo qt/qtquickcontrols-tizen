@@ -26,11 +26,13 @@ QML_FILES = \
     DateEditStyle.qml\
     TimeEditStyle.qml \
     ToolBarStyle.qml \
-    ToolBarButton.qml
+    ToolBarButton.qml \
+    PanelStyle.qml
 
 QML_FILES += \
     private/DateEditField.qml\
-    private/DateEditBarPicker.qml
+    private/DateEditBarPicker.qml \
+    private/PrivatePanel.qml
 
 # Images
 QML_FILES += \

@@ -14,3 +14,4 @@ TitleBar 1.0 TitleBar.qml
 TimeEdit 1.0 TimeEdit.qml
 ToolBar 1.0 ToolBar.qml
 View 1.0 View.qml
+Panel 1.0 Panel.qml

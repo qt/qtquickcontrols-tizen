@@ -7,7 +7,7 @@ CheckBoxStyle 1.0 CheckBoxStyle.qml
 ButtonStyle 1.0 ButtonStyle.qml
 SliderStyle 1.0 SliderStyle.qml
 TizenBorderImage 1.0 TizenBorderImage.qml
-Panel 1.0 Panel.qml
+PanelStyle 1.0 PanelStyle.qml
 Floater 1.0 Floater.qml
 SwitchStyle 1.0 SwitchStyle.qml
 DetailButtonStyle 1.0 DetailButtonStyle.qml

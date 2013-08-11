@@ -54,7 +54,7 @@ ApplicationWindow {
 
     contentOrientation: Screen.orientation
     property bool pageCurlEffectEnabled: false
-
+    Component.onCompleted: TizenControls.changeTheme("white")
     Item {
         id: rotatedItem
         anchors.fill: parent

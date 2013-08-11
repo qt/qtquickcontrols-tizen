@@ -29,7 +29,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Tizen 1.0
-import QtQuick.Controls.Styles.Tizen 1.0
 import QtQuick.Layouts 1.0
 
 Item {
@@ -70,8 +69,9 @@ Item {
             id: themePanel
             x:15
             width: root.width-30
-            onPressedChanged: {
-                if (pressed)
+            active: false
+            onActiveChanged: {
+                if (active)
                     themeCheckBoxPanel.show()
                 else
                     themeCheckBoxPanel.hide()
@@ -91,7 +91,7 @@ Item {
                 fontSizeMode: Text.Fit
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: themePanel.pressed = !themePanel.pressed
+                    onClicked: themePanel.active = !themePanel.active
                 }
             }
         }
@@ -107,7 +107,6 @@ Item {
                     name:"visible"
                     PropertyChanges {
                         target: themeCheckBoxPanel
-                        //visible: true
                         width: root.width -30
                         height: checkBoxWhite.implicitHeight + spacing + checkBoxBlack.implicitHeight
                     }
@@ -117,10 +116,12 @@ Item {
                 Transition {
                     from: "*"
                     to: "*"
-                    NumberAnimation {
-                        target: themeCheckBoxPanel
-                        properties: "width,height"
-                        duration: 200
+                    ParallelAnimation {
+                        NumberAnimation {
+                            target: themeCheckBoxPanel
+                            properties: "width,height"
+                            duration: 200
+                        }
                     }
                 }
             ]
@@ -132,6 +133,7 @@ Item {
             }
 
             property string theme: TizenControls.currentTheme
+
             onThemeChanged: {
                 checkBoxWhite.checked = TizenControls.currentTheme === "white"
                 checkBoxBlack.checked = TizenControls.currentTheme === "black"

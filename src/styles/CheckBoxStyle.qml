@@ -21,6 +21,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Controls.Styles.Tizen 1.0
+import "private"
 
 CheckBoxStyle {
     id: checkboxStyle
@@ -49,7 +50,7 @@ CheckBoxStyle {
     }
 
 
-    background: Panel {
+    background: PrivatePanel {
         id:panel
         pressed: control.pressed
         property var pressedColor: control.styleHints && control.styleHints["pressedColor"] ? control.styleHints["pressedColor"]: TizenConfig.panel.color.pressed

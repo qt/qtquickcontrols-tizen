@@ -50,6 +50,11 @@ Item {
                                 }
                             "
         }
+        onStatusChanged: {
+            if (status == BorderImage.Error) {
+                console.log("Error while loading BorderImage:"+source)
+            }
+        }
     }
     BorderImage {
         id:effect
@@ -73,6 +78,11 @@ Item {
                                     }
                                 }
                             "
+        }
+        onStatusChanged: {
+            if (status == BorderImage.Error) {
+                console.log("Error while loading BorderImage:"+source)
+            }
         }
     }
 

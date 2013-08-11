@@ -16,30 +16,23 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
-import QtQml 2.1
+
+import QtQuick 2.1
+import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Styles.Tizen 1.0
+import "private"
 
-QtObject {
-    readonly property var availableThemes: ["black","white"]
-    readonly property string currentTheme: TizenConfig.theme
-    function changeTheme(theme) {
-        if (availableThemes.indexOf(theme) >= 0) {
-            if (currentTheme !== theme)
-                TizenConfig.theme = theme;
-        } else {
-            console.log("Theme:" + theme + " is not handled");
-        }
-    }
-    readonly property alias palette: __prv.pal
+Style {
+    id:style
 
-    property QtObject __prvProp: QtObject {
-        id: __prv
-        property QtObject pal: QtObject {
-            readonly property color foreground: TizenConfig.colors.foreground
-            readonly property color background: TizenConfig.colors.background
-            readonly property color active: TizenConfig.panel.color.pressed
+    property Component panel: PrivatePanel {
+        anchors.fill: parent
+        Binding {
+            target: control
+            property: "color"
+            value: control.active ? TizenConfig.panel.color.pressed : TizenConfig.panel.color.normal
         }
+        backgroundColor: control.color
     }
 
-    readonly property string defaultFontFamily: TizenConfig.fontLoader.name
 }
