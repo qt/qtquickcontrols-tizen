@@ -29,23 +29,16 @@ SliderStyle {
         implicitWidth: bg.implicitWidth
         implicitHeight: bg.implicitHeight
 
-        Component.onCompleted: {
-            control.onPressedChanged.connect(updatePos)
-            control.onValueChanged.connect(updatePos)
-        }
-        property point globalPosition
-        property int globalX
-        property int globalY
-        function updatePos() {
+        property point globalPosition: updatePos(parent.x,control.pressed)
+        function updatePos(parentX,controlPressed) {
             var pt = handleItem.mapFromItem(floater.parent,x,y)
-            globalPosition = Qt.point(pt.x,pt.y)
+            return Qt.point(pt.x,pt.y)
         }
-
 
         Floater {
             id:floater
             content: TizenBorderImage {
-                implicitWidth: Math.max(txt.contentWidth+txt.anchors.margins, TizenConfig.slider.handle.overlay.width)
+                implicitWidth: Math.max(txt.contentWidth, TizenConfig.slider.handle.overlay.width)
                 implicitHeight: TizenConfig.slider.handle.overlay.height
                 source: TizenConfig.slider.handle.overlay.source
                 backgroundColor: TizenConfig.slider.handle.overlay.backgroundColor
@@ -62,7 +55,6 @@ SliderStyle {
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     text: control.value
-
                 }
             }
             visible:control.pressed
