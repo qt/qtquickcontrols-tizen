@@ -63,7 +63,7 @@ ApplicationWindow {
             id: content
             anchors.fill: parent
 
-            titleBar.text: "Controls Gallery (Theme: " + TizenControls.currentTheme+")"
+            titleBar.text: "Controls Gallery (" + TizenControls.currentTheme+ " theme)"
             titleBar.subText: pageStack.depth > 1 ? pageStack.currentItem: "Main Page"
 
             backAction.onTriggered: pageStack.depth > 1 ? pageStack.pop() : Qt.quit()
