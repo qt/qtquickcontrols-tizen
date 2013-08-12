@@ -69,6 +69,7 @@ ApplicationWindow {
     Accelerometer {
         id: gravitySensor
         active: gravityItem.sensorActive
+        identifier: "tizen.gravity"
     }
     Gyroscope {
         id: gyroscope
