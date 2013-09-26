@@ -38,7 +38,7 @@ Item {
         anchors.centerIn: parent
         spacing: 50
         Column {
-            Label {
+            Text {
                 color: TizenControls.palette.foreground
                 text:"Today"
             }
@@ -47,7 +47,7 @@ Item {
             }
         }
         Column {
-            Label {
+            Text {
                 color: TizenControls.palette.foreground
                 text:"Tomorrow"
             }
@@ -58,7 +58,7 @@ Item {
             }
         }
         Column {
-            Label {
+            Text {
                 color: TizenControls.palette.foreground
                 text:"Disabled"
             }
@@ -68,7 +68,7 @@ Item {
             }
         }
         Column {
-            Label {
+            Text {
                 color: TizenControls.palette.foreground
                 text:"Time"
             }
@@ -76,7 +76,7 @@ Item {
             TimeEdit { amPmDisplay: false }
         }
         Column {
-            Label {
+            Text {
                 color: TizenControls.palette.foreground
                 text:"Time AM/PM"
             }

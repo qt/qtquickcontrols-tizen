@@ -40,7 +40,7 @@ Item {
         Panel {
             x: 15
             width: root.width - 30
-            Label {
+            Text {
                 id: pageEffectLabel
                 anchors.margins: 10
                 anchors.left: parent.left
@@ -76,7 +76,7 @@ Item {
                 else
                     themeCheckBoxPanel.hide()
             }
-            Label {
+            Text {
                 id: themeLabel
                 anchors.margins: 10
                 anchors.left: parent.left

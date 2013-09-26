@@ -46,7 +46,7 @@ Panel {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        Label {
+        Text {
             id: switchLabel
             color: TizenControls.palette.foreground
             text: "Compass"
@@ -55,7 +55,7 @@ Panel {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             font.family: TizenControls.defaultFontFamily
-            font.pixelSize: parent.height/2
+            font.pixelSize: 50
             fontSizeMode: Text.Fit
         }
         Switch {
@@ -63,7 +63,7 @@ Panel {
             checked: false
         }
     }
-    Label {
+    Text {
         id: compassLabel
         anchors.margins: 10
         color: TizenControls.palette.foreground

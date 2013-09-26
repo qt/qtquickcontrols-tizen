@@ -56,7 +56,7 @@ Item {
         visible: detailButton.pressed
     }
 
-    Label {
+    Text {
         id: textitem
         color: TizenControls.palette.foreground
         font.pixelSize: 32
