@@ -23,6 +23,6 @@
         <file>content/DateTimeEditPage.qml</file>
         <file>content/PageCurl.qml</file>
         <file>content/ConfigurationPage.qml</file>
-        <file>images/mainmenu.png</file>
+        <file alias="images/mainmenu.png">shared/res/screen-density-xhigh/mainmenu.png</file>
     </qresource>
 </RCC>

@@ -27,23 +27,25 @@
 
 #include <QGuiApplication>
 #include <QQuickWindow>
-#include <QtDebug>
 #include <QtGlobal>
 #include <QQmlApplicationEngine>
-#include <QScreen>
 #include <QQuickItem>
+
 extern "C" int OspMain(int argc, char *argv[])
 {
+
 #ifdef Q_OS_TIZEN_SIMULATOR
-    qputenv("QML_BAD_GUI_RENDER_LOOP","1");
+    qputenv("QSG_RENDER_LOOP","windows");
 #endif
     qputenv("QT_QUICK_CONTROLS_STYLE","Tizen");
     QGuiApplication app(argc,argv);
 
     QQmlApplicationEngine engine(QUrl("qrc:///main.qml"));
-    QQuickWindow *window = qobject_cast<QQuickWindow *>(engine.rootObjects().at(0));
+    QQuickWindow *window = 0;
+    if (engine.rootObjects().count() > 0)
+        window = qobject_cast<QQuickWindow *>(engine.rootObjects().at(0));
     if (window) {
-        window->setIcon(QIcon(":/images/mainmenu.png"));
+        window->setIcon(QIcon(":/icons/mainmenu.png"));
         window->show();
         return app.exec();
     } else {

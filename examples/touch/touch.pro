@@ -1,11 +1,7 @@
 TEMPLATE=app
 
-tizen {
-    QMAKE_LFLAGS+=-pie -rdynamic
-    TARGET=QtControls.exe
-} else {
-    TARGET=QtControls
-}
+TARGET=QtControls
+
 QT += qml quick
 
 OTHER_FILES += \
@@ -22,7 +18,8 @@ OTHER_FILES += \
     content/DateTimeEditPage.qml\
     content/PageCurl.qml \
     content/ConfigurationPage.qml \
-    tizen/qt.conf
+    tizen/qt.conf \
+    manifest.xml
 
 
 SOURCES += \
@@ -30,5 +27,9 @@ SOURCES += \
 
 RESOURCES += touch-default.qrc
 
-tizen: RESOURCES += touch-tizen.qrc
-
+tizen {
+    tizen_shared.files = shared/res
+    CONFIG += TIZEN_STANDALONE_PACKAGE
+    TIZEN_BUNDLED_QT_LIBS=Qt5Core Qt5DBus Qt5Qml Qt5Quick Qt5Widgets Qt5Gui Qt5Network
+    load(tizen_app)
+}

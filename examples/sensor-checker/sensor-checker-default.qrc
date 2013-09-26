@@ -2,6 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>content/SensorInformationItem.qml</file>
-        <file>images/mainmenu.png</file>
+        <file alias="images/mainmenu.png">shared/res/screen-density-xhigh/mainmenu.png</file>
     </qresource>
 </RCC>

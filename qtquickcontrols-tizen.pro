@@ -1,3 +1,1 @@
-#load(qt_parts)
-TEMPLATE=subdirs
-SUBDIRS += src examples tools
+load(qt_parts)

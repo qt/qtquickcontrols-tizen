@@ -57,5 +57,4 @@ ApplicationWindow {
 
         backAction.onTriggered: Qt.quit()
     }
-
 }

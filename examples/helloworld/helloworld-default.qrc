@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>images/mainmenu.png</file>
+        <file alias="icons/mainmenu.png">shared/res/screen-density-xhigh/mainmenu.png</file>
     </qresource>
 </RCC>

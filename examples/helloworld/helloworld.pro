@@ -1,29 +1,21 @@
 TEMPLATE=app
 
-tizen {
-    QMAKE_LFLAGS+=-pie -rdynamic
-    TARGET=QtHelloWorld.exe
-} else {
-    TARGET=QtHelloWorld
-}
-
-#under /opt/usr/apps/$APPID application will be installed
-#you also need to add this in tizen/qt.conf file in Prefix entry
-APPID=QtHelloWrl
+TARGET=QtHelloWorld
 
 QT += qml quick
 
 OTHER_FILES += \
     main.qml \
-    tizen/qt.conf
+    manifest.xml
 
 SOURCES += \
     main.cpp
 
 RESOURCES += helloworld-default.qrc
 
-tizen: RESOURCES += helloworld-tizen.qrc
-
-
-
-
+tizen {
+    tizen_shared.files = shared/res
+    CONFIG += TIZEN_STANDALONE_PACKAGE
+    TIZEN_BUNDLED_QT_LIBS=Qt5Core Qt5DBus Qt5Qml Qt5Quick Qt5Widgets Qt5Gui Qt5Network
+    load(tizen_app)
+}
