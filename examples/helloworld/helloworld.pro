@@ -6,7 +6,7 @@ QT += qml quick
 
 OTHER_FILES += \
     main.qml \
-    manifest.xml
+    tizen/manifest.xml
 
 SOURCES += \
     main.cpp

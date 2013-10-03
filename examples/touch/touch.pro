@@ -18,8 +18,7 @@ OTHER_FILES += \
     content/DateTimeEditPage.qml\
     content/PageCurl.qml \
     content/ConfigurationPage.qml \
-    tizen/qt.conf \
-    manifest.xml
+    tizen/manifest.xml
 
 
 SOURCES += \

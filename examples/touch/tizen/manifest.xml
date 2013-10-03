@@ -7,8 +7,8 @@
     <Apps>
         <ApiVersion>2.2</ApiVersion>
         <Privileges/>
-        <UiApp Main="True" MenuIconVisible="True" Name="QtControls" LaunchingHistoryVisible="True">
-            <UiScalability CoordinateSystem="Logical" LogicalCoordinate="720" BaseScreenSize="Normal"/>
+        <UiApp MenuIconVisible="True" Main="True" Name="QtControls" LaunchingHistoryVisible="True">
+            <UiScalability BaseScreenSize="Normal" LogicalCoordinate="720" CoordinateSystem="Logical"/>
             <UiTheme SystemTheme="White"/>
             <DisplayNames>
                 <DisplayName Locale="eng-GB">Qt Controls</DisplayName>

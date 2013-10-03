@@ -7,7 +7,7 @@ QT += qml quick
 OTHER_FILES += \
     main.qml \
     content/SensorInformationItem.qml \
-    manifest.xml
+    tizen/manifest.xml
 
 SOURCES += \
     main.cpp
