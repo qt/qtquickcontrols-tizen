@@ -106,6 +106,10 @@ ApplicationWindow {
                     title: "DateTimeEdit"
                     page: "content/DateTimeEditPage.qml"
                 }
+                ListElement {
+                    title: "Text Input"
+                    page: "content/TextInputPage.qml"
+                }
             }
 
             StackView {
