@@ -34,7 +34,7 @@
 
 extern "C" int OspMain(int argc, char *argv[])
 {
-#ifdef Q_OS_TIZEN_SIMULATOR
+#ifdef Q_OS_LINUX_TIZEN_SIMULATOR
     qputenv("QSG_RENDER_LOOP","windows");
 #endif
     qputenv("QT_QUICK_CONTROLS_STYLE","Tizen");
@@ -46,7 +46,7 @@ extern "C" int OspMain(int argc, char *argv[])
         window->setIcon(QIcon(":/images/mainmenu.png"));
         window->screen()->setOrientationUpdateMask(Qt::PortraitOrientation | Qt::LandscapeOrientation |
                                                    Qt::InvertedPortraitOrientation | Qt::InvertedLandscapeOrientation);
-#ifdef Q_OS_TIZEN
+#ifdef Q_OS_LINUX_TIZEN
         window->setProperty("contentFollowsContentOrientation",true);
 #endif
         window->show();
