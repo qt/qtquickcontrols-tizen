@@ -46,11 +46,12 @@ import "content"
 
 ApplicationWindow {
     id: appWindow
-    y: isPortrait ? 60 : 0
-    width: 720
-    height: isPortrait? 1220 : 1280
+
     property real curlValue: 0.05
     property bool isPortrait: contentOrientation === Qt.PortraitOrientation || contentOrientation === Qt.InvertedPortraitOrientation
+    property rect keyboardRectangle: Qt.inputMethod.keyboardRectangle
+
+    onKeyboardRectangleChanged: console.log("keyboardRectangle:", keyboardRectangle)
 
     contentOrientation: Screen.orientation
     property bool pageCurlEffectEnabled: false

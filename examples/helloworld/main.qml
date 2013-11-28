@@ -45,9 +45,6 @@ import QtQuick.Window 2.0
 
 ApplicationWindow {
     id: appWindow
-    y: 60
-    width: 720
-    height: 1220
 
     View {
         id: content

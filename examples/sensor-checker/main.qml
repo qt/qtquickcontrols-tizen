@@ -48,9 +48,7 @@ import "content"
 
 ApplicationWindow {
     id: appWindow
-    y: 60
-    width: 720
-    height: 1220
+
     property real curlValue: 0.05
 
     Accelerometer {
