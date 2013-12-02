@@ -26,10 +26,9 @@
  */
 
 
-import QtQuick 2.1
-import QtQuick.Controls 1.0
+import QtQuick 2.2
+import QtQuick.Controls 1.1
 import QtQuick.Controls.Tizen 1.0
-import QtQuick.Controls.Styles 1.0
 
 Item {
     id:root
@@ -111,19 +110,6 @@ Item {
                 checked: parent.checked
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                onCheckedChanged: parent.checked = checked
-            }
-        }
-        CheckBox {
-            text:"V Switch"
-            onCheckedChanged: mSwitch1.checked = checked
-            Switch {
-                id:mSwitch1
-                orientation: Qt.Vertical
-                checked: parent.checked
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
                 onCheckedChanged: parent.checked = checked
             }
         }

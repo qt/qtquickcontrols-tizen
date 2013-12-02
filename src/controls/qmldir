@@ -2,13 +2,11 @@ module QtQuick.Controls.Tizen
 
 plugin tizencontrolsplugin
 
-Switch 1.0 Switch.qml
 DetailButton 1.0 DetailButton.qml
 ContextMenu 1.0 ContextMenu.qml
 SplitView 1.0 SplitView.qml
 ScrollDecorator 1.0 ScrollDecorator.qml
 Popup 1.0 Popup.qml
-BusyIndicator 1.0 BusyIndicator.qml
 DateEdit 1.0 DateEdit.qml
 TitleBar 1.0 TitleBar.qml
 TimeEdit 1.0 TimeEdit.qml

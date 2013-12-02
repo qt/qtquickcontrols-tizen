@@ -17,36 +17,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-import QtQuick 2.1
-import QtQuick.Controls 1.0
+import QtQuick 2.2
+import QtQuick.Controls 1.1
 import QtQuick.Controls.Private 1.0
-import QtQuick.Controls.Tizen 1.0
 import QtQuick.Controls.Styles.Tizen 1.0
+import QtQuick.Controls.Styles 1.1
 
-Style {
+BusyIndicatorStyle {
     id: style
 
-    property BusyIndicator control: __control
-
-    property Component panel: Image {
+    indicator: Image {
         id:root
         source: TizenConfig.busyIndicator.source
+        opacity: control.running ? 1 : 0
 
-        Binding {
-            target:control
-            property: "duration"
-            value: TizenConfig.busyIndicator.duration
-        }
+        Behavior on opacity { OpacityAnimator { duration: 250 } }
 
-        RotationAnimation {
+        RotationAnimator on rotation {
             running: control.running
-            from:0
-            to: 360
-            target: root
-            direction: RotationAnimation.Clockwise
-            duration: control.duration
+            duration: 1000
             loops: Animation.Infinite
-            property: "rotation"
+            from: 0
+            to: 360
+
         }
     }
 }

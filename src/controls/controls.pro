@@ -6,13 +6,11 @@ TARGETPATH = QtQuick/Controls/Tizen
 
 
 QML_FILES += \
-    Switch.qml \
     DetailButton.qml\
     ContextMenu.qml\
     SplitView.qml\
     ScrollDecorator.qml\
     Popup.qml\
-    BusyIndicator.qml \
     DateEdit.qml\
     TimeEdit.qml \
     TitleBar.qml \

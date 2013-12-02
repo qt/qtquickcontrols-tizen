@@ -18,23 +18,15 @@
  */
 
 import QtQuick 2.1
-import QtQuick.Controls 1.0
-import QtQuick.Controls.Private 1.0
-import QtQuick.Controls.Tizen 1.0
 import QtQuick.Controls.Styles.Tizen 1.0
+import QtQuick.Controls.Styles 1.1
 
-Style {
+
+
+SwitchStyle {
     id: styleitem
 
-    /*! The \l Slider attached to this style. */
-    readonly property Switch control: __control
-
-    padding { top: 0 ; left: 0 ; right: 0 ; bottom: 0 }
-
-    /*! This property holds the item for the slider handle.
-        You can access the slider through the \c control property
-    */
-    property Component handle: Item {
+    handle: Item {
         implicitWidth: icon.implicitWidth
         implicitHeight: icon.implicitHeight
         Image {
@@ -44,56 +36,13 @@ Style {
         }
     }
 
-    /*! This property holds the background groove of the slider.
-        You can access the handle position through the \c handlePosition property.
-    */
-    property Component groove: Item {
+    groove: Item {
         implicitWidth: onOffBackground.implicitWidth
         implicitHeight: onOffBackground.implicitHeight
         Image {
             id:onOffBackground
             anchors.fill: parent
             source: control.enabled ? TizenConfig.checkBox.onOff.source.normal :  TizenConfig.checkBox.on.source.disabled
-        }
-    }
-
-    /*! This property holds the slider style panel.
-
-        Note that it is generally not recommended to override this.
-    */
-    property Component panel: Item {
-        id: root
-        property int handleWidth: handleLoader.implicitWidth
-        property int handleHeight: handleLoader.implicitHeight
-
-        property bool horizontal : control.orientation === Qt.Horizontal
-        property int horizontalSize: grooveLoader.implicitWidth + padding.left + padding.right
-        property int verticalSize: Math.max(handleLoader.implicitHeight, grooveLoader.implicitHeight) + padding.top + padding.bottom
-
-        implicitWidth: horizontal ? horizontalSize : verticalSize
-        implicitHeight: horizontal ? verticalSize : horizontalSize
-
-        y: horizontal ? 0 : height
-        rotation: horizontal ? 0 : -90
-        transformOrigin: Item.TopLeft
-
-        Item {
-            anchors.fill: parent
-            Loader {
-                id: grooveLoader
-                property int handlePosition: handleLoader.x + handleLoader.width/2
-                x: padding.left
-                sourceComponent: groove
-                width: (horizontal ? parent.width : parent.height) - padding.left - padding.right
-                height:(horizontal ? parent.height : parent.width) - padding.top - padding.bottom
-                y: padding.top
-            }
-            Loader {
-                id: handleLoader
-                sourceComponent: handle
-                anchors.verticalCenter: grooveLoader.verticalCenter
-                x: control.__handlePos
-            }
         }
     }
 }
