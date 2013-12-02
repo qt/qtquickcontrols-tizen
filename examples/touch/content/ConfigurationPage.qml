@@ -138,19 +138,24 @@ Item {
                 checkBoxWhite.checked = TizenControls.currentTheme === "white"
                 checkBoxBlack.checked = TizenControls.currentTheme === "black"
             }
-            CheckBox {
+            ExclusiveGroup {
+                id: exclGroup
+            }
+            RadioButton {
                 id: checkBoxWhite
+                exclusiveGroup: exclGroup
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 text: "White"
-                onClicked: TizenControls.changeTheme("white")
+                onCheckedChanged: if (checked) TizenControls.changeTheme("white")
             }
-            CheckBox {
+            RadioButton {
                 id: checkBoxBlack
                 Layout.fillWidth: true
+                exclusiveGroup: exclGroup
                 Layout.fillHeight: true
                 text: "Black"
-                onClicked: TizenControls.changeTheme("black")
+                onCheckedChanged: if (checked) TizenControls.changeTheme("black")
             }
         }
     }

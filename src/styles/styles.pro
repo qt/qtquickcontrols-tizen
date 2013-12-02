@@ -27,7 +27,8 @@ QML_FILES = \
     TimeEditStyle.qml \
     ToolBarStyle.qml \
     ToolBarButton.qml \
-    PanelStyle.qml
+    PanelStyle.qml \
+    RadioButtonStyle.qml
 
 QML_FILES += \
     private/DateEditField.qml\

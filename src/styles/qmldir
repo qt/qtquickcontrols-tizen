@@ -21,3 +21,4 @@ TitleBarStyle 1.0 TitleBarStyle.qml
 ToolBarStyle 1.0 ToolBarStyle.qml
 ToolBarButton 1.0 ToolBarButton.qml
 ViewStyle 1.0 ViewStyle.qml
+RadioButtonStyle 1.0 RadioButtonStyle.qml

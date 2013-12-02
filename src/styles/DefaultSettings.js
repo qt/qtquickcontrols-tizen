@@ -275,6 +275,25 @@ function createCheckBox(th) {
         },
         onOff: {
             source: {
+                normal: images.img_00_button_radio_bg,
+                disabled: images.img_00_button_radio_dim_bg,
+                pressed: images.img_00_button_radio_press_bg,
+                highlighted: images.img_00_button_radio_focus,
+                selected: images.img_00_button_radio_bg
+            },
+            indicator: {
+                source: {
+                    normal: images.img_00_button_radio_activated,
+                    disabled: images.img_00_button_radio_activated_dim,
+                    pressed: images.img_00_button_radio_activated_press,
+                    highlighted: images.img_00_button_radio_activated,
+                    selected: images.img_00_button_radio_activated
+                }
+            }
+        },
+
+        onOffSliding: {
+            source: {
                 normal: images.img_00_button_on_off_bg,
                 disabled: images.img_00_button_on_off_bg_dim,
                 pressed: images.img_00_button_on_off_bg,

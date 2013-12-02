@@ -32,7 +32,7 @@ SwitchStyle {
         Image {
             id:icon
             anchors.fill: parent
-            source: control.enabled ? ( control.checked ? TizenConfig.checkBox.onOff.on.handler.source.normal : TizenConfig.checkBox.onOff.off.handler.source.normal) :  ( control.checked ? TizenConfig.checkBox.onOff.on.handler.source.disabled : TizenConfig.checkBox.onOff.off.handler.source.disabled)
+            source: control.enabled ? ( control.checked ? TizenConfig.checkBox.onOffSliding.on.handler.source.normal : TizenConfig.checkBox.onOffSliding.off.handler.source.normal) :  ( control.checked ? TizenConfig.checkBox.onOffSliding.on.handler.source.disabled : TizenConfig.checkBox.onOffSliding.off.handler.source.disabled)
         }
     }
 
@@ -42,7 +42,7 @@ SwitchStyle {
         Image {
             id:onOffBackground
             anchors.fill: parent
-            source: control.enabled ? TizenConfig.checkBox.onOff.source.normal :  TizenConfig.checkBox.on.source.disabled
+            source: control.enabled ? TizenConfig.checkBox.onOffSliding.source.normal :  TizenConfig.checkBox.on.source.disabled
         }
     }
 }
