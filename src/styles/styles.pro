@@ -17,7 +17,6 @@ QML_FILES = \
     Floater.qml \
     SwitchStyle.qml\
     DetailButtonStyle.qml\
-    ScrollDecoratorStyle.qml\
     ContextMenuStyle.qml\
     PopupStyle.qml\
     BusyIndicatorStyle.qml \
@@ -28,7 +27,9 @@ QML_FILES = \
     ToolBarStyle.qml \
     ToolBarButton.qml \
     PanelStyle.qml \
-    RadioButtonStyle.qml
+    RadioButtonStyle.qml \
+    FocusFrameStyle.qml \
+    ScrollViewStyle.qml
 
 QML_FILES += \
     private/DateEditField.qml\

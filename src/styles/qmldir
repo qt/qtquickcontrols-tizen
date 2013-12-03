@@ -11,7 +11,6 @@ PanelStyle 1.0 PanelStyle.qml
 Floater 1.0 Floater.qml
 SwitchStyle 1.0 SwitchStyle.qml
 DetailButtonStyle 1.0 DetailButtonStyle.qml
-ScrollDecoratorStyle 1.0 ScrollDecoratorStyle.qml
 ContextMenuStyle 1.0 ContextMenuStyle.qml
 PopupStyle 1.0 PopupStyle.qml
 BusyIndicatorStyle 1.0 BusyIndicatorStyle.qml
@@ -22,3 +21,5 @@ ToolBarStyle 1.0 ToolBarStyle.qml
 ToolBarButton 1.0 ToolBarButton.qml
 ViewStyle 1.0 ViewStyle.qml
 RadioButtonStyle 1.0 RadioButtonStyle.qml
+ScrollViewStyle 1.0 ScrollViewStyle.qml
+

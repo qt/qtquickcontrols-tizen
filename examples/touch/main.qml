@@ -121,21 +121,20 @@ ApplicationWindow {
                     width: parent.width
                     height: parent.height
 
-
-                    ListView {
-                        id:listView
-                        model: pageModel
+                    ScrollView {
                         anchors.fill: parent
-                        clip:true
+                        ListView {
+                            id:listView
+                            model: pageModel
 
-                        delegate: AndroidDelegate {
-                            text: title
-                            onClicked: {
-                                content.titleBar.subText = Qt.binding(function() {return pageStack.depth > 1 ? title: "Main Page"})
-                                pageStack.push(Qt.resolvedUrl(page))
+                            delegate: AndroidDelegate {
+                                text: title
+                                onClicked: {
+                                    content.titleBar.subText = Qt.binding(function() {return pageStack.depth > 1 ? title: "Main Page"})
+                                    pageStack.push(Qt.resolvedUrl(page))
+                                }
                             }
                         }
-                        ScrollDecorator {flickableItem: listView}
                     }
                 }
             }

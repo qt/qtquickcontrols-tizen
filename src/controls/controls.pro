@@ -9,7 +9,6 @@ QML_FILES += \
     DetailButton.qml\
     ContextMenu.qml\
     SplitView.qml\
-    ScrollDecorator.qml\
     Popup.qml\
     DateEdit.qml\
     TimeEdit.qml \
