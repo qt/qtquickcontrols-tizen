@@ -111,6 +111,10 @@ ApplicationWindow {
                     title: "Text Input"
                     page: "content/TextInputPage.qml"
                 }
+                ListElement {
+                    title: "Multimedia"
+                    page: "content/MultimediaPage.qml"
+                }
             }
 
             StackView {

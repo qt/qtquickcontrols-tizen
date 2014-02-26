@@ -24,5 +24,6 @@
         <file>content/PageCurl.qml</file>
         <file>content/ConfigurationPage.qml</file>
         <file alias="images/mainmenu.png">shared/res/screen-density-xhigh/mainmenu.png</file>
+        <file>content/MultimediaPage.qml</file>
     </qresource>
 </RCC>
