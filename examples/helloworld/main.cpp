@@ -34,7 +34,7 @@
 extern "C" int OspMain(int argc, char *argv[])
 {
 
-#ifdef Q_OS_LINUX_TIZEN_SIMULATOR
+#ifdef QT_TIZEN_EMULATOR
     qputenv("QSG_RENDER_LOOP","windows");
 #endif
     qputenv("QT_QUICK_CONTROLS_STYLE","Tizen");
