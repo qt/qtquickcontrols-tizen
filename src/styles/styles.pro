@@ -29,7 +29,8 @@ QML_FILES = \
     PanelStyle.qml \
     RadioButtonStyle.qml \
     FocusFrameStyle.qml \
-    ScrollViewStyle.qml
+    ScrollViewStyle.qml \
+    ApplicationWindowStyle.qml
 
 QML_FILES += \
     private/DateEditField.qml\
